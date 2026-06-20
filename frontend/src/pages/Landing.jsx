@@ -140,9 +140,11 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-white/5 py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500 font-mono">
-          <span>// CloudForge Cards — fan-made, not affiliated with Amazon Web Services</span>
-          <span>v0.1 · solo mode</span>
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-zinc-500 font-mono">
+          <span data-testid="footer-disclaimer">
+            Unofficial educational project. Not affiliated with Amazon Web Services.
+          </span>
+          <span>v0.2 · solo mode</span>
         </div>
       </footer>
     </div>

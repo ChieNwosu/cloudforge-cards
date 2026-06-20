@@ -183,7 +183,7 @@ def _overengineering(selected: List[dict], scenario: dict, constraints: List[str
     if not reasons:
         reasons.append("Selection sized & shaped reasonably for the scenario.")
 
-    return {"label": "Overengineering", "score": round(_clamp(penalty, -20, 0), 1),
+    return {"label": "Overengineering Penalty", "score": round(_clamp(penalty, -20, 0), 1),
             "max": 0, "min": -20, "reasons": reasons}
 
 
@@ -208,12 +208,18 @@ def score_round(scenario_id: str, constraint_ids: List[str],
     total = round(_clamp(total, 0, 100), 1)
 
     rating = (
-        "S-Tier Architect" if total >= 85 else
-        "Solid Design" if total >= 70 else
-        "Workable" if total >= 55 else
-        "Needs Rework" if total >= 35 else
-        "Back to the drawing board"
+        "Well-Architected" if total >= 86 else
+        "Production Candidate" if total >= 71 else
+        "Partial Fit" if total >= 51 else
+        "Needs Refactor" if total >= 31 else
+        "Broken Architecture"
     )
+
+    ideal_combos = scenario.get("ideal_combos", [])
+    ideal_combos_resolved = [
+        [SERVICES_BY_ID[s] for s in combo if s in SERVICES_BY_ID]
+        for combo in ideal_combos
+    ]
 
     return {
         "total": total,
@@ -222,4 +228,5 @@ def score_round(scenario_id: str, constraint_ids: List[str],
         "scenario": scenario,
         "constraints": [CONSTRAINTS_BY_ID[c] for c in constraint_ids if c in CONSTRAINTS_BY_ID],
         "selected_services": selected,
+        "ideal_combos": ideal_combos_resolved,
     }

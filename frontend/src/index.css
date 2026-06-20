@@ -11,7 +11,12 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background: #090A0B;
     color: #fff;
+    overflow-x: hidden;
+    letter-spacing: 0;
 }
+
+html { overflow-x: hidden; }
+p, .cf-body { letter-spacing: 0; line-height: 1.55; }
 
 code, .font-mono {
     font-family: 'JetBrains Mono', monospace;

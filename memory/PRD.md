@@ -29,16 +29,22 @@ visuals (no Uno/Balatro clones).
 - **LLM**: EMERGENT_LLM_KEY (Anthropic claude-sonnet-4-6) for end-of-round critique.
 
 ## What's been implemented (2026-02)
-- Landing page (hero, features grid, CTA, footer)
+- Landing page (hero, features grid, CTA, footer with explicit AWS disclaimer)
 - Solo Play with best-of-3 session state machine
-- 30+ service cards (Compute/Storage/Database/Network/Security/Analytics/Integration/Monitoring)
-- 10 scenarios + 8 constraints
+- 33 service cards across 9 categories incl. AI (Bedrock, SageMaker)
+- 10 scenarios + 8 constraints + `ideal_combos` per scenario
 - Six-axis transparent scoring engine with per-axis "reasons"
+- New grade labels: Broken Architecture / Needs Refactor / Partial Fit / Production Candidate / Well-Architected
 - Hybrid AI commentary (Claude Sonnet 4.6 + deterministic fallback)
 - Local MongoDB leaderboard, top-N display
 - How to Play page (rules + scoring rubric table)
-- Custom dark Swiss / cloud-lab aesthetic, no AWS branding
-- Testing: 13/13 backend pytest pass; manual e2e best-of-3 verified
+- Custom dark Swiss / cloud-lab aesthetic
+- **v0.2 — Mobile UX pass**: full responsive layout, no horizontal overflow,
+  hamburger nav drawer, sticky bottom selection tray, category filter chips
+  (All/Compute/Storage/Database/Security/Analytics/Networking/Integration/AI),
+  dynamic selected-counter tied to `scenario.max_services`, "Got Right /
+  To Improve / Ideal Architecture" panels, cleaner penalty bar viz,
+  rationalised letter-spacing on body text.
 
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)

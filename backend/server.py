@@ -106,6 +106,7 @@ async def score_endpoint(req: ScoreRequest):
     if not (3 <= len(req.selected_service_ids) <= 6):
         raise HTTPException(status_code=400,
                             detail="Select between 3 and 6 service cards.")
+    score = None
     try:
         score = score_round(req.scenario_id, req.constraint_ids,
                             req.selected_service_ids)

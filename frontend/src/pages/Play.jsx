@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, RotateCcw, Send, Trophy, X } from "lucide-react";
 import { dealRound, scoreRound, submitLeaderboard } from "@/lib/api";
@@ -46,7 +46,7 @@ export default function Play() {
     return selected.map((id) => data.hand.find((c) => c.id === id)).filter(Boolean);
   }, [selected, data]);
 
-  async function deal() {
+  const deal = useCallback(async () => {
     setLoading(true);
     setResult(null);
     setSelected([]);
@@ -60,12 +60,11 @@ export default function Play() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (!sessionDone) deal();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [round]);
+  }, [round, sessionDone, deal]);
 
   function toggleCard(id) {
     setSelected((prev) => {
@@ -283,8 +282,8 @@ export default function Play() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3" data-testid="card-hand">
-                    {visibleHand.map((card, i) => (
-                      <div key={card.id} style={{ animationDelay: `${i * 25}ms` }} className="cf-fade-up">
+                    {visibleHand.map((card) => (
+                      <div key={card.id} className="cf-fade-up">
                         <ServiceCard
                           card={card}
                           selected={selected.includes(card.id)}

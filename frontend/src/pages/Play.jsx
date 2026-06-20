@@ -46,11 +46,13 @@ export default function Play() {
     if (filter === "All") return data.hand;
     const cat = FILTER_TO_CATEGORY[filter] || filter;
     return data.hand.filter((c) => c.category === cat);
-  }, [data, filter]);
+    // FILTER_TO_CATEGORY is a module-level constant; listed for analyzer satisfaction.
+  }, [data, filter, FILTER_TO_CATEGORY]);
 
   const selectedCards = useMemo(() => {
     if (!data?.hand) return [];
     return selected.map((id) => data.hand.find((c) => c.id === id)).filter(Boolean);
+    // `id`, `c`, `hand` are local to the callback body — not external reactive values.
   }, [selected, data]);
 
   const deal = useCallback(async () => {
@@ -67,7 +69,8 @@ export default function Play() {
     } finally {
       setLoading(false);
     }
-  }, []);
+    // `d`, `e` are local try/catch bindings; dealRound is a stable module import.
+  }, [dealRound]);
 
   useEffect(() => {
     if (!sessionDone) deal();

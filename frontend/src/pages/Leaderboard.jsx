@@ -64,7 +64,7 @@ export default function Leaderboard() {
       .then(setEntries)
       .catch(() => setEntries([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [setEntries, setLoading]);
 
   useEffect(() => {
     load();

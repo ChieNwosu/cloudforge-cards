@@ -143,6 +143,8 @@ function useToast() {
         listeners.splice(index, 1)
       }
     };
+    // `listeners` is a module-level singleton; `index` is local to cleanup;
+    // `setState` is React-stable. Effect runs per state change by design.
   }, [state])
 
   return {

@@ -3,7 +3,10 @@ import axios from "axios";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
-export const api = axios.create({ baseURL: API, timeout: 30000 });
+export const API_TIMEOUT_MS = 30000;
+export const CACHE_DURATION_MS = 60000;
+
+export const api = axios.create({ baseURL: API, timeout: API_TIMEOUT_MS });
 
 export const dealRound = (scenarioId, handSize = 10, constraintCount = 2) =>
   api.get("/game/deal", {

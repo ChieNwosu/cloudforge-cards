@@ -3,8 +3,8 @@ import { ArrowRight } from "lucide-react";
 
 const steps = [
   { n: "01", t: "Read the scenario", d: "Each round shows an architecture problem and two constraint chips (e.g. 'Low Cost', 'Secure')." },
-  { n: "02", t: "Pick 3 to 6 service cards", d: "Build the simplest design that fits the scenario and constraints — overengineering costs you points." },
-  { n: "03", t: "(Optional) explain yourself", d: "Write a short justification. It's saved on the scoreboard but does not affect scoring — keep things transparent." },
+  { n: "02", t: "Pick 3 to 6 service cards", d: "Build the simplest design that fits the scenario and constraints, overengineering costs you points." },
+  { n: "03", t: "(Optional) explain yourself", d: "Write a short justification. It's saved on the scoreboard but does not affect scoring, keep things transparent." },
   { n: "04", t: "Submit & read the review", d: "Six explainable sub-scores plus an AI architect critique tell you what worked and what didn't." },
   { n: "05", t: "Win the best-of-3", d: "Three scenarios per session. Save your total to the leaderboard." },
 ];
@@ -24,7 +24,7 @@ export default function HowToPlay() {
       <div>
         <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#0055FF] mb-3">/// how to play</div>
         <h1 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4">The rules in 60 seconds.</h1>
-        <p className="text-zinc-400 max-w-xl">A round of CloudForge takes about three minutes. No memorisation — just reasoning about trade-offs.</p>
+        <p className="text-zinc-400 max-w-xl">A round of CloudForge takes about three minutes. No memorisation, just reasoning about trade-offs.</p>
       </div>
 
       <div className="space-y-3">

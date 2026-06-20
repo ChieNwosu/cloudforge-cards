@@ -3,7 +3,7 @@ import { ArrowRight, Layers, Sparkles, ShieldCheck, Cpu, Zap, BarChart3 } from "
 
 const features = [
   { icon: Layers, title: "30+ AWS service cards", body: "Each with category, cost, security & scale ratings." },
-  { icon: Sparkles, title: "Transparent scoring", body: "Six explainable sub-scores — no black box." },
+  { icon: Sparkles, title: "Transparent scoring", body: "Six explainable sub-scores, no black box." },
   { icon: ShieldCheck, title: "Constraint chips", body: "Low cost, secure, serverless, scalable, and more." },
   { icon: Cpu, title: "Hybrid AI judging", body: "Rule engine + Claude commentary on every round." },
   { icon: Zap, title: "Best-of-3 sessions", body: "Three scenarios. Win the table." },
@@ -35,7 +35,7 @@ export default function Landing() {
             </h1>
             <p className="mt-6 text-lg text-zinc-300 max-w-xl leading-relaxed">
               CloudForge Cards is an educational AWS card game. Read a scenario,
-              pick the right services, justify your design — and get an
+              pick the right services, justify your design, and get an
               explainable score back, instantly.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -100,7 +100,7 @@ export default function Landing() {
             </div>
             <p className="text-zinc-400 max-w-md">
               No memorisation. Just hands-on reasoning about cost, security,
-              scalability, and trade-offs — the way real architects think.
+              scalability, and trade-offs, the way real architects think.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 border border-white/5 rounded-lg overflow-hidden">

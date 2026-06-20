@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, RotateCcw, Send, Trophy, X } from "lucide-react";
 import { dealRound, scoreRound, submitLeaderboard } from "@/lib/api";
@@ -12,13 +12,29 @@ const FILTERS = [
   "All", "Compute", "Storage", "Database",
   "Security", "Analytics", "Networking", "Integration", "AI",
 ];
-const FILTER_TO_CATEGORY = { Networking: "Network" }; // UI label -> data category
+const FILTER_TO_CATEGORY = { Networking: "Network" };
 
 function roundChipClass(chipRound, currentRound, past) {
   const base = "px-2.5 sm:px-3 py-1.5 rounded-md text-[10px] sm:text-xs font-mono";
   if (past) return `${base} bg-[#0055FF]/15 border border-[#0055FF]/40 text-[#5C8CFF]`;
   if (chipRound === currentRound) return `${base} bg-white/10 border border-white/15 text-white`;
   return `${base} bg-white/[0.02] border border-white/10 text-zinc-600`;
+}
+
+// Pure helpers, kept outside the component so static analyzers do not
+// inspect their local variables as if they were React dependencies.
+function getVisibleHand(data, activeFilter) {
+  if (!data?.hand) return [];
+  if (activeFilter === "All") return data.hand;
+  const category = FILTER_TO_CATEGORY[activeFilter] || activeFilter;
+  return data.hand.filter((card) => card.category === category);
+}
+
+function getSelectedCards(selected, data) {
+  if (!data?.hand) return [];
+  return selected
+    .map((cardId) => data.hand.find((card) => card.id === cardId))
+    .filter(Boolean);
 }
 
 export default function Play() {
@@ -41,40 +57,25 @@ export default function Play() {
   const maxServices = data?.scenario?.max_services ?? 6;
   const canSubmit = selected.length >= minServices && selected.length <= maxServices;
 
-  const visibleHand = useMemo(() => {
-    if (!data?.hand) return [];
-    if (filter === "All") return data.hand;
-    const cat = FILTER_TO_CATEGORY[filter] || filter;
-    return data.hand.filter((c) => c.category === cat);
-    // FILTER_TO_CATEGORY is a module-level constant; listed for analyzer satisfaction.
-  }, [data, filter, FILTER_TO_CATEGORY]);
+  const visibleHand = getVisibleHand(data, filter);
+  const selectedCards = getSelectedCards(selected, data);
 
-  const selectedCards = useMemo(() => {
-    if (!data?.hand) return [];
-    return selected.map((id) => data.hand.find((c) => c.id === id)).filter(Boolean);
-    // `id`, `c`, `hand` are local to the callback body — not external reactive values.
-  }, [selected, data]);
-
-  const deal = useCallback(async () => {
+  useEffect(() => {
+    if (sessionDone) return undefined;
+    let cancelled = false;
     setLoading(true);
     setResult(null);
     setSelected([]);
     setExplanation("");
     setFilter("All");
-    try {
-      const d = await dealRound(null, 12, 2);
-      setData(d);
-    } catch (e) {
-      toast.error("Failed to deal a round. Is the backend running?");
-    } finally {
-      setLoading(false);
-    }
-    // `d`, `e` are local try/catch bindings; dealRound is a stable module import.
-  }, [dealRound]);
-
-  useEffect(() => {
-    if (!sessionDone) deal();
-  }, [round, sessionDone, deal]);
+    dealRound(null, 12, 2)
+      .then((dealt) => { if (!cancelled) setData(dealt); })
+      .catch(() => {
+        if (!cancelled) toast.error("Failed to deal a round. Is the backend running?");
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [round, sessionDone]);
 
   function toggleCard(id) {
     setSelected((prev) => {
@@ -298,7 +299,7 @@ export default function Play() {
                   </div>
                 )}
 
-                {/* Explanation field (desktop) — sits below cards */}
+                {/* Explanation field (desktop), sits below cards */}
                 <div className="mt-6 rounded-lg border border-white/10 bg-[#0C0E11] p-5">
                   <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">
                     Architecture explanation (optional)

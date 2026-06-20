@@ -26,7 +26,7 @@ CONSTRAINTS = [
      "description": "Logs, metrics, traces. Know what is happening in prod."},
 ]
 
-# 30 service cards — categories: Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring
+# 30 service cards, categories: Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring
 SERVICE_CARDS = [
     # Compute (6)
     {"id": "lambda", "title": "Lambda", "category": "Compute",
@@ -286,7 +286,7 @@ SCENARIOS = [
                       ["s3", "glacier", "kms", "iam"]]},
 ]
 
-# Service pairs that work great together — used for synergy bonus.
+# Service pairs that work great together, used for synergy bonus.
 SYNERGIES = [
     ("lambda", "api_gateway"),
     ("lambda", "dynamodb"),

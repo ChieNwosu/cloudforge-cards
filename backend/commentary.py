@@ -1,7 +1,7 @@
 """
 LLM commentary layer. Uses emergentintegrations + Claude Sonnet 4.6
 to turn the deterministic score breakdown into a short, friendly review.
-Fails gracefully — if the LLM call errors, we return a rule-based summary
+Fails gracefully, if the LLM call errors, we return a rule-based summary
 so the game never blocks on the network.
 """
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def _rule_based_summary(score: Dict[str, Any]) -> str:
-    parts = [f"You scored {score['total']} / 100 — {score['rating']}."]
+    parts = [f"You scored {score['total']} / 100, {score['rating']}."]
     for sub in score["breakdown"]:
         if sub["reasons"]:
             parts.append(f"• {sub['label']}: {sub['reasons'][0]}")
@@ -49,11 +49,11 @@ async def generate_commentary(score: Dict[str, Any], explanation: str) -> str:
     )
 
     user_prompt = (
-        f"Scenario: {scenario['title']} — {scenario['prompt']}\n"
+        f"Scenario: {scenario['title']}, {scenario['prompt']}\n"
         f"Constraints chosen: {constraints}\n"
         f"Services chosen: {services}\n"
         f"Student's explanation: {explanation or '(none)'}\n\n"
-        f"Score: {score['total']} / 100 — {score['rating']}\n"
+        f"Score: {score['total']} / 100, {score['rating']}\n"
         f"Breakdown:\n" + "\n".join(breakdown_lines) + "\n\n"
         "Write the review now."
     )

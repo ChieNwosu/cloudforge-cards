@@ -9,7 +9,7 @@ Total max score: 100  (six sub-scores below clamp to their ranges).
   synergy_bonus           0..20   bonus for known good service pairs
   overengineering        -20..0   penalty for too many services / unjustified complexity
 
-Each sub-score carries a `reasons` list — these are surfaced to the user verbatim.
+Each sub-score carries a `reasons` list, these are surfaced to the user verbatim.
 """
 
 from typing import List, Dict, Any
@@ -69,11 +69,11 @@ def _cost(selected: List[dict], constraints: List[str]) -> Dict[str, Any]:
         score = (3.0 - avg_cost) * 5   # avg 1 -> 10, avg 2 -> 5, avg 3 -> 0, avg 4 -> -5
         score = _clamp(score, -10, 15)
         if avg_cost <= 1.8:
-            reasons.append("Lean, mostly serverless / pay-per-use picks — cost looks great.")
+            reasons.append("Lean, mostly serverless / pay-per-use picks, cost looks great.")
         elif avg_cost <= 2.5:
             reasons.append("Moderate cost. Some picks still carry fixed overhead.")
         else:
-            reasons.append("Expensive choices for a 'low cost' brief — consider serverless equivalents.")
+            reasons.append("Expensive choices for a 'low cost' brief, consider serverless equivalents.")
     else:
         # neutral: reward sensible cost overall
         score = (3.5 - avg_cost) * 3
@@ -81,7 +81,7 @@ def _cost(selected: List[dict], constraints: List[str]) -> Dict[str, Any]:
         if avg_cost <= 2.2:
             reasons.append("Cost-efficient lineup overall.")
         elif avg_cost >= 4:
-            reasons.append("Lineup is on the expensive side — only worth it if the workload justifies it.")
+            reasons.append("Lineup is on the expensive side, only worth it if the workload justifies it.")
 
     return {"label": "Cost Alignment", "score": round(score, 1),
             "max": 15, "reasons": reasons}
@@ -97,7 +97,7 @@ def _security(selected: List[dict], constraints: List[str]) -> Dict[str, Any]:
         score = (avg_sec - 3) * 5  # avg 4 -> 5; avg 5 -> 10
         if has_iam:
             score += 5
-            reasons.append("Includes an explicit security service — good defense-in-depth.")
+            reasons.append("Includes an explicit security service, good defense-in-depth.")
         else:
             reasons.append("No explicit security service (IAM, KMS, WAF, Cognito, Secrets Manager).")
         score = _clamp(score, -10, 15)
@@ -123,12 +123,12 @@ def _scalability(selected: List[dict], constraints: List[str]) -> Dict[str, Any]
         score = (avg_scale - 3) * 5
         if serverless_ratio >= 0.6:
             score += 3
-            reasons.append("Mostly serverless — scales without manual intervention.")
+            reasons.append("Mostly serverless, scales without manual intervention.")
         score = _clamp(score, -10, 15)
         if avg_scale >= 4.3:
             reasons.append("Components selected can absorb sudden traffic bursts.")
         elif avg_scale < 3.5:
-            reasons.append("Some bottlenecks here — these services don't scale on their own.")
+            reasons.append("Some bottlenecks here, these services don't scale on their own.")
     else:
         score = (avg_scale - 3.5) * 2
         score = _clamp(score, -3, 6)
@@ -170,10 +170,10 @@ def _overengineering(selected: List[dict], scenario: dict, constraints: List[str
 
     if n > max_ideal:
         penalty -= (n - max_ideal) * 4
-        reasons.append(f"Selection has {n} services — scenario expects at most {max_ideal}.")
+        reasons.append(f"Selection has {n} services, scenario expects at most {max_ideal}.")
     if n < min_ideal:
         penalty -= (min_ideal - n) * 4
-        reasons.append(f"Selection has only {n} services — scenario needs at least {min_ideal}.")
+        reasons.append(f"Selection has only {n} services, scenario needs at least {min_ideal}.")
     if avg_complexity >= 3.5:
         penalty -= (avg_complexity - 3) * 3
         reasons.append("High overall operational complexity for this brief.")

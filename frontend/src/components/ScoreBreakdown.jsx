@@ -139,7 +139,7 @@ export default function ScoreBreakdown({ result }) {
               <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#FFD500]">What to improve</h4>
             </div>
             {toImprove.length === 0 ? (
-              <p className="text-sm text-zinc-500">Solid round — nothing major to flag.</p>
+              <p className="text-sm text-zinc-500">Solid round, nothing major to flag.</p>
             ) : (
               <ul className="space-y-2 text-sm text-zinc-200">
                 {toImprove.slice(0, 4).map((r) => (

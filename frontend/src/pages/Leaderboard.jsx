@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Trophy, Loader2 } from "lucide-react";
 import { getLeaderboard } from "@/lib/api";
 
@@ -59,16 +59,14 @@ export default function Leaderboard() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(() => {
-    getLeaderboard()
-      .then(setEntries)
-      .catch(() => setEntries([]))
-      .finally(() => setLoading(false));
-  }, [setEntries, setLoading]);
-
   useEffect(() => {
-    load();
-  }, [load]);
+    let cancelled = false;
+    getLeaderboard()
+      .then((rows) => { if (!cancelled) setEntries(rows); })
+      .catch(() => { if (!cancelled) setEntries([]); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12" data-testid="leaderboard-page">

@@ -18,11 +18,11 @@ export default function Nav() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2" data-testid="nav-home" onClick={() => setOpen(false)}>
-          <span className="grid place-items-center w-8 h-8 rounded-md bg-[#0055FF] text-white">
+          <span className="grid place-items-center w-8 h-8 rounded-md bg-[#7E1818] text-white">
             <Cloud size={18} strokeWidth={2.4} />
           </span>
           <span className="font-bold tracking-tight text-base sm:text-lg whitespace-nowrap">
-            CloudForge<span className="text-[#FFD500]"> Cards</span>
+            CloudForge<span className="text-[#D32F2F]"> Cards</span>
           </span>
         </Link>
 

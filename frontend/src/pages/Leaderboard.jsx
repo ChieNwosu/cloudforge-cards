@@ -3,7 +3,7 @@ import { Trophy, Loader2 } from "lucide-react";
 import { getLeaderboard } from "@/lib/api";
 
 const RANK_COLOR = {
-  0: "text-[#FFD500]",
+  0: "text-[#D32F2F]",
   1: "text-zinc-300",
   2: "text-[#CD7F32]",
 };
@@ -71,7 +71,7 @@ export default function Leaderboard() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12" data-testid="leaderboard-page">
       <div className="flex items-center gap-3 mb-2">
-        <Trophy className="text-[#FFD500]" />
+        <Trophy className="text-[#D32F2F]" />
         <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">Leaderboard</h1>
       </div>
       <p className="text-zinc-400 mb-10">Highest best-of-3 totals from local players.</p>

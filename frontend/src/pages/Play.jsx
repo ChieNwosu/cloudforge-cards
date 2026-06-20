@@ -16,7 +16,7 @@ const FILTER_TO_CATEGORY = { Networking: "Network" };
 
 function roundChipClass(chipRound, currentRound, past) {
   const base = "px-2.5 sm:px-3 py-1.5 rounded-md text-[10px] sm:text-xs font-mono";
-  if (past) return `${base} bg-[#0055FF]/15 border border-[#0055FF]/40 text-[#5C8CFF]`;
+  if (past) return `${base} bg-[#7E1818]/15 border border-[#7E1818]/40 text-[#D89090]`;
   if (chipRound === currentRound) return `${base} bg-white/10 border border-white/15 text-white`;
   return `${base} bg-white/[0.02] border border-white/10 text-zinc-600`;
 }
@@ -128,28 +128,69 @@ export default function Play() {
   }
 
   if (sessionDone) {
+    const totals = history.map((h) => h.total);
+    const avg = totals.length ? totals.reduce((a, b) => a + b, 0) / totals.length : 0;
+    const best = totals.length ? Math.max(...totals) : 0;
+    const lowest = totals.length ? Math.min(...totals) : 0;
+    const overallGrade =
+      avg >= 86 ? "Well-Architected" :
+      avg >= 71 ? "Production Candidate" :
+      avg >= 51 ? "Partial Fit" :
+      avg >= 31 ? "Needs Refactor" : "Broken Architecture";
+    const finalReview =
+      avg >= 86 ? "Outstanding session. You consistently picked the right services, kept architectures lean, and respected the scenario constraints. You are operating at a Solutions Architect Associate level."
+      : avg >= 71 ? "Strong session. Your designs are production-ready in most cases. Focus on tightening service synergy and cutting any service that does not justify its complexity."
+      : avg >= 51 ? "Solid foundations. You picked workable services but missed some classic AWS pairings. Review the Ideal Architectures shown after each round."
+      : avg >= 31 ? "Promising but inconsistent. Several rounds had category mismatches or unnecessary services. Re-read each scenario carefully and lean on serverless defaults."
+      : "Time to revisit AWS service categories. Start with the static blog and photo sharing scenarios, and study why S3 + CloudFront keeps showing up.";
+
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-6 sm:p-8 cf-fade-up">
           <div className="flex items-center gap-3 mb-2">
-            <Trophy className="text-[#FFD500]" />
-            <h1 className="text-2xl sm:text-3xl font-bold">Session complete</h1>
+            <Trophy className="text-[#D32F2F]" />
+            <h1 className="text-2xl sm:text-3xl font-bold">Final game summary</h1>
           </div>
-          <p className="text-zinc-400 mb-8 text-sm sm:text-base">Best-of-{TOTAL_ROUNDS} finished. Here&apos;s your tally:</p>
+          <p className="text-zinc-400 mb-6 text-sm sm:text-base">Best-of-{TOTAL_ROUNDS} finished. Here is your tally.</p>
 
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6" data-testid="session-history">
+          <div className="border border-[#7E1818]/50 cf-glow rounded-lg p-5 sm:p-6 mb-5">
+            <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-400 mb-1">Final game score</div>
+            <div className="flex items-end gap-3 mb-3">
+              <div className="text-5xl sm:text-6xl font-bold font-mono" data-testid="session-total">{sessionTotal.toFixed(1)}</div>
+              <div className="text-zinc-500 text-xl mb-1">/ 300</div>
+            </div>
+            <div className="inline-block text-xs sm:text-sm font-mono uppercase tracking-[0.12em] px-3 py-1 rounded border bg-[#7E1818]/15 border-[#7E1818]/50 text-[#D89090]"
+                 data-testid="final-overall-grade">{overallGrade}</div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5" data-testid="final-stats">
+            <div className="border border-white/10 rounded-lg p-3 sm:p-4 bg-[#121417]">
+              <div className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">Average</div>
+              <div className="text-xl sm:text-2xl font-bold font-mono">{avg.toFixed(1)}</div>
+            </div>
+            <div className="border border-white/10 rounded-lg p-3 sm:p-4 bg-[#121417]">
+              <div className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">Best round</div>
+              <div className="text-xl sm:text-2xl font-bold font-mono text-[#D89090]">{best.toFixed(1)}</div>
+            </div>
+            <div className="border border-white/10 rounded-lg p-3 sm:p-4 bg-[#121417]">
+              <div className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">Lowest</div>
+              <div className="text-xl sm:text-2xl font-bold font-mono text-zinc-400">{lowest.toFixed(1)}</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5" data-testid="session-history">
             {history.map((h) => (
               <div key={h.round} className="border border-white/10 rounded-lg p-3 sm:p-4 bg-[#121417]">
                 <div className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">Round {h.round}</div>
-                <div className="text-xl sm:text-2xl font-bold font-mono">{h.total}</div>
+                <div className="text-lg sm:text-2xl font-bold font-mono">{h.total}</div>
                 <div className="text-[11px] sm:text-xs text-zinc-400 mt-1 truncate">{h.scenario}</div>
               </div>
             ))}
           </div>
 
-          <div className="border border-[#0055FF]/40 cf-glow rounded-lg p-5 sm:p-6 mb-6 sm:mb-8">
-            <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-400 mb-1">Session total</div>
-            <div className="text-4xl sm:text-5xl font-bold font-mono" data-testid="session-total">{sessionTotal.toFixed(1)}</div>
+          <div className="rounded-lg border border-white/10 bg-[#121417] p-5 mb-6" data-testid="final-architect-review">
+            <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">/// final architect&apos;s review</div>
+            <p className="text-sm text-zinc-200 leading-relaxed">{finalReview}</p>
           </div>
 
           {!submitted && (
@@ -159,33 +200,33 @@ export default function Play() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name for the leaderboard"
                 data-testid="leaderboard-name-input"
-                className="flex-1 bg-[#121417] border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#0055FF]"
+                className="flex-1 bg-[#121417] border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#7E1818]"
                 maxLength={32}
               />
               <button
                 onClick={saveScore}
                 data-testid="save-score-button"
-                className="bg-[#0055FF] hover:bg-[#3377FF] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center justify-center gap-2"
+                className="bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center justify-center gap-2"
               >
-                <Send size={16} /> Save score
+                <Send size={16} /> Save Score
               </button>
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3 mt-6">
+          <div className="flex flex-wrap gap-3 mt-4">
             <button
               onClick={resetSession}
               data-testid="play-again-button"
-              className="bg-[#0055FF] hover:bg-[#3377FF] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center gap-2"
+              className="bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center gap-2"
             >
-              <RotateCcw size={16} /> Play again
+              <RotateCcw size={16} /> Play Again
             </button>
             <Link
               to="/leaderboard"
               data-testid="view-leaderboard-link"
               className="border border-white/15 hover:border-white/30 hover:bg-white/5 text-white px-5 py-3 rounded-md font-semibold"
             >
-              View leaderboard
+              View Leaderboard
             </Link>
           </div>
         </div>
@@ -226,7 +267,7 @@ export default function Play() {
           {/* Side panel */}
           <aside className="lg:col-span-4 space-y-4">
             <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6 cf-fade-up" data-testid="scenario-card">
-              <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#FFD500] mb-2">Scenario</div>
+              <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Scenario</div>
               <h3 className="text-lg sm:text-xl font-bold mb-3">{data.scenario.title}</h3>
               <p className="text-sm text-zinc-300 leading-relaxed mb-4">{data.scenario.prompt}</p>
               <div className="grid grid-cols-2 gap-2 text-xs font-mono text-zinc-500 border-t border-white/5 pt-3">
@@ -246,7 +287,7 @@ export default function Play() {
               <button
                 onClick={nextRound}
                 data-testid="next-round-button"
-                className="w-full bg-[#FFD500] hover:bg-yellow-300 text-black px-5 py-3 rounded-md font-semibold"
+                className="w-full bg-[#D32F2F] hover:bg-yellow-300 text-black px-5 py-3 rounded-md font-semibold"
               >
                 {round === TOTAL_ROUNDS ? "See final results →" : "Next round →"}
               </button>
@@ -266,7 +307,7 @@ export default function Play() {
                       data-testid={`filter-${f.toLowerCase()}`}
                       className={`px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.1em] whitespace-nowrap border transition-colors ${
                         filter === f
-                          ? "bg-[#0055FF] border-[#0055FF] text-white"
+                          ? "bg-[#7E1818] border-[#7E1818] text-white"
                           : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
                       }`}
                     >
@@ -310,7 +351,7 @@ export default function Play() {
                     placeholder="Briefly explain why this architecture solves the scenario…"
                     rows={3}
                     data-testid="explanation-input"
-                    className="w-full bg-[#121417] border border-white/10 rounded-md px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#0055FF] resize-none"
+                    className="w-full bg-[#121417] border border-white/10 rounded-md px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#7E1818] resize-none"
                   />
                 </div>
               </>
@@ -341,7 +382,7 @@ export default function Play() {
                       key={c.id}
                       onClick={() => toggleCard(c.id)}
                       data-testid={`tray-card-${c.id}`}
-                      className="shrink-0 inline-flex items-center gap-1.5 bg-[#121417] border border-[#0055FF]/50 px-2 py-1 rounded text-xs hover:border-[#FF3333]/60 transition-colors group"
+                      className="shrink-0 inline-flex items-center gap-1.5 bg-[#121417] border border-[#7E1818]/50 px-2 py-1 rounded text-xs hover:border-[#FF3333]/60 transition-colors group"
                       title="Remove"
                     >
                       <span>{c.title}</span>
@@ -355,7 +396,7 @@ export default function Play() {
               onClick={submitRound}
               disabled={scoring || !canSubmit}
               data-testid="submit-round-button"
-              className="shrink-0 bg-[#0055FF] hover:bg-[#3377FF] disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 sm:px-5 py-2.5 rounded-md font-semibold inline-flex items-center gap-2 text-sm"
+              className="shrink-0 bg-[#7E1818] hover:bg-[#A02828] disabled:opacity-40 disabled:cursor-not-allowed text-white px-4 sm:px-5 py-2.5 rounded-md font-semibold inline-flex items-center gap-2 text-sm"
             >
               {scoring ? <><Loader2 className="animate-spin" size={16} /> Scoring…</> : <>Submit Design</>}
             </button>

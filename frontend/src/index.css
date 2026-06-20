@@ -23,7 +23,7 @@ code, .font-mono {
 }
 
 ::selection {
-    background: #0055FF;
+    background: #7E1818;
     color: #fff;
 }
 
@@ -46,13 +46,13 @@ code, .font-mono {
 }
 .cf-card-hover:hover {
     transform: translateY(-4px);
-    border-color: #0055FF !important;
+    border-color: #7E1818 !important;
     box-shadow: 0 12px 40px -16px rgba(0, 85, 255, 0.5);
 }
 
 .cf-card-selected {
-    border-color: #0055FF !important;
-    box-shadow: 0 0 0 1px #0055FF, 0 12px 40px -16px rgba(0, 85, 255, 0.6);
+    border-color: #7E1818 !important;
+    box-shadow: 0 0 0 1px #7E1818, 0 12px 40px -16px rgba(0, 85, 255, 0.6);
 }
 
 @keyframes cf-fade-up {

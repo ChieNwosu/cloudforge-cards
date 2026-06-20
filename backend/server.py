@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
-import random
+import secrets
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
@@ -94,10 +94,11 @@ async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
         if not scenario:
             raise HTTPException(status_code=404, detail="Scenario not found")
     else:
-        scenario = random.choice(SCENARIOS)
+        scenario = secrets.choice(SCENARIOS)
 
-    constraints = random.sample(CONSTRAINTS, k=min(constraint_count, len(CONSTRAINTS)))
-    hand = random.sample(SERVICE_CARDS, k=min(hand_size, len(SERVICE_CARDS)))
+    rng = secrets.SystemRandom()
+    constraints = rng.sample(CONSTRAINTS, k=min(constraint_count, len(CONSTRAINTS)))
+    hand = rng.sample(SERVICE_CARDS, k=min(hand_size, len(SERVICE_CARDS)))
     return {"scenario": scenario, "constraints": constraints, "hand": hand}
 
 

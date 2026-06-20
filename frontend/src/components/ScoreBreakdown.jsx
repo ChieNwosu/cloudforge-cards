@@ -123,8 +123,8 @@ export default function ScoreBreakdown({ result }) {
               <p className="text-sm text-zinc-500">Nothing stood out. Try again.</p>
             ) : (
               <ul className="space-y-2 text-sm text-zinc-200">
-                {gotRight.slice(0, 4).map((r, i) => (
-                  <li key={i} className="flex gap-2">
+                {gotRight.slice(0, 4).map((r) => (
+                  <li key={`gr-${r.label}-${r.text}`} className="flex gap-2">
                     <span className="text-[#00E676] mt-0.5">·</span>
                     <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
                   </li>
@@ -142,8 +142,8 @@ export default function ScoreBreakdown({ result }) {
               <p className="text-sm text-zinc-500">Solid round — nothing major to flag.</p>
             ) : (
               <ul className="space-y-2 text-sm text-zinc-200">
-                {toImprove.slice(0, 4).map((r, i) => (
-                  <li key={i} className="flex gap-2">
+                {toImprove.slice(0, 4).map((r) => (
+                  <li key={`ti-${r.label}-${r.text}`} className="flex gap-2">
                     <span className="text-[#FFD500] mt-0.5">·</span>
                     <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
                   </li>
@@ -174,7 +174,7 @@ export default function ScoreBreakdown({ result }) {
                 </div>
                 <SubScoreBar b={b} />
                 <ul className="text-xs text-zinc-400 space-y-1 leading-relaxed">
-                  {b.reasons.map((r, i) => (<li key={i}>· {r}</li>))}
+                  {b.reasons.map((r) => (<li key={`${b.label}-${r}`}>· {r}</li>))}
                 </ul>
               </div>
             );
@@ -193,16 +193,19 @@ export default function ScoreBreakdown({ result }) {
             One of these combinations would score very highly for this scenario.
           </p>
           <div className="space-y-3">
-            {ideal_combos.map((combo, i) => (
-              <div key={i} className="border border-white/5 bg-[#0C0E11] rounded-md p-3">
-                <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">
-                  Option {i + 1} · {combo.length} services
+            {ideal_combos.map((combo, i) => {
+              const comboKey = combo.map((c) => c.id).join("-") || `combo-${i}`;
+              return (
+                <div key={comboKey} className="border border-white/5 bg-[#0C0E11] rounded-md p-3">
+                  <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">
+                    Option {i + 1} · {combo.length} services
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {combo.map((c) => <MiniCard key={c.id} card={c} />)}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {combo.map((c) => <MiniCard key={c.id} card={c} />)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

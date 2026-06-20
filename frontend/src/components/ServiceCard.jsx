@@ -32,7 +32,7 @@ export default function ServiceCard({ card, selected, onClick, disabled }) {
         <div className="flex gap-0.5">
           {Array.from({ length: 3 }).map((_, i) => (
             <Star
-              key={i}
+              key={`star-${i + 1}`}
               size={10}
               className={i < card.difficulty ? "text-[#FFD500] fill-[#FFD500]" : "text-zinc-700"}
             />

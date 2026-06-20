@@ -14,6 +14,13 @@ const FILTERS = [
 ];
 const FILTER_TO_CATEGORY = { Networking: "Network" }; // UI label -> data category
 
+function roundChipClass(chipRound, currentRound, past) {
+  const base = "px-2.5 sm:px-3 py-1.5 rounded-md text-[10px] sm:text-xs font-mono";
+  if (past) return `${base} bg-[#0055FF]/15 border border-[#0055FF]/40 text-[#5C8CFF]`;
+  if (chipRound === currentRound) return `${base} bg-white/10 border border-white/15 text-white`;
+  return `${base} bg-white/[0.02] border border-white/10 text-zinc-600`;
+}
+
 export default function Play() {
   const [round, setRound] = useState(1);
   const [data, setData] = useState(null);          // {scenario, constraints, hand}
@@ -198,14 +205,7 @@ export default function Play() {
           {Array.from({ length: TOTAL_ROUNDS }).map((_, i) => {
             const past = history.find((h) => h.round === i + 1);
             return (
-              <div
-                key={i}
-                className={`px-2.5 sm:px-3 py-1.5 rounded-md text-[10px] sm:text-xs font-mono ${
-                  past ? "bg-[#0055FF]/15 border border-[#0055FF]/40 text-[#5C8CFF]"
-                  : i + 1 === round ? "bg-white/10 border border-white/15 text-white"
-                  : "bg-white/[0.02] border border-white/10 text-zinc-600"
-                }`}
-              >
+              <div key={`round-chip-${i + 1}`} className={roundChipClass(i + 1, round, past)}>
                 R{i + 1}{past ? ` · ${past.total}` : ""}
               </div>
             );

@@ -1,0 +1,109 @@
+{
+  "theme_and_archetype": {
+    "domain": "Education / Developer Tools Game",
+    "theme": "Dark Theme",
+    "archetype": "Archetype 4: Swiss & High-Contrast (Authority, Clarity, Truth)",
+    "reasoning": "The application requires a 'modern cloud lab aesthetic' that feels technical yet engaging for students. A dark-first high-contrast theme establishes a developer-centric 'lab' environment, while bright, functional accents ensure game elements (cards, scores, constraints) pop clearly without feeling like a generic corporate dashboard."
+  },
+  "colors": {
+    "background": {
+      "default": "#090A0B",
+      "surface": "#121417",
+      "surface_elevated": "#1A1D21",
+      "glass": "rgba(18, 20, 23, 0.7)"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#A1A1AA",
+      "disabled": "#52525B"
+    },
+    "primary": {
+      "DEFAULT": "#0055FF",
+      "hover": "#3377FF",
+      "foreground": "#FFFFFF"
+    },
+    "accent": {
+      "yellow": "#FFD500",
+      "yellow_foreground": "#000000",
+      "red": "#FF3333",
+      "green": "#00E676"
+    },
+    "border": {
+      "default": "#272A30",
+      "subtle": "#1E2025"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Outfit, sans-serif",
+      "body": "Outfit, sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none font-bold",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-semibold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-medium",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm text-secondary",
+      "mono_label": "text-xs font-mono tracking-[0.1em] uppercase",
+      "stats": "text-3xl font-mono font-bold tracking-tighter"
+    },
+    "rules": [
+      "No Inter, Roboto, or standard fonts for headings.",
+      "Use mono font for tags, telemetry, stats, and constraint chips.",
+      "Ensure text over images uses proper text-shadow or gradient overlays to meet contrast standards."
+    ]
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing Philosophy with dense 'Control Room' grid for the actual game board.",
+    "scale_usage": "Use p-6 or p-8 inside cards to avoid text collision with borders. Use gap-6 or gap-8 between major sections.",
+    "patterns": {
+      "game_board": "Control Room Grid (Dense). grid-cols-1 lg:grid-cols-12 gap-6. Side panel for constraints/scenario (col-span-4), main area for service cards hand (col-span-8).",
+      "landing_page": "Tetris Grid (Asymmetric). Overlapping hero section, generous margins (py-24)."
+    },
+    "containers": "Cards must be direct children of grids. Max height for mobile images is 80vh."
+  },
+  "components": {
+    "cards_general": "Flat backgrounds, 1px subtle border (#272A30). No soft shadows. Use sharp or max 8px border-radius.",
+    "playing_cards": "Service Cards should have a tactile 'spec sheet' look. 1px solid border, subtle inner glow on hover. Category icon at top left, difficulty stars top right. Description in body, tags in mono font at the bottom.",
+    "constraint_chips": "High contrast pill shapes. Use accent colors based on constraint type (e.g., Yellow for 'Cost', Green for 'Serverless'). Mono font.",
+    "buttons": "Primary CTA uses solid #0055FF with #FFFFFF text. Hover state must explicitly define text color. Use geometric, sharp edges (rounded-md max).",
+    "inputs_and_forms": "Shadcn based but heavily customized for dark lab theme. 1px solid border, bg-surface. Focus state: ring-2 ring-[#0055FF].",
+    "navigation": "Crystal Glass sticky header. backdrop-blur-xl bg-[#090A0B]/70 with 1px bottom border border-white/10."
+  },
+  "visual_enhancers": {
+    "glassmorphism": "Use for Score Breakdown Modals and sticky Nav. Heavy blur (backdrop-blur-2xl), background #121417/60, 1px inner border (border-white/10).",
+    "grid_borders": "Visible 'technical' grid lines (border-collapse style) for the leaderboard section to emphasize the developer aesthetic.",
+    "tracing_beam": "Use a shimmering gradient border effect for the 'Winning Score' or 'Best Synergy' highlights in the feedback panel."
+  },
+  "motion_and_interactions": {
+    "hover_states": "Cards lift slightly (-translate-y-1) with a sharper border color transition (border-[#0055FF]).",
+    "click_states": "Scale down slightly (scale-95) for tactile feedback.",
+    "entrances": "Staggered fade-up for dealing cards into the player's hand.",
+    "accessibility": "Respect prefers-reduced-motion. Ensure focus states have high contrast."
+  },
+  "icons_and_assets": {
+    "library": "lucide-react (default choice) for standard icons, but prefer @phosphor-icons/react (Duotone) if complex cloud architecture icons are needed.",
+    "installation": "yarn add @phosphor-icons/react"
+  },
+  "image_urls": {
+    "hero_background": {
+      "url": "https://images.pexels.com/photos/30547577/pexels-photo-30547577.jpeg",
+      "description": "Dynamic abstract depiction of digital circuits with vivid lights, to be used with a heavy dark overlay (bg-black/60) behind the landing page hero section."
+    },
+    "game_board_texture": {
+      "url": "https://images.unsplash.com/photo-1667984390538-3dea7a3fe33d",
+      "description": "3D render of cloud computing. Can be used as a subtle, low-opacity background watermark for the game board area."
+    },
+    "about_student": {
+      "url": "https://images.unsplash.com/photo-1513258496099-48168024aec0",
+      "description": "Man wearing headphones sitting in front of MacBook. Use in the 'How to Play' or 'For Students' section."
+    }
+  },
+  "instructions_to_main_agent": {
+    "testing": "All interactive and key informational elements MUST include a 'data-testid' attribute in kebab-case, role-based format (e.g., data-testid='deal-cards-button', data-testid='service-card-s3').",
+    "styling": "Do NOT use purple/violet gradients. Avoid generic centered layouts. Stick to the Dark Theme Swiss & High-Contrast palette.",
+    "components": "Use custom raw HTML/Tailwind for the landing page layouts (to achieve asymmetry). Use Shadcn UI primitives for inputs, dialogs, and the scoring panel, customized to match the dark lab aesthetic.",
+    "file_extensions": "Implement the logic and components using .js/.jsx extensions as requested, not .tsx."
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, RotateCcw, Send, Trophy, X } from "lucide-react";
-import { dealRound, scoreRound, submitLeaderboard } from "@/lib/api";
+import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios } from "@/lib/api";
 import ServiceCard from "@/components/ServiceCard";
 import ConstraintChip from "@/components/ConstraintChip";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
@@ -49,6 +49,16 @@ export default function Play() {
   const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [filter, setFilter] = useState("All");
+  const [sessionIds, setSessionIds] = useState([]);
+
+  // Pick 3 unique scenario IDs once per session so rounds never repeat.
+  useEffect(() => {
+    let cancelled = false;
+    getSessionScenarios(TOTAL_ROUNDS)
+      .then((ids) => { if (!cancelled) setSessionIds(ids); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const sessionDone = round > TOTAL_ROUNDS;
   const sessionTotal = history.reduce((s, h) => s + h.total, 0);
@@ -62,20 +72,22 @@ export default function Play() {
 
   useEffect(() => {
     if (sessionDone) return undefined;
+    if (sessionIds.length === 0) return undefined;
+    const scenarioId = sessionIds[round - 1];
     let cancelled = false;
     setLoading(true);
     setResult(null);
     setSelected([]);
     setExplanation("");
     setFilter("All");
-    dealRound(null, 12, 2)
+    dealRound(scenarioId, 12, 2)
       .then((dealt) => { if (!cancelled) setData(dealt); })
       .catch(() => {
         if (!cancelled) toast.error("Failed to deal a round. Is the backend running?");
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [round, sessionDone]);
+  }, [round, sessionDone, sessionIds]);
 
   function toggleCard(id) {
     setSelected((prev) => {
@@ -114,6 +126,7 @@ export default function Play() {
   function resetSession() {
     setRound(1); setHistory([]); setResult(null);
     setSubmitted(false); setName("");
+    getSessionScenarios(TOTAL_ROUNDS).then(setSessionIds).catch(() => {});
   }
 
   async function saveScore() {
@@ -270,6 +283,24 @@ export default function Play() {
               <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Scenario</div>
               <h3 className="text-lg sm:text-xl font-bold mb-3">{data.scenario.title}</h3>
               <p className="text-sm text-zinc-300 leading-relaxed mb-4">{data.scenario.prompt}</p>
+              {data.scenario.hint && (
+                <div className="border-t border-white/5 pt-3 mb-3" data-testid="mentor-hint">
+                  <div className="flex items-start gap-2">
+                    <span className="text-2xl leading-none" aria-hidden="true">🦅</span>
+                    <div className="text-xs text-zinc-300 leading-relaxed">
+                      <span className="font-semibold text-zinc-200">Professor Flock says: </span>
+                      <span>{data.scenario.hint.text}</span>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {data.scenario.hint.kw.map((k) => (
+                          <span key={k} className="text-[10px] font-mono uppercase tracking-[0.1em] px-2 py-0.5 rounded bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#E6C75A]">
+                            {k}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-2 text-xs font-mono text-zinc-500 border-t border-white/5 pt-3">
                 <div>min: <span className="text-white">{minServices}</span></div>
                 <div>max: <span className="text-white">{maxServices}</span></div>

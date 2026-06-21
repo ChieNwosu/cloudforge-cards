@@ -130,7 +130,7 @@ async def score_endpoint(req: ScoreRequest):
     score = None
     try:
         score = score_round(req.scenario_id, req.constraint_ids,
-                            req.selected_service_ids)
+                            req.selected_service_ids, req.explanation or "")
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

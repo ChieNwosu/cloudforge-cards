@@ -1,0 +1,34 @@
+{
+  "summary": "Iteration 3 backend + frontend testing for v0.2.5 scoring rewrite (AWS CloudForge Cards). 16/16 pytest backend tests PASS against public REACT_APP_BACKEND_URL covering: glue_catalog card present in /api/cards/services, scenarios expose core/supporting/distractor ids, /api/game/session?rounds=3 returns 3 unique scenario_ids, /api/game/deal guarantees a full ideal-combo subset is in the hand for static_blog, /api/game/score returns the new schema with exactly 6 sub-scores in correct order (Correct Service Selection, Ideal Architecture Match, Constraint Alignment, Synergy Bonus, Simplicity / Overengineering, Explanation Bonus) and new fields matched_ideal {combo_ids, matched_count, total, status}, ideal_combos_status, best_match_service_names. 5 v0.2.5 acceptance cases TC1..TC5 validated (TC1 static_blog full ideal=90 Well-Architected, TC2 partial covered via direct engine + 3-card variant via API, TC3 internal_dashboard full=90 with matched_ideal.status=full, TC4 mostly-distractor=34 Needs Refactor, TC5 photo_sharing strong=90). Direct engine acceptance also verified via `python -m tests.test_scoring` -> 5/5 PASS. Frontend Playwright run executes a full 3-round /play session at 1920x1080: each round renders ScoreBreakdown with exactly the 6 new category labels in order, total /100, rating pill, verdict line consistent with rating (never positive copy for Needs Refactor — confirmed every round), matched-ideal-summary with 'Matched ideal services: X of Y' + status pill, best-match-architecture line, and per-combo Full/Partial/Miss pills on every ideal-combo tile. Final game summary screen appears after round 3 with session-total (110.7/300) and final-overall-grade. Leaderboard save via save-score-button worked ('Saved to leaderboard!' toast) and the new TEST_iter3 entry is visible on /leaderboard. Professor Flock mentor hint with gold keyword chips (caching, low latency, serverless) renders on each round as expected.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "ScoreBreakdown (Play) — when matched_ideal.total=0", "issues": ["In one captured round the matched-ideal-summary rendered 'Matched ideal services: 0 of 0' with a 'Miss' pill and no Best matching architecture line, even though the scenario had ideal_combos. This is an edge case where the engine returned a zero-size matched_ideal. UI gracefully hides best-match line when best_match_service_names is empty, but consider showing the smallest ideal combo as the fallback 'best match' so the X of Y denominator is never 0."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/test_scoring.py",
+    "/app/test_reports/pytest/iter3_results.xml"
+  ],
+  "action_items": [
+    "Optional: when matched_ideal.matched_count is 0 across all combos, pick the shortest ideal combo as the fallback so the UI never renders 'Matched ideal services: 0 of 0' (denominator should reflect the smallest ideal combo size). Cosmetic only.",
+    "Spec/TC2 mismatch worth noting: TC2 (static_blog selected=[s3,cloudfront]) is unreachable via the HTTP /api/game/score endpoint because the endpoint enforces 3..6 services; the engine itself satisfies TC2 (covered by /app/backend/tests/test_scoring.py). Either relax the endpoint min to 2 for parity with the engine acceptance, OR update the spec to note TC2 is engine-level only."
+  ],
+  "critical_code_review_comments": [
+    "score_endpoint server.py:127-129 hard-codes 3..6 range; consider sourcing min/max from scenario.min_services / scenario.max_services to keep validation consistent with the per-scenario rules the UI already displays.",
+    "When matched_ideal.total is 0 (no service of any combo selected), the UI text 'Matched ideal services: 0 of 0' looks broken; the engine should pick the smallest ideal_combo as the comparison target so total >= 1 always.",
+    "All new fields (matched_ideal, ideal_combos_status, best_match_service_names) are correctly serialized and consumed by ScoreBreakdown.jsx — schema/contract is tight.",
+    "Frontend correctly never shows positive 'solid round' copy on negative ratings — verdictLine() switch in ScoreBreakdown.jsx pairs each rating with its own copy, validated across 3 'Needs Refactor' rounds in this run."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "100% (16/16 + engine 5/5)", "frontend": "100% (3-round flow, score view, leaderboard save + lookup, mentor hint all verified)"},
+  "test_credentials": "N/A — no auth in app",
+  "seed_data_creation": "Inserted TEST_v025_player (88.7) and TEST_iter3 (110.7) into leaderboard via tests/UI.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests at /app/backend/tests/backend_test.py + engine acceptance at /app/backend/tests/test_scoring.py. Run via: `export REACT_APP_BACKEND_URL=$(grep REACT_APP_BACKEND_URL /app/frontend/.env | cut -d= -f2) && pytest /app/backend/tests/backend_test.py -v` and `cd /app/backend && python -m tests.test_scoring`. Frontend: full play flow covered by Playwright at /play — 12 cards dealt per round, pick first 4 cards in card-hand grid, click submit-round-button, validate score-breakdown subtree (subscore-* testids), then next-round-button × 3, then leaderboard-name-input + save-score-button. All testid selectors listed in the request work as documented.",
+  "rca of the issue": "No critical issues. Minor cosmetic edge case: when a player picks zero services that appear in any ideal combo for a scenario, matched_ideal.total can be 0 producing 'Matched ideal services: 0 of 0'. RCA: engine _ideal_match likely defaults to the first ideal_combo only when at least one service overlaps; with zero overlap, it returns an empty matched combo. Fix: in game_engine.py:_ideal_match, when no overlap with any combo, fall back to the shortest combo (or first combo) and set matched_count=0, total=len(fallback_combo). One-line change."
+}

@@ -15,40 +15,29 @@ function ratingColor(rating) {
   }
 }
 
-function SubScoreBar({ b }) {
-  const isPenalty = (b.min ?? 0) < 0 && b.max <= 0;
-  const isNegative = b.score < 0;
+// Pill styling for ideal-combo match status.
+const PILL = {
+  full:    { cls: "bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]", label: "Full Match" },
+  partial: { cls: "bg-[#FF8A33]/15 border-[#FF8A33]/40 text-[#FF8A33]", label: "Partial Match" },
+  miss:    { cls: "bg-white/5 border-white/15 text-zinc-500",           label: "Miss" },
+};
 
-  if (isPenalty) {
-    // Penalty bar: empty when score=0, fills red from left as score gets more negative
-    const fill = Math.min(100, (Math.abs(b.score) / Math.abs(b.min)) * 100);
-    return (
-      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-2">
-        <div className="h-full bg-[#FF3333]" style={{ width: `${fill}%` }} />
-      </div>
-    );
+// One short verdict line that is always consistent with the numeric rating.
+function verdictLine(rating) {
+  switch (rating) {
+    case "Well-Architected":     return "Excellent round, this is a well-architected design.";
+    case "Production Candidate": return "Strong round, this design is close to production-ready.";
+    case "Partial Fit":          return "Workable, but this design has clear gaps to close.";
+    case "Needs Refactor":       return "This design needs a rethink, several picks miss the mark.";
+    default:                     return "This architecture is broken for the scenario, start from the ideal patterns.";
   }
+}
 
-  // Regular sub-score: range can include negatives (e.g. -10..15)
-  const min = b.min ?? 0;
-  const range = b.max - min;
-  const zeroPct = range > 0 ? ((0 - min) / range) * 100 : 0;
-  const scorePct = range > 0 ? ((b.score - min) / range) * 100 : 50;
-  const startPct = Math.min(zeroPct, scorePct);
-  const widthPct = Math.abs(scorePct - zeroPct);
-
+function SubScoreBar({ b }) {
+  const fill = b.max > 0 ? Math.min(100, Math.max(2, (b.score / b.max) * 100)) : 0;
   return (
-    <div className="relative h-1.5 bg-white/5 rounded-full overflow-hidden mb-2">
-      {min < 0 && (
-        <div
-          className="absolute top-0 bottom-0 w-px bg-white/20"
-          style={{ left: `${zeroPct}%` }}
-        />
-      )}
-      <div
-        className={`absolute top-0 bottom-0 ${isNegative ? "bg-[#FF3333]" : "bg-[#7E1818]"}`}
-        style={{ left: `${startPct}%`, width: `${Math.max(1.5, widthPct)}%` }}
-      />
+    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-2">
+      <div className="h-full bg-[#7E1818]" style={{ width: `${fill}%` }} />
     </div>
   );
 }
@@ -66,26 +55,23 @@ function MiniCard({ card }) {
 export default function ScoreBreakdown({ result }) {
   if (!result) return null;
   const { total, rating, breakdown, commentary, ideal_combos = [],
+    ideal_combos_status = [], matched_ideal = null, best_match_service_names = [],
     selected_services = [], scenario, explanation = "" } = result;
 
-  // Derive "got right" (positive subscores with reasons) vs "to improve" (negative or low)
+  // Derive "got right" vs "to improve" purely from each sub-score ratio,
+  // but the headline verdict is driven by the overall rating so copy never contradicts the grade.
   const gotRight = [];
   const toImprove = [];
   for (const b of breakdown) {
-    const isPenalty = (b.min ?? 0) < 0 && b.max <= 0;
-    if (isPenalty) {
-      if (b.score >= -1) gotRight.push({ label: b.label, text: b.reasons[0] || "No penalty incurred." });
-      else b.reasons.forEach((r) => toImprove.push({ label: b.label, text: r }));
-    } else {
-      // For mixed-range bars, "positive" = > 60% of max
-      const norm = b.score / b.max;
-      if (norm >= 0.6) {
-        b.reasons.forEach((r) => gotRight.push({ label: b.label, text: r }));
-      } else if (norm <= 0.2 || b.score < 0) {
-        b.reasons.forEach((r) => toImprove.push({ label: b.label, text: r }));
-      }
+    const norm = b.max > 0 ? b.score / b.max : 0;
+    if (norm >= 0.6) {
+      b.reasons.forEach((r) => gotRight.push({ label: b.label, text: r }));
+    } else if (norm <= 0.34) {
+      b.reasons.forEach((r) => toImprove.push({ label: b.label, text: r }));
     }
   }
+
+  const statusPill = matched_ideal ? (PILL[matched_ideal.status] || PILL.miss) : null;
 
   return (
     <div className="space-y-4 sm:space-y-6" data-testid="score-breakdown">
@@ -109,77 +95,72 @@ export default function ScoreBreakdown({ result }) {
           >
             {rating}
           </div>
+          <p className="text-sm text-zinc-300 mt-3" data-testid="round-verdict">{verdictLine(rating)}</p>
         </div>
       </div>
 
       {/* Got right / To improve */}
-      {(gotRight.length > 0 || toImprove.length > 0) && (
-        <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-          <div className="rounded-lg border border-[#00E676]/20 bg-[#00E676]/[0.04] p-5" data-testid="got-right">
-            <div className="flex items-center gap-2 mb-3">
-              <CheckCircle2 size={16} className="text-[#00E676]" />
-              <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#00E676]">What you got right</h4>
-            </div>
-            {gotRight.length === 0 ? (
-              <p className="text-sm text-zinc-500">Nothing stood out. Try again.</p>
-            ) : (
-              <ul className="space-y-2 text-sm text-zinc-200">
-                {gotRight.slice(0, 4).map((r) => (
-                  <li key={`gr-${r.label}-${r.text}`} className="flex gap-2">
-                    <span className="text-[#00E676] mt-0.5">·</span>
-                    <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+      <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="rounded-lg border border-[#00E676]/20 bg-[#00E676]/[0.04] p-5" data-testid="got-right">
+          <div className="flex items-center gap-2 mb-3">
+            <CheckCircle2 size={16} className="text-[#00E676]" />
+            <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#00E676]">What you got right</h4>
           </div>
-
-          <div className="rounded-lg border border-[#D32F2F]/20 bg-[#D32F2F]/[0.04] p-5" data-testid="to-improve">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertCircle size={16} className="text-[#D32F2F]" />
-              <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F]">What to improve</h4>
-            </div>
-            {toImprove.length === 0 ? (
-              <p className="text-sm text-zinc-500">Solid round, nothing major to flag.</p>
-            ) : (
-              <ul className="space-y-2 text-sm text-zinc-200">
-                {toImprove.slice(0, 4).map((r) => (
-                  <li key={`ti-${r.label}-${r.text}`} className="flex gap-2">
-                    <span className="text-[#D32F2F] mt-0.5">·</span>
-                    <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          {gotRight.length === 0 ? (
+            <p className="text-sm text-zinc-500">Not much landed this round, lean on the ideal architectures below.</p>
+          ) : (
+            <ul className="space-y-2 text-sm text-zinc-200">
+              {gotRight.slice(0, 4).map((r) => (
+                <li key={`gr-${r.label}-${r.text}`} className="flex gap-2">
+                  <span className="text-[#00E676] mt-0.5">·</span>
+                  <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      )}
+
+        <div className="rounded-lg border border-[#D32F2F]/20 bg-[#D32F2F]/[0.04] p-5" data-testid="to-improve">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertCircle size={16} className="text-[#D32F2F]" />
+            <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F]">What to improve</h4>
+          </div>
+          {toImprove.length === 0 ? (
+            <p className="text-sm text-zinc-500">
+              {total >= 86 ? "Nothing major to flag, this is a clean design." : "Tighten synergy and constraint fit to push the score higher."}
+            </p>
+          ) : (
+            <ul className="space-y-2 text-sm text-zinc-200">
+              {toImprove.slice(0, 4).map((r) => (
+                <li key={`ti-${r.label}-${r.text}`} className="flex gap-2">
+                  <span className="text-[#D32F2F] mt-0.5">·</span>
+                  <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
 
       {/* Score breakdown */}
       <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6">
         <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-4">/// score breakdown</h4>
         <div className="space-y-4">
-          {breakdown.map((b) => {
-            const isPenalty = (b.min ?? 0) < 0 && b.max <= 0;
-            const isNegative = b.score < 0;
-            return (
-              <div key={b.label} data-testid={`subscore-${b.label.toLowerCase().replace(/\s+/g, "-")}`}>
-                <div className="flex items-baseline justify-between mb-1.5 gap-2">
-                  <div className="font-medium text-sm sm:text-base">{b.label}</div>
-                  <div className={`font-mono font-bold tabular-nums ${isNegative ? "text-[#FF6666]" : "text-white"}`}>
-                    {b.score > 0 ? "+" : ""}{b.score}
-                    <span className="text-zinc-500 text-xs ml-1">
-                      / {isPenalty ? b.min : b.max}
-                    </span>
-                  </div>
+          {breakdown.map((b) => (
+            <div key={b.label} data-testid={`subscore-${b.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`}>
+              <div className="flex items-baseline justify-between mb-1.5 gap-2">
+                <div className="font-medium text-sm sm:text-base">{b.label}</div>
+                <div className="font-mono font-bold tabular-nums text-white">
+                  {b.score}
+                  <span className="text-zinc-500 text-xs ml-1">/ {b.max}</span>
                 </div>
-                <SubScoreBar b={b} />
-                <ul className="text-xs text-zinc-400 space-y-1 leading-relaxed">
-                  {b.reasons.map((r) => (<li key={`${b.label}-${r}`}>· {r}</li>))}
-                </ul>
               </div>
-            );
-          })}
+              <SubScoreBar b={b} />
+              <ul className="text-xs text-zinc-400 space-y-1 leading-relaxed">
+                {b.reasons.map((r) => (<li key={`${b.label}-${r}`}>· {r}</li>))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -191,6 +172,29 @@ export default function ScoreBreakdown({ result }) {
             What you selected for {scenario ? `"${scenario.title}"` : "this scenario"}.
             Compare this to the recommended architectures below.
           </p>
+
+          {/* Ideal-match summary */}
+          {matched_ideal && (
+            <div className="border border-white/10 bg-[#121417] rounded-md p-3 mb-4" data-testid="matched-ideal-summary">
+              <div className="flex items-center flex-wrap gap-2 mb-1.5">
+                <span className="text-xs font-mono uppercase tracking-[0.14em] text-zinc-400">
+                  Matched ideal services: <span className="text-white">{matched_ideal.matched_count} of {matched_ideal.total}</span>
+                </span>
+                {statusPill && (
+                  <span className={`text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border ${statusPill.cls}`}
+                        data-testid="matched-ideal-status-pill">
+                    {statusPill.label}
+                  </span>
+                )}
+              </div>
+              {best_match_service_names.length > 0 && (
+                <div className="text-xs text-zinc-400" data-testid="best-match-architecture">
+                  Best matching architecture: <span className="text-zinc-200">{best_match_service_names.join(" + ")}</span>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="space-y-2 mb-4">
             {selected_services.map((s) => (
               <div key={s.id} className="border border-white/5 bg-[#121417] rounded-md p-3">
@@ -235,10 +239,21 @@ export default function ScoreBreakdown({ result }) {
           <div className="space-y-3">
             {ideal_combos.map((combo, i) => {
               const comboKey = combo.map((c) => c.id).join("-") || `combo-${i}`;
+              const st = ideal_combos_status[i];
+              const pill = st ? (PILL[st.status] || PILL.miss) : null;
               return (
-                <div key={comboKey} className="border border-white/5 bg-[#0C0E11] rounded-md p-3">
-                  <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">
-                    Option {i + 1} · {combo.length} services
+                <div key={comboKey} className="border border-white/5 bg-[#0C0E11] rounded-md p-3"
+                     data-testid={`ideal-combo-${i}`}>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">
+                      Option {i + 1} · {combo.length} services
+                    </div>
+                    {pill && (
+                      <span className={`text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border ${pill.cls}`}
+                            data-testid={`ideal-combo-${i}-pill`}>
+                        {pill.label}{st && st.status !== "miss" ? ` · ${st.matched_count}/${st.total}` : ""}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {combo.map((c) => <MiniCard key={c.id} card={c} />)}

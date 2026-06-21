@@ -22,7 +22,7 @@ export default function HowToPlay() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 space-y-12" data-testid="how-to-page">
       <div>
-        <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#0055FF] mb-3">/// how to play</div>
+        <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#7E1818] mb-3">/// how to play</div>
         <h1 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4">The rules in 60 seconds.</h1>
         <p className="text-zinc-400 max-w-xl">A round of CloudForge takes about three minutes. No memorisation, just reasoning about trade-offs.</p>
       </div>
@@ -30,7 +30,7 @@ export default function HowToPlay() {
       <div className="space-y-3">
         {steps.map(s => (
           <div key={s.n} className="border border-white/10 rounded-lg bg-[#0C0E11] p-5 flex gap-5">
-            <div className="text-2xl font-mono font-bold text-[#0055FF] tabular-nums">{s.n}</div>
+            <div className="text-2xl font-mono font-bold text-[#7E1818] tabular-nums">{s.n}</div>
             <div>
               <div className="font-semibold mb-1">{s.t}</div>
               <p className="text-sm text-zinc-400 leading-relaxed">{s.d}</p>
@@ -66,7 +66,7 @@ export default function HowToPlay() {
       <Link
         to="/play"
         data-testid="how-to-play-cta"
-        className="inline-flex items-center gap-2 bg-[#0055FF] hover:bg-[#3377FF] text-white px-6 py-3 rounded-md font-semibold"
+        className="inline-flex items-center gap-2 bg-[#7E1818] hover:bg-[#A02828] text-white px-6 py-3 rounded-md font-semibold"
       >
         Start your first round <ArrowRight size={18} />
       </Link>

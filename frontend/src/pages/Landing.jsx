@@ -31,7 +31,7 @@ export default function Landing() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tight">
               Design AWS<br />
               architectures.<br />
-              <span className="text-[#0055FF]">Card by card.</span>
+              <span className="text-[#7E1818]">Card by card.</span>
             </h1>
             <p className="mt-6 text-lg text-zinc-300 max-w-xl leading-relaxed">
               CloudForge Cards is an educational AWS card game. Read a scenario,
@@ -42,7 +42,7 @@ export default function Landing() {
               <Link
                 to="/play"
                 data-testid="hero-play-button"
-                className="group inline-flex items-center gap-2 bg-[#0055FF] hover:bg-[#3377FF] text-white px-6 py-3 rounded-md font-semibold transition-colors"
+                className="group inline-flex items-center gap-2 bg-[#7E1818] hover:bg-[#A02828] text-white px-6 py-3 rounded-md font-semibold transition-colors"
               >
                 Start solo run <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -91,7 +91,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 py-20 lg:py-24">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-12">
             <div>
-              <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#0055FF] mb-3">
+              <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#7E1818] mb-3">
                 /// what&apos;s in the box
               </div>
               <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight">
@@ -106,7 +106,7 @@ export default function Landing() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 border border-white/5 rounded-lg overflow-hidden">
             {features.map((f) => (
               <div key={f.title} className="bg-[#0C0E11] p-7 hover:bg-[#10131A] transition-colors">
-                <f.icon size={22} className="text-[#0055FF] mb-4" />
+                <f.icon size={22} className="text-[#7E1818] mb-4" />
                 <h3 className="font-semibold text-lg mb-2">{f.title}</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed">{f.body}</p>
               </div>
@@ -131,7 +131,7 @@ export default function Landing() {
             <Link
               to="/play"
               data-testid="cta-play-button"
-              className="group inline-flex items-center gap-2 bg-[#FFD500] hover:bg-yellow-300 text-black px-7 py-4 rounded-md font-semibold transition-colors"
+              className="group inline-flex items-center gap-2 bg-[#D32F2F] hover:bg-yellow-300 text-black px-7 py-4 rounded-md font-semibold transition-colors"
             >
               Deal me in <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -154,7 +154,7 @@ export default function Landing() {
 function SampleCard({ title, category, tags, className = "", accent = false }) {
   return (
     <div
-      className={`w-56 h-72 bg-[#121417] border ${accent ? "border-[#0055FF] cf-glow" : "border-white/10"} rounded-lg p-5 flex flex-col ${className}`}
+      className={`w-56 h-72 bg-[#121417] border ${accent ? "border-[#7E1818] cf-glow" : "border-white/10"} rounded-lg p-5 flex flex-col ${className}`}
     >
       <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">{category}</div>
       <div className="text-xl font-bold">{title}</div>

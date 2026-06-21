@@ -8,8 +8,8 @@ const CAT_ICONS = {
 function ratingColor(rating) {
   switch (rating) {
     case "Well-Architected":     return "bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]";
-    case "Production Candidate": return "bg-[#0055FF]/15 border-[#0055FF]/40 text-[#5C8CFF]";
-    case "Partial Fit":          return "bg-[#FFD500]/15 border-[#FFD500]/40 text-[#FFD500]";
+    case "Production Candidate": return "bg-[#7E1818]/15 border-[#7E1818]/40 text-[#D89090]";
+    case "Partial Fit":          return "bg-[#D32F2F]/15 border-[#D32F2F]/40 text-[#D32F2F]";
     case "Needs Refactor":       return "bg-[#FF8A33]/15 border-[#FF8A33]/40 text-[#FF8A33]";
     default:                     return "bg-[#FF3333]/15 border-[#FF3333]/40 text-[#FF6666]";
   }
@@ -46,7 +46,7 @@ function SubScoreBar({ b }) {
         />
       )}
       <div
-        className={`absolute top-0 bottom-0 ${isNegative ? "bg-[#FF3333]" : "bg-[#0055FF]"}`}
+        className={`absolute top-0 bottom-0 ${isNegative ? "bg-[#FF3333]" : "bg-[#7E1818]"}`}
         style={{ left: `${startPct}%`, width: `${Math.max(1.5, widthPct)}%` }}
       />
     </div>
@@ -57,7 +57,7 @@ function MiniCard({ card }) {
   return (
     <div className="border border-white/10 bg-[#121417] rounded-md px-2 py-1.5 flex items-center gap-2 text-xs"
          title={card.tooltip}>
-      <span className="text-[#0055FF]">{CAT_ICONS[card.category] || "◆"}</span>
+      <span className="text-[#7E1818]">{CAT_ICONS[card.category] || "◆"}</span>
       <span className="font-medium truncate">{card.title}</span>
     </div>
   );
@@ -65,7 +65,8 @@ function MiniCard({ card }) {
 
 export default function ScoreBreakdown({ result }) {
   if (!result) return null;
-  const { total, rating, breakdown, commentary, ideal_combos = [] } = result;
+  const { total, rating, breakdown, commentary, ideal_combos = [],
+    selected_services = [], scenario, explanation = "" } = result;
 
   // Derive "got right" (positive subscores with reasons) vs "to improve" (negative or low)
   const gotRight = [];
@@ -133,10 +134,10 @@ export default function ScoreBreakdown({ result }) {
             )}
           </div>
 
-          <div className="rounded-lg border border-[#FFD500]/20 bg-[#FFD500]/[0.04] p-5" data-testid="to-improve">
+          <div className="rounded-lg border border-[#D32F2F]/20 bg-[#D32F2F]/[0.04] p-5" data-testid="to-improve">
             <div className="flex items-center gap-2 mb-3">
-              <AlertCircle size={16} className="text-[#FFD500]" />
-              <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#FFD500]">What to improve</h4>
+              <AlertCircle size={16} className="text-[#D32F2F]" />
+              <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F]">What to improve</h4>
             </div>
             {toImprove.length === 0 ? (
               <p className="text-sm text-zinc-500">Solid round, nothing major to flag.</p>
@@ -144,7 +145,7 @@ export default function ScoreBreakdown({ result }) {
               <ul className="space-y-2 text-sm text-zinc-200">
                 {toImprove.slice(0, 4).map((r) => (
                   <li key={`ti-${r.label}-${r.text}`} className="flex gap-2">
-                    <span className="text-[#FFD500] mt-0.5">·</span>
+                    <span className="text-[#D32F2F] mt-0.5">·</span>
                     <span><span className="text-zinc-500 font-mono text-xs mr-1">{r.label}:</span>{r.text}</span>
                   </li>
                 ))}
@@ -182,12 +183,51 @@ export default function ScoreBreakdown({ result }) {
         </div>
       </div>
 
+      {/* Your Choices */}
+      {selected_services.length > 0 && (
+        <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6" data-testid="your-choices">
+          <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-400 mb-3">/// your choices</h4>
+          <p className="text-xs text-zinc-500 mb-4">
+            What you selected for {scenario ? `"${scenario.title}"` : "this scenario"}.
+            Compare this to the recommended architectures below.
+          </p>
+          <div className="space-y-2 mb-4">
+            {selected_services.map((s) => (
+              <div key={s.id} className="border border-white/5 bg-[#121417] rounded-md p-3">
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-[#7E1818] text-base">{CAT_ICONS[s.category] || "\u25C6"}</span>
+                  <span className="font-semibold text-sm">{s.title}</span>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">{s.category}</span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {s.tags.slice(0, 4).map((t) => (
+                    <span key={`${s.id}-${t}`} className="text-[10px] font-mono px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-zinc-400">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          {explanation ? (
+            <div className="border-t border-white/5 pt-3">
+              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">Your explanation</div>
+              <p className="text-sm text-zinc-300 leading-relaxed">{explanation}</p>
+            </div>
+          ) : (
+            <div className="text-xs text-zinc-500 italic border-t border-white/5 pt-3">
+              No explanation provided. Try writing one next round to clarify your design intent.
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Ideal architecture */}
       {ideal_combos.length > 0 && (
-        <div className="rounded-lg border border-[#0055FF]/30 bg-[#0055FF]/[0.04] p-5 sm:p-6" data-testid="ideal-architecture">
+        <div className="rounded-lg border border-[#7E1818]/30 bg-[#7E1818]/[0.04] p-5 sm:p-6" data-testid="ideal-architecture">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={16} className="text-[#5C8CFF]" />
-            <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#5C8CFF]">Ideal architectures</h4>
+            <Sparkles size={16} className="text-[#D89090]" />
+            <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-[#D89090]">Ideal architectures</h4>
           </div>
           <p className="text-xs text-zinc-400 mb-4">
             One of these combinations would score very highly for this scenario.

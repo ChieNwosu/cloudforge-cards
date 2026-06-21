@@ -13,6 +13,9 @@ export const dealRound = (scenarioId, handSize = 10, constraintCount = 2) =>
     params: { hand_size: handSize, constraint_count: constraintCount, scenario_id: scenarioId },
   }).then(r => r.data);
 
+export const getSessionScenarios = (rounds = 3) =>
+  api.get("/game/session", { params: { rounds } }).then(r => r.data.scenario_ids);
+
 export const scoreRound = (payload) =>
   api.post("/game/score", payload).then(r => r.data);
 

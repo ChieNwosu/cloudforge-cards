@@ -85,21 +85,41 @@ async def get_constraints():
 @api_router.get("/game/deal")
 async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
                     constraint_count: int = 2):
-    """Deal a randomized round: 1 scenario, N constraint chips, M service cards."""
+    """Deal a randomized round: 1 scenario, N constraint chips, M service cards.
+    Hand is guaranteed to contain every service from one ideal combo for the scenario,
+    so the post-round 'Ideal Architecture' recommendation is always reachable."""
     hand_size = max(6, min(14, hand_size))
     constraint_count = max(1, min(4, constraint_count))
+    rng = secrets.SystemRandom()
 
     if scenario_id:
         scenario = next((s for s in SCENARIOS if s["id"] == scenario_id), None)
         if not scenario:
             raise HTTPException(status_code=404, detail="Scenario not found")
     else:
-        scenario = secrets.choice(SCENARIOS)
+        scenario = rng.choice(SCENARIOS)
 
-    rng = secrets.SystemRandom()
     constraints = rng.sample(CONSTRAINTS, k=min(constraint_count, len(CONSTRAINTS)))
-    hand = rng.sample(SERVICE_CARDS, k=min(hand_size, len(SERVICE_CARDS)))
+
+    # Guarantee one ideal combo is in the hand (no duplicates).
+    combos = scenario.get("ideal_combos") or []
+    required_ids = set(rng.choice(combos)) if combos else set()
+    required = [s for s in SERVICE_CARDS if s["id"] in required_ids]
+    pool = [s for s in SERVICE_CARDS if s["id"] not in required_ids]
+    filler_n = max(0, min(hand_size, len(SERVICE_CARDS)) - len(required))
+    filler = rng.sample(pool, k=min(filler_n, len(pool)))
+    hand = required + filler
+    rng.shuffle(hand)
     return {"scenario": scenario, "constraints": constraints, "hand": hand}
+
+
+@api_router.get("/game/session")
+async def session_scenarios(rounds: int = 3):
+    """Pre-pick N unique scenarios for a session so rounds never repeat."""
+    rng = secrets.SystemRandom()
+    n = max(1, min(rounds, len(SCENARIOS)))
+    picks = rng.sample(SCENARIOS, k=n)
+    return {"scenario_ids": [s["id"] for s in picks]}
 
 
 @api_router.post("/game/score")

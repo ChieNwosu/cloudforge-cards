@@ -1,6 +1,6 @@
 const COLOR_CLASSES = {
-  yellow: "bg-[#FFD500]/15 border-[#FFD500]/40 text-[#FFD500]",
-  blue:   "bg-[#0055FF]/15 border-[#0055FF]/50 text-[#5C8CFF]",
+  yellow: "bg-[#D32F2F]/15 border-[#D32F2F]/40 text-[#D32F2F]",
+  blue:   "bg-[#7E1818]/15 border-[#7E1818]/50 text-[#D89090]",
   green:  "bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]",
   red:    "bg-[#FF3333]/15 border-[#FF3333]/40 text-[#FF6666]",
 };

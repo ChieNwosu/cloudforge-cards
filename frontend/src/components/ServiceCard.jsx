@@ -24,7 +24,7 @@ export default function ServiceCard({ card, selected, onClick, disabled }) {
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-[#0055FF] text-lg leading-none">{CAT_ICONS[card.category] || "◆"}</span>
+          <span className="text-[#7E1818] text-lg leading-none">{CAT_ICONS[card.category] || "◆"}</span>
           <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">
             {card.category}
           </span>
@@ -34,7 +34,7 @@ export default function ServiceCard({ card, selected, onClick, disabled }) {
             <Star
               key={`star-${i + 1}`}
               size={10}
-              className={i < card.difficulty ? "text-[#FFD500] fill-[#FFD500]" : "text-zinc-700"}
+              className={i < card.difficulty ? "text-[#D32F2F] fill-[#D32F2F]" : "text-zinc-700"}
             />
           ))}
         </div>
@@ -59,7 +59,7 @@ export default function ServiceCard({ card, selected, onClick, disabled }) {
       </div>
 
       {selected && (
-        <div className="absolute -top-2 -right-2 bg-[#0055FF] text-white text-[10px] font-bold rounded-full w-6 h-6 grid place-items-center">
+        <div className="absolute -top-2 -right-2 bg-[#7E1818] text-white text-[10px] font-bold rounded-full w-6 h-6 grid place-items-center">
           ✓
         </div>
       )}

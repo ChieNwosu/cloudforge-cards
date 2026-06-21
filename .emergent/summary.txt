@@ -1,0 +1,166 @@
+<analysis>**original_problem_statement**: Build a full-stack web app called AWS CloudForge Cards. It is an educational AWS architecture card game. Core MVP features include a deck of ~30 AWS service cards, 10 scenario cards, 8 constraints. The player selects 3–6 cards to solve an architecture problem. The system requires a scoring engine with transparent feedback based on AWS service synergies and constraints, and an end-of-round Claude Sonnet 4.6 Architect review.
+
+**User's preferred language**: English
+(INSTRUCT NEXT AGENT: You MUST respond in English only).
+
+**what currently exists?** 
+A fully functional React + FastAPI full-stack application. The app is currently stable at version **v0.2.4**. Features include: Landing page, Play page (3-round sessions with unique scenarios), Professor Flock mentor character with gold keyword hints, NCCU-inspired (maroon/red/gray) academic UI, sticky selected-card tray, a robust scoring breakdown with Your Choices and Ideal Architectures comparisons, a final game summary screen after round 3, and a local MongoDB leaderboard. ESLint and Pylint are clean for all custom code.
+
+**Last working item**:
+- **Last item agent was working**: The agent received a detailed brief for a major scoring engine rewrite (v0.2.5) to make scoring more transparent and less harsh on exact ideal architecture matches. Due to budget constraints, the agent *explicitly halted* without making partial changes to ensure app stability.
+- **Status**: NOT STARTED
+- **Agent Testing Done**: N (For the v0.2.5 features. Y for the current v0.2.4 state).
+- **Which testing method agent to use?**: backend testing agent + manual testing by curl, followed by frontend testing agent. Create a backend test script () before UI changes.
+- **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+Issue 1: Scoring engine is too harsh on exact matches (P0)
+Issue 2: Add missing Glue Data Catalog service card (P1)
+Issue 3: Inconsistent feedback copy (P2)
+
+Issues Detail:
+- Issue 1: 
+  - Attempted fixes: None. Paused cleanly before starting.
+  - Next debug checklist: . Rewrite scoring to use a 100-pt scale: A (Correct Service: 30), B (Ideal Match: 25), C (Constraints: 20), D (Synergy: 15), E (Simplicity: 10), F (Explanation Bonus: 0-5). Implement guardrails: full match ≥85, full match + 1 support ≥78, partial strong match 55-70.
+  - Why fix this issue and what will be achieved with the fix?: Makes the game fair and educational by correctly rewarding exact AWS architecture patterns.
+  - Status: NOT STARTED
+  - Is recurring issue? N
+  - Should Test frontend/backend/both after fix?: Both
+  - Blocked on other issue: None
+
+- Issue 2: 
+  - Attempted fixes: None
+  - Next debug checklist: . The v0.2.5 brief requires a test case for Internal Analytics Dashboard using a Glue Data Catalog card, which currently doesn't exist in the 33-card bank. Add it (Category: Analytics, tags: data-catalog, metadata, serverless).
+  - Why fix this issue and what will be achieved with the fix?: Required to satisfy the requested test case in the upcoming scoring rewrite.
+  - Status: NOT STARTED
+  - Is recurring issue? N
+  - Should Test frontend/backend/both after fix?: Backend
+  - Blocked on other issue: None
+
+- Issue 3: 
+  - Attempted fixes: None
+  - Next debug checklist: . Ensure the Got-Right / To-Improve text derives logically from the overall rating, preventing contradictions (e.g., saying Solid round while assigning a Needs Refactor grade).
+  - Why fix this issue and what will be achieved with the fix?: Ensures transparent and non-confusing user feedback.
+  - Status: NOT STARTED
+  - Is recurring issue? Y
+  - Should Test frontend/backend/both after fix?: Frontend
+  - Blocked on other issue: Issue 1
+
+**In progress Task List**:
+Task 1: v0.2.5 Scoring Logic Rewrite and API updates (P0)
+
+Task Detail:
+- Task 1: 
+  - Where to resume: 
+    1. Update  (add , ,  to scenarios). 
+    2. Rewrite  using the 100-pt rubric. 
+    3. Update  () to return . 
+    4. Update  to consume the new schema and show green/yellow/gray pills next to ideal architectures.
+  - What will be achieved with this?: Fulfills the exact user requirements provided in the final brief.
+  - Status: NOT STARTED
+  - Should Test frontend/backend/both after fix?: Both
+  - Blocked on something: None
+
+**Upcoming and Future Tasks**:
+Upcoming Tasks:
+- Persist player name to localStorage so returning players don't have to retype it (P1).
+- Add tooltip popovers on service cards (data is already in the  field) (P1).
+
+Future Tasks:
+- Combo cards (from the original specification, deferred from MVP) (P2).
+- Pre-deal constraint picker so players can manually choose their challenge (P2).
+- Shareable result card with deep linking to drive organic traffic (P2).
+
+**Completed work in this session**:
+- Initial project scaffolding, MongoDB DB setup, and FastAPI routing (, ).
+- Frontend UI creation with mobile responsiveness and NCCU-inspired color scheme.
+- End-to-end 3-round gameplay flow including custom scoring logic and emergentintegrations Claude 3.5 Sonnet commentary.
+- v0.2.4 Game Integrity: Unique scenarios per session via , guaranteed ideal-combo service cards in the deal.
+- Professor Flock mentor character and gold keyword hint UI.
+- React Hook dependency and component key refactoring. Lint cleanups across codebase.
+- Your Choices scoring section and Final Game Summary screen implementation.
+
+**Earlier issues found/mentioned but not fixed**:
+Issue 1: 
+- Debug checklist:  and .
+- Why to solve this issue and what will be achieved with this?: These components currently flag Cyclomatic Complexity static warnings. They are large but functional.
+- Should Test frontend/backend/both after fix: Frontend
+- Is recurring issue? Y
+
+**Known issue recurrence from previous fork**:
+- N/A (This is the first session).
+
+**Code Architecture**:
+
+
+**Key Technical Concepts**:
+React, FastAPI, MongoDB (Motor AsyncIO), TailwindCSS, Shadcn UI, Emergent Integrations (Claude Sonnet 4.6).
+
+**key DB schema**:
+- : 
+
+**changes in tech stack**:
+- Added  to  safely handling missing module fallbacks. 
+
+**All files of reference**:
+-  (Source of truth for all cards and scenarios)
+-  (Target file for v0.2.5 rewrite)
+-  (API definitions)
+-  (Core game state management)
+-  (Core scoring UI)
+
+**Areas that need refactoring**:
+-  and  (High cyclomatic complexity warnings flagged during review).
+
+**key api endpoints**:
+- 
+- 
+- 
+- 
+- 
+- 
+
+**Critical Info for New Agent**:
+- **DO NOT TOUCH UI DESIGN**: The visual layout is fully approved, mobile responsive, and stable at v0.2.4. Do not perform any broad refactoring.
+- **IMMEDIATE NEXT STEP**: You are starting fresh to implement the **v0.2.5 Scoring Rewrite** exactly as outlined in the last user message and the previous agent's handoff instructions. Focus primarily on the backend backend sub-scoring math and the UI rendering of the new schemas.
+- Make sure to create the  file with the exact 5 test cases requested by the user and verify them via terminal *before* editing the frontend.
+
+**documents and test reports created in this job**:
+- 
+- 
+- 
+- 
+
+**Last 10 User Messages and any pending HUMAN messages**:
+- *Latest*: User acknowledged the previous agent's warning about budget, agreed to explicitly pause, and asked to stop cleanly at v0.2.4 while requesting a handoff summary for the v0.2.5 scoring rewrite. (COMPLETED - PAUSED)
+- *Oldest*: User requested a major scoring logic rewrite (v0.2.5) altering the mathematical distribution (A: 30, B: 25, C: 20, etc.) and updating the  component to reflect exact ideal matches. (PENDING FOR NEW AGENT)
+
+**Project Health Check**:
+- Broken: None.
+- Mocked: Professor Flock (Mentor component uses static styling/emojis, no image generation needed).
+
+**3rd Party Integrations**:
+- Claude Sonnet 4.6 (Commentary Generation) — uses Emergent LLM Key.
+
+**Testing status**:
+- Testing agent used after significant changes: YES
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: None yet (Need to create  for v0.2.5 logic).
+- Known regressions: None.
+
+**Credentials to test flow**:
+- None required (local DB).
+
+**What agent forgot to execute**:
+- The agent actively caught that executing the v0.2.5 rewrite would exhaust the budget and break the app, so it negotiated a pause with the user. Nothing was accidentally forgotten. 
+
+**Debugging checklist for current issue**
+    Issue: Scoring Engine Rewrite and Test cases (v0.2.5)
+
+    Backend files to check: 
+    -  (Add core_service_ids, supporting_service_ids, distractor_service_ids, and create Glue Data Catalog card).
+    -  (Refactor entire logic to new 100-pt scale with 6 rubrics).
+    -  (Update return schema for ).
+
+    Frontend files to check:
+    -  (Map the new subscore JSON payload to the UI, add green/yellow/gray visual pills for Ideal Architecture matches).</analysis>

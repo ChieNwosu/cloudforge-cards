@@ -91,6 +91,13 @@ def _ideal_match(selected: List[dict], scenario: dict) -> Dict[str, Any]:
         if coverage > best["coverage"]:
             best = {**entry, "coverage": coverage}
 
+    # No overlap with any combo: compare against the shortest ideal combo so the
+    # UI never shows "0 of 0". matched_count stays 0, status stays miss.
+    if best["total"] == 0 and combos:
+        shortest = min(combos, key=len)
+        best = {"combo_ids": list(shortest), "matched_count": 0,
+                "total": len(shortest), "coverage": 0.0, "status": "miss"}
+
     score = 25 * best["coverage"]
 
     reasons = []

@@ -51,6 +51,24 @@ visuals (no Uno/Balatro clones).
 - Persist player name across sessions (localStorage)
 - Bigger hand size selector / scenario picker
 
+## v0.2.5 — Scoring engine rewrite (2026-06-21, DONE)
+- New transparent 100-pt engine in `game_engine.py`, six sub-scores:
+  A. Correct Service Selection (0-30), B. Ideal Architecture Match (0-25),
+  C. Constraint Alignment (0-20), D. Synergy Bonus (0-15),
+  E. Simplicity/Overengineering (0-10), F. Explanation Bonus (0-5, capped at 100).
+- Guardrails: full ideal match (no distractors) >= 85; full match + 1 supporting >= 78.
+- Scenarios gained `core_service_ids` / `supporting_service_ids` / `distractor_service_ids`.
+- Added `glue_catalog` (Glue Data Catalog, Analytics) card + synergies; new
+  internal_dashboard ideal combo [s3, athena, glue_catalog, iam].
+- `/api/game/score` returns additive fields: `matched_ideal {combo_ids, matched_count,
+  total, status}`, `ideal_combos_status` (per-combo full/partial/miss), `best_match_service_names`.
+- `ScoreBreakdown.jsx`: 6 categories, green/yellow/gray match pills, "Matched ideal
+  services: X of Y", "Best matching architecture", and a `verdictLine()` that always
+  matches the numeric rating (fixes the contradictory Got-Right/To-Improve copy).
+- Tests: `backend/tests/test_scoring.py` (5 acceptance cases, 5/5 pass). Testing agent
+  iteration_3: 16/16 backend + full 3-round frontend flow PASS.
+
+
 ## P1 backlog
 - Constraint multi-select before dealing (currently random)
 - More scenarios + cards (seed file already supports extension)

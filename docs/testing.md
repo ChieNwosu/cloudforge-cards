@@ -150,3 +150,24 @@ Run this checklist after any changes to seed data, scoring logic, or frontend co
 - MongoDB running locally or connection string configured
 - Node.js 18+ and Yarn for frontend tests
 - No external API keys required for scoring tests (LLM commentary is optional)
+
+---
+
+## Deployed QA Results (v0.2.5)
+
+Final manual QA performed against the live deployment at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/).
+
+| Check | Result |
+|-------|--------|
+| Landing page loads | Pass |
+| Solo 3-round game works | Pass |
+| Score breakdown displays all six sub-scores | Pass |
+| Final summary (session total and rating) works | Pass |
+| Leaderboard accepts entries and sorts by score | Pass |
+| How to Play page reflects v0.2.5 scoring categories | Pass |
+
+**Notes:**
+- All six sub-scores render correctly with reasons text.
+- Commentary falls back to rule-based summary when no LLM key is configured.
+- Constraint chips display and influence scoring as expected.
+- No critical issues observed during deployed QA.

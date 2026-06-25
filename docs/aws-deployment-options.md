@@ -6,13 +6,16 @@ This document compares deployment paths for CloudForge Cards, from the fastest n
 
 - **Amazon Bedrock is not the primary hosting platform for this app.** Bedrock is an AI/ML service for accessing foundation models. It should be used later for AI feedback, card generation, or Professor Flock explanations, not for hosting the application itself.
 - **The fastest near-term deployment path is Emergent deployment when credits are available.** This requires no architectural changes.
+- **Emergent deployment is now live** at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/).
 - **The strongest AWS portfolio path is a later AWS-native deployment** using API Gateway, Lambda, DynamoDB, and related services. This demonstrates real cloud architecture skills.
 
 ---
 
-## Option A: Emergent Deployment (Near-Term)
+## Option A: Emergent Deployment (Live)
 
-**Description:** Deploy via the Emergent platform when credits are available. The app is already structured for Emergent deployment (FastAPI backend, React frontend, MongoDB).
+**Description:** Deploy via the Emergent platform. The app is already structured for Emergent deployment (FastAPI backend, React frontend, MongoDB).
+
+**Live URL:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
 
 **Pros:**
 - Zero architectural changes needed
@@ -27,7 +30,7 @@ This document compares deployment paths for CloudForge Cards, from the fastest n
 
 **When to choose:** When you need a live demo link quickly for portfolio reviews or job applications.
 
-**Status:** Blocked on credit availability. No code changes needed.
+**Status:** Live as of v0.2.5. Full-stack deployment running (React frontend, FastAPI backend, MongoDB).
 
 ---
 
@@ -173,8 +176,8 @@ Guardrails (content filtering, token limits)
 
 ## Deployment Priority Order
 
-1. **Now:** Option B (GitHub repo with local demo instructions) - already active
-2. **When credits available:** Option A (Emergent deployment for quick live demo)
+1. **Live now:** Option A (Emergent deployment) at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
+2. **Always active:** Option B (GitHub repo with local demo instructions)
 3. **Portfolio investment:** Option C (Amplify for frontend) as a stepping stone
 4. **Full portfolio deployment:** Option D (AWS-native serverless full stack)
 5. **Enhancement layer:** Option E (Bedrock feedback after Option D is stable)

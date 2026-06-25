@@ -2,20 +2,20 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 const steps = [
-  { n: "01", t: "Read the scenario", d: "Each round shows an architecture problem and two constraint chips (e.g. 'Low Cost', 'Secure')." },
+  { n: "01", t: "Read the scenario", d: "Each round shows a unique AWS architecture problem plus two constraint chips (e.g. 'Low Cost', 'Secure')." },
   { n: "02", t: "Pick 3 to 6 service cards", d: "Build the simplest design that fits the scenario and constraints, overengineering costs you points." },
-  { n: "03", t: "(Optional) explain yourself", d: "Write a short justification. It's saved on the scoreboard but does not affect scoring, keep things transparent." },
+  { n: "03", t: "Optional: explain your architecture", d: "Write a short justification for your design. A relevant explanation can earn up to 5 bonus points, capped at 100, and helps make your architecture reasoning clearer." },
   { n: "04", t: "Submit & read the review", d: "Six explainable sub-scores plus an AI architect critique tell you what worked and what didn't." },
-  { n: "05", t: "Win the best-of-3", d: "Three scenarios per session. Save your total to the leaderboard." },
+  { n: "05", t: "Win the best-of-3", d: "Three scenarios per session. A final game summary appears after round 3, then save your total to the leaderboard." },
 ];
 
 const scores = [
-  ["Service Fit", "0 – 25", "How well your services match the scenario's needed categories and tags."],
-  ["Cost Alignment", "-10 – 15", "Lean lineup rewarded when 'Low Cost' is in play."],
-  ["Security Alignment", "-10 – 15", "Bonus for explicit security services when 'Secure' is requested."],
-  ["Scalability Alignment", "-10 – 15", "Higher scores for services that scale on their own."],
-  ["Synergy Bonus", "0 – 20", "Known good AWS pairings (e.g. Lambda + API Gateway)."],
-  ["Overengineering", "-20 – 0", "Penalty for too many or too complex services."],
+  ["Correct Service Selection", "0 – 30", "How well your chosen services fit the scenario; distractor picks lower this."],
+  ["Ideal Architecture Match", "0 – 25", "Closeness to a known ideal combo. Exact matches score full, partial matches earn partial credit."],
+  ["Constraint Alignment", "0 – 20", "How well the design satisfies the round's active constraints."],
+  ["Synergy Bonus", "0 – 15", "Known good AWS pairings (e.g. Lambda + API Gateway)."],
+  ["Simplicity / Overengineering", "0 – 10", "Right-sized designs score full; too many or too few services lose points."],
+  ["Explanation Bonus", "0 – 5", "A relevant written justification, capped so total never exceeds 100."],
 ];
 
 export default function HowToPlay() {

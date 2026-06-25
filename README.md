@@ -4,7 +4,9 @@ A gamified AWS architecture trainer where players solve cloud architecture scena
 
 **Current Version:** v0.2.5 (Scoring Fairness Release)
 
-**Demo Status:** Not deployed yet. Deployment will happen when cloud credits are available. See [docs/aws-deployment-options.md](docs/aws-deployment-options.md) for the planned deployment path.
+**Live Demo:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
+
+**Demo Status:** Live demo available. Deployed via the Emergent platform. See [docs/aws-deployment-options.md](docs/aws-deployment-options.md) for the planned AWS-native deployment path.
 
 ---
 
@@ -27,6 +29,34 @@ A gamified AWS architecture trainer where players solve cloud architecture scena
 3. **Explain Phase:** Optionally write a short rationale for your design choices (up to +5 bonus points).
 4. **Score Phase:** The engine evaluates your selection across six dimensions and provides a detailed breakdown plus commentary.
 5. **Session:** A full game session consists of 3 rounds with unique scenarios. Your total score lands on the leaderboard.
+
+## Screenshots
+
+### Landing Page
+
+![Landing Page](docs/screenshots/v0.2.5/landing-page.png)
+
+### Round 1: Play Screen
+
+![Round 1 Play Screen](docs/screenshots/v0.2.5/round-1-play-screen.png)
+
+### Score Breakdown
+
+![Round 1 Score Breakdown](docs/screenshots/v0.2.5/round-1-score-breakdown.png)
+
+### Final Game Summary
+
+![Final Game Summary](docs/screenshots/v0.2.5/final-game-summary.png)
+
+### Leaderboard
+
+![Leaderboard](docs/screenshots/v0.2.5/leaderboard.png)
+
+These screenshots show a manual QA solo run used to verify gameplay, scoring behavior, final summary, and leaderboard flow. The different scores are test examples across scenarios and should not be interpreted as a formal assessment of the creator's AWS knowledge.
+
+See the [full screenshot set in docs/screenshots](docs/screenshots).
+
+---
 
 ## Scoring Overview
 
@@ -129,7 +159,7 @@ yarn test
 
 See [docs/roadmap.md](docs/roadmap.md) for the full version plan.
 
-**Near-term (v0.2.6):** Player polish, service-card tooltips, shareable result card
+**Near-term (v0.2.6):** US English copy sweep, unique leaderboard names, suggested names when taken, optional audio toggle, service-card tooltips, move "not core to scenario" feedback to What To Improve, shareable result card
 **Mid-term (v0.3):** CLF Mode, SAA Mode, Obsidian note integration, more scenarios
 **Long-term (v0.4+):** AWS-native deployment, Bedrock-enhanced AI feedback
 
@@ -160,6 +190,8 @@ cloudforge-cards/
 - [AWS Deployment Options](docs/aws-deployment-options.md)
 - [CLF Knowledge Integration](docs/clf-knowledge-integration.md)
 - [Content Pipeline](docs/content-pipeline.md)
+- [Release Notes: v0.2.5](docs/release-notes/v0.2.5.md)
+- [Screenshots](docs/screenshots/README.md)
 
 ## Disclaimer
 

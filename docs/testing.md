@@ -112,6 +112,32 @@ Run this checklist after any changes to seed data, scoring logic, or frontend co
 
 ---
 
+## Deployed v0.2.5 Manual QA
+
+This section documents the manual QA performed against the live deployed demo at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/).
+
+### QA Checklist (Deployed)
+
+- [x] Live demo URL loads without errors
+- [x] Landing page renders with dark theme and Start Game button
+- [x] 3-round solo run completes successfully (unique scenario per round)
+- [x] Score breakdown displays all six v0.2.5 scoring categories per round
+- [x] Final game summary appears after round 3 with total score
+- [x] Leaderboard save works (player name submitted, score recorded)
+- [x] Leaderboard lookup works (saved entries display in descending order)
+- [x] How to Play screen reflects v0.2.5 scoring, including explanation bonus
+- [x] Screenshots captured for public repo documentation
+
+### QA Notes
+
+- Solo run scenarios tested: E-Commerce Storefront, Mobile Game Leaderboard, Global Photo Sharing
+- All six scoring sub-scores displayed correctly in each round
+- Commentary text appeared (rule-based fallback, no LLM key in deployed environment)
+- Leaderboard accepted and persisted a player name entry
+- Screenshots saved to `docs/screenshots/v0.2.5/` for repo reference
+
+---
+
 ## Known Issues
 
 ### Minor: "Not core to the scenario" feedback placement

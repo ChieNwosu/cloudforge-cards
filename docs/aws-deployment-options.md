@@ -4,15 +4,24 @@ This document compares deployment paths for CloudForge Cards, from the fastest n
 
 ## Important Clarifications
 
+<<<<<<< HEAD
 - **The current live demo is hosted on the Emergent platform** at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/). This is a non-AWS deployment used for quick public access.
 - **Amazon Bedrock is not the hosting platform for this app.** Bedrock is an AI/ML service for accessing foundation models. It is planned as a future AI feature layer for feedback, card generation, or Professor Flock explanations.
 - **The strongest AWS portfolio path is a future AWS-native deployment** using API Gateway, Lambda, DynamoDB, and related services. This demonstrates real cloud architecture skills and is documented below as a separate milestone.
+=======
+- **Amazon Bedrock is not the primary hosting platform for this app.** Bedrock is an AI/ML service for accessing foundation models. It should be used later for AI feedback, card generation, or Professor Flock explanations, not for hosting the application itself.
+- **The fastest near-term deployment path is Emergent deployment when credits are available.** This requires no architectural changes.
+- **Emergent deployment is now live** at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/).
+- **The strongest AWS portfolio path is a later AWS-native deployment** using API Gateway, Lambda, DynamoDB, and related services. This demonstrates real cloud architecture skills.
+>>>>>>> origin/main
 
 ---
 
-## Option A: Emergent Deployment (Near-Term)
+## Option A: Emergent Deployment (Live)
 
-**Description:** Deploy via the Emergent platform when credits are available. The app is already structured for Emergent deployment (FastAPI backend, React frontend, MongoDB).
+**Description:** Deploy via the Emergent platform. The app is already structured for Emergent deployment (FastAPI backend, React frontend, MongoDB).
+
+**Live URL:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
 
 **Pros:**
 - Zero architectural changes needed
@@ -27,7 +36,11 @@ This document compares deployment paths for CloudForge Cards, from the fastest n
 
 **When to choose:** When you need a live demo link quickly for portfolio reviews or job applications.
 
+<<<<<<< HEAD
 **Status:** Active. Live at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/). No code changes were required for deployment.
+=======
+**Status:** Live as of v0.2.5. Full-stack deployment running (React frontend, FastAPI backend, MongoDB).
+>>>>>>> origin/main
 
 ---
 
@@ -173,8 +186,13 @@ Guardrails (content filtering, token limits)
 
 ## Deployment Priority Order
 
+<<<<<<< HEAD
 1. **Active:** Option B (GitHub repo with local demo instructions)
 2. **Active:** Option A (Emergent deployment, live at cloudforge-cards.emergent.host)
+=======
+1. **Live now:** Option A (Emergent deployment) at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
+2. **Always active:** Option B (GitHub repo with local demo instructions)
+>>>>>>> origin/main
 3. **Portfolio investment:** Option C (Amplify for frontend) as a stepping stone
 4. **Full portfolio deployment:** Option D (AWS-native serverless full stack)
 5. **Enhancement layer:** Option E (Bedrock feedback after Option D is stable)

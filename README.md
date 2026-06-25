@@ -2,11 +2,33 @@
 
 A gamified AWS architecture trainer where players solve cloud architecture scenarios by selecting AWS service cards, matching constraints, and receiving explainable scoring feedback.
 
-**Current Version:** v0.2.5 (Scoring Fairness Release)
+---
 
+<<<<<<< HEAD
 **Live Demo:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
 
 **Demo Status:** Live demo available. Deployed via the Emergent platform. See [docs/aws-deployment-options.md](docs/aws-deployment-options.md) for the planned AWS-native deployment path.
+=======
+## Live Demo
+
+**Try it now:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
+
+No login required. Play a full 3-round session, view your score breakdown, and land on the leaderboard.
+
+---
+
+## Current Release
+
+**CloudForge Cards v0.2.5: Scoring Fairness Release**
+
+The scoring engine is transparent, rule-based, and fair. Six sub-scores total up to 100 points with guardrails ensuring ideal architectures always score well. Every point is explainable.
+
+---
+
+## Screenshots
+
+Screenshots will be added to [`docs/screenshots/`](docs/screenshots/README.md) as they are captured from the live deployment. Planned captures include the landing page, deal phase, card selection, score breakdown, leaderboard, and mobile view.
+>>>>>>> origin/main
 
 ---
 

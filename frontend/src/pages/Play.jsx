@@ -293,7 +293,7 @@ export default function Play() {
                     <div className="text-xs text-zinc-300 leading-relaxed min-w-0">
                       {playerName && (
                         <p className="mb-1.5 text-zinc-200" data-testid="flock-greeting">
-                          <span className="font-semibold">Professor Flock says:</span> Welcome back, {playerName}. Ready to forge another architecture?
+                          Welcome back, {playerName}. Ready to forge another architecture?
                         </p>
                       )}
                       <span className="font-semibold text-zinc-200">Professor Flock says: </span>

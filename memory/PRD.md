@@ -48,8 +48,24 @@ visuals (no Uno/Balatro clones).
 
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
-- Persist player name across sessions (localStorage)
-- Bigger hand size selector / scenario picker
+
+## v0.2.6 — Mobile + Leaderboard maintenance (2026-06-26, DONE)
+- Fixed Play-page mobile portrait overflow (390x844): added `min-w-0` to the
+  grid children (`aside`/`main`) and the mentor-hint text block so the
+  non-wrapping category-filter row scrolls inside its own `overflow-x-auto`
+  container instead of stretching the whole page. No page-level horizontal scroll.
+- US English copy sweep: "memorisation"->"memorization" (Landing, How to Play),
+  "Prioritise"->"Prioritize" (fintech_api hint). Scoring untouched.
+- Safe per-entry leaderboard delete: new `DELETE /api/leaderboard/{entry_id}`
+  (delete_one by app uuid, 404 if missing). NO delete-all endpoint. Client stores
+  the saved entry id in `localStorage.cf_my_score`; Leaderboard shows a "Your saved
+  score" panel + "Delete my score" button + row highlight; confirm dialog; clears
+  localStorage on success/404. Other rows have no delete control.
+- Local player name: `localStorage.cf_player_name` persists; pre-fills the final
+  summary name input and drives a static Professor Flock greeting on /play.
+- Testing: iteration_4 = 6/6 new backend + full mobile/desktop/delete/name frontend
+  flows, 100% PASS. Scoring engine unchanged (5/5 acceptance still pass).
+
 
 ## v0.2.5 — Scoring engine rewrite (2026-06-21, DONE)
 - New transparent 100-pt engine in `game_engine.py`, six sub-scores:

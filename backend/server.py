@@ -1,15 +1,16 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Header
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import re
 import logging
 import secrets
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -59,6 +60,8 @@ class LeaderboardCreate(BaseModel):
     name: str
     total_score: float
     rounds: int = 3
+    mode: str = "official"          # "official" | "guest"
+    owner_token: Optional[str] = None
 
 
 # ---------- Routes ----------
@@ -138,33 +141,148 @@ async def score_endpoint(req: ScoreRequest):
     return {**score, "commentary": commentary, "explanation": req.explanation or ""}
 
 
+GUEST_TTL_DAYS = 7
+
+
+def _normalize_name(name: str) -> str:
+    return re.sub(r"\s+", " ", (name or "").strip())
+
+
+def _name_key(name: str) -> str:
+    return _normalize_name(name).lower()
+
+
+def _name_suggestions(name: str) -> List[str]:
+    n = _normalize_name(name)
+    compact = n.replace(" ", "")
+    return [f"{n}_01", f"{compact}Cloud", f"{n}_Forge"]
+
+
+def _sanitize(doc: dict) -> dict:
+    """Public-safe view of a leaderboard doc (no owner_token / internal keys)."""
+    return {
+        "id": doc.get("id"),
+        "name": doc.get("name"),
+        "total_score": doc.get("total_score"),
+        "rounds": doc.get("rounds", 3),
+        "mode": doc.get("mode", "official"),
+        "created_at": doc.get("created_at"),
+    }
+
+
 @api_router.get("/leaderboard")
 async def get_leaderboard(limit: int = 20):
-    docs = await db.leaderboard.find({}, {"_id": 0}).sort("total_score", -1).to_list(limit)
-    for d in docs:
-        if isinstance(d.get("created_at"), str):
-            d["created_at"] = datetime.fromisoformat(d["created_at"])
-    return {"entries": docs}
+    now_iso = datetime.now(timezone.utc).isoformat()
+    # Hide expired guest scores; official/legacy rows have no expires_at.
+    query = {"$or": [
+        {"expires_at": {"$exists": False}},
+        {"expires_at": None},
+        {"expires_at": {"$gt": now_iso}},
+    ]}
+    docs = await db.leaderboard.find(query, {"_id": 0}).sort("total_score", -1).to_list(limit)
+    return {"entries": [_sanitize(d) for d in docs]}
 
 
-@api_router.post("/leaderboard", response_model=LeaderboardEntry)
+@api_router.post("/leaderboard")
 async def add_leaderboard(entry: LeaderboardCreate):
-    if not entry.name or not entry.name.strip():
+    name = _normalize_name(entry.name)[:32]
+    if not name:
         raise HTTPException(status_code=400, detail="Name is required")
-    obj = LeaderboardEntry(name=entry.name.strip()[:32],
-                           total_score=round(entry.total_score, 1),
-                           rounds=entry.rounds)
-    doc = obj.model_dump()
-    doc["created_at"] = doc["created_at"].isoformat()
-    await db.leaderboard.insert_one(doc)
-    return obj
+    key = name.lower()
+    score = round(entry.total_score, 1)
+    now = datetime.now(timezone.utc)
+    mode = "guest" if entry.mode == "guest" else "official"
+    owner = entry.owner_token or secrets.token_urlsafe(16)
+
+    # ----- Temporary guest score: always a fresh entry, expires in 7 days -----
+    if mode == "guest":
+        doc = {
+            "id": str(uuid.uuid4()), "name": name, "name_key": key,
+            "total_score": score, "rounds": entry.rounds, "mode": "guest",
+            "owner_token": owner, "created_at": now.isoformat(),
+            "expires_at": (now + timedelta(days=GUEST_TTL_DAYS)).isoformat(),
+        }
+        await db.leaderboard.insert_one(doc)
+        return {"status": "created", "message": f"Guest score saved for {name}.",
+                "entry": _sanitize(doc), "suggestions": []}
+
+    # ----- Official personal best -----
+    all_rows = await db.leaderboard.find({}, {"_id": 0}).to_list(1000)
+    matches = [r for r in all_rows
+               if r.get("mode", "official") != "guest" and _name_key(r.get("name", "")) == key]
+
+    if not matches:
+        doc = {
+            "id": str(uuid.uuid4()), "name": name, "name_key": key,
+            "total_score": score, "rounds": entry.rounds, "mode": "official",
+            "owner_token": owner, "created_at": now.isoformat(), "expires_at": None,
+        }
+        await db.leaderboard.insert_one(doc)
+        return {"status": "created", "message": f"New personal best saved for {name}.",
+                "entry": _sanitize(doc), "suggestions": []}
+
+    # Collapse any pre-existing duplicate official rows: keep the highest as canonical.
+    matches.sort(key=lambda r: r.get("total_score", 0), reverse=True)
+    canonical = matches[0]
+    for dup in matches[1:]:
+        await db.leaderboard.delete_one({"id": dup["id"]})
+
+    canon_owner = canonical.get("owner_token")
+    # Name is owned by someone else -> cannot update, suggest alternatives.
+    if canon_owner and entry.owner_token and entry.owner_token != canon_owner:
+        return {"status": "conflict",
+                "message": "That name is already taken. Try one of these instead.",
+                "entry": None, "suggestions": _name_suggestions(name)}
+    if canon_owner and not entry.owner_token:
+        return {"status": "conflict",
+                "message": "That name is already taken. Try one of these instead.",
+                "entry": None, "suggestions": _name_suggestions(name)}
+
+    # Owner matches, or canonical was an unowned legacy row (claim it now).
+    new_owner = canon_owner or owner
+    if score > canonical.get("total_score", 0):
+        await db.leaderboard.update_one(
+            {"id": canonical["id"]},
+            {"$set": {"name": name, "name_key": key, "total_score": score,
+                      "rounds": entry.rounds, "mode": "official",
+                      "owner_token": new_owner, "expires_at": None}},
+        )
+        updated = {**canonical, "name": name, "total_score": score,
+                   "rounds": entry.rounds, "mode": "official"}
+        return {"status": "updated", "message": f"New personal best saved for {name}.",
+                "entry": _sanitize(updated), "suggestions": []}
+
+    if not canon_owner:
+        await db.leaderboard.update_one({"id": canonical["id"]},
+                                        {"$set": {"owner_token": new_owner}})
+    return {"status": "kept",
+            "message": f"Your saved best for {name} is still {canonical.get('total_score')}.",
+            "entry": _sanitize(canonical), "suggestions": []}
 
 
 @api_router.delete("/leaderboard/{entry_id}")
-async def delete_leaderboard(entry_id: str):
-    """Delete a single leaderboard entry by its unique id. There is intentionally
-    no bulk/delete-all endpoint. The client only knows the id of a score it just
-    saved (kept in localStorage), so only that player's own entry can be removed."""
+async def delete_leaderboard(entry_id: str, owner_token: Optional[str] = None):
+    """Delete a single entry by id. If the entry has an owner_token, the caller
+    must present the matching token. There is no bulk/delete-all endpoint."""
+    doc = await db.leaderboard.find_one({"id": entry_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Score not found")
+    token = doc.get("owner_token")
+    if token and owner_token != token:
+        raise HTTPException(status_code=403, detail="You can only delete your own score.")
+    await db.leaderboard.delete_one({"id": entry_id})
+    return {"deleted": True, "id": entry_id}
+
+
+@api_router.delete("/admin/leaderboard/{entry_id}")
+async def admin_delete_leaderboard(entry_id: str,
+                                   x_admin_token: Optional[str] = Header(default=None)):
+    """Protected single-entry delete for moderation. Disabled unless ADMIN_TOKEN is set."""
+    admin_token = os.environ.get("ADMIN_TOKEN")
+    if not admin_token:
+        raise HTTPException(status_code=503, detail="Admin delete is disabled.")
+    if not x_admin_token or not secrets.compare_digest(x_admin_token, admin_token):
+        raise HTTPException(status_code=403, detail="Invalid admin token.")
     result = await db.leaderboard.delete_one({"id": entry_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Score not found")

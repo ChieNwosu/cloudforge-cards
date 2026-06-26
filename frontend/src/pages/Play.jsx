@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, RotateCcw, Send, Trophy, X } from "lucide-react";
-import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios } from "@/lib/api";
+import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios, getOwnerToken } from "@/lib/api";
 import ServiceCard from "@/components/ServiceCard";
 import ConstraintChip from "@/components/ConstraintChip";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
@@ -50,6 +50,8 @@ export default function Play() {
   const [submitted, setSubmitted] = useState(false);
   const [filter, setFilter] = useState("All");
   const [sessionIds, setSessionIds] = useState([]);
+  const [saveMode, setSaveMode] = useState("official");
+  const [suggestions, setSuggestions] = useState([]);
   const playerName = (localStorage.getItem("cf_player_name") || "").trim();
 
   // Pick 3 unique scenario IDs once per session so rounds never repeat.
@@ -127,17 +129,34 @@ export default function Play() {
   function resetSession() {
     setRound(1); setHistory([]); setResult(null);
     setSubmitted(false); setName(localStorage.getItem("cf_player_name") || "");
+    setSuggestions([]); setSaveMode("official");
     getSessionScenarios(TOTAL_ROUNDS).then(setSessionIds).catch(() => {});
   }
 
   async function saveScore() {
-    if (!name.trim()) { toast.warning("Enter a name to save your score."); return; }
+    const trimmed = name.trim();
+    if (!trimmed) { toast.warning("Enter a name to save your score."); return; }
+    setSuggestions([]);
     try {
-      const entry = await submitLeaderboard({ name: name.trim(), total_score: sessionTotal, rounds: TOTAL_ROUNDS });
-      localStorage.setItem("cf_player_name", name.trim());
-      localStorage.setItem("cf_my_score", JSON.stringify({ id: entry.id, name: entry.name, total_score: entry.total_score }));
+      const res = await submitLeaderboard({
+        name: trimmed, total_score: sessionTotal, rounds: TOTAL_ROUNDS,
+        mode: saveMode, owner_token: getOwnerToken(),
+      });
+      if (res.status === "conflict") {
+        setSuggestions(res.suggestions || []);
+        toast.warning(res.message || "That name is already taken.");
+        return;
+      }
+      localStorage.setItem("cf_player_name", trimmed);
+      if (res.entry?.id) {
+        localStorage.setItem("cf_my_score", JSON.stringify({
+          id: res.entry.id, name: res.entry.name,
+          total_score: res.entry.total_score, mode: res.entry.mode,
+        }));
+      }
       setSubmitted(true);
-      toast.success("Saved to leaderboard!");
+      if (res.status === "kept") toast.message(res.message);
+      else toast.success(res.message || "Saved to leaderboard!");
     } catch {
       toast.error("Could not save score.");
     }
@@ -210,22 +229,73 @@ export default function Play() {
           </div>
 
           {!submitted && (
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name for the leaderboard"
-                data-testid="leaderboard-name-input"
-                className="flex-1 bg-[#121417] border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#7E1818]"
-                maxLength={32}
-              />
-              <button
-                onClick={saveScore}
-                data-testid="save-score-button"
-                className="bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center justify-center gap-2"
-              >
-                <Send size={16} /> Save Score
-              </button>
+            <div className="mb-4" data-testid="save-section">
+              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Save mode</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3" data-testid="save-mode-choice">
+                <button
+                  type="button"
+                  onClick={() => setSaveMode("official")}
+                  data-testid="save-mode-official"
+                  className={`text-left px-4 py-3 rounded-md border text-sm transition-colors ${
+                    saveMode === "official"
+                      ? "bg-[#7E1818]/15 border-[#7E1818]/60 text-white"
+                      : "bg-white/[0.02] border-white/10 text-zinc-400 hover:border-white/20"
+                  }`}
+                >
+                  <div className="font-semibold">Save as official personal best</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">One public score per name. Updates only if higher.</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSaveMode("guest")}
+                  data-testid="save-mode-guest"
+                  className={`text-left px-4 py-3 rounded-md border text-sm transition-colors ${
+                    saveMode === "guest"
+                      ? "bg-[#7E1818]/15 border-[#7E1818]/60 text-white"
+                      : "bg-white/[0.02] border-white/10 text-zinc-400 hover:border-white/20"
+                  }`}
+                >
+                  <div className="font-semibold">Save as temporary guest score</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">Expires after 7 days. Will not overwrite a personal best.</div>
+                </button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name for the leaderboard"
+                  data-testid="leaderboard-name-input"
+                  className="flex-1 min-w-0 bg-[#121417] border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#7E1818]"
+                  maxLength={32}
+                />
+                <button
+                  onClick={saveScore}
+                  data-testid="save-score-button"
+                  className="bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center justify-center gap-2"
+                >
+                  <Send size={16} /> Save Score
+                </button>
+              </div>
+
+              {suggestions.length > 0 && (
+                <div className="mt-3 border border-[#FF8A33]/30 bg-[#FF8A33]/[0.06] rounded-md p-3" data-testid="name-suggestions">
+                  <div className="text-xs text-[#FF8A33] mb-2">That name is already taken. Try one of these instead:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestions.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => { setName(s); setSuggestions([]); }}
+                        data-testid={`name-suggestion-${s}`}
+                        className="px-3 py-1.5 rounded-md text-sm bg-white/[0.03] border border-white/15 hover:border-white/30 hover:bg-white/5 text-white"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

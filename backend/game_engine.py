@@ -210,6 +210,7 @@ def _simplicity(selected: List[dict], scenario: dict) -> Dict[str, Any]:
     min_ideal = scenario["min_services"]
     max_ideal = scenario["max_services"]
     reasons = []
+    score = 10.0  # default: right-sized; reassigned in every branch below
 
     if n > max_ideal:
         dev = n - max_ideal
@@ -231,6 +232,7 @@ def _simplicity(selected: List[dict], scenario: dict) -> Dict[str, Any]:
 def _explanation(explanation: str) -> Dict[str, Any]:
     text = (explanation or "").strip()
     words = len(text.split())
+    score, reason = 0.0, "No explanation given, add one next round for up to +5."
     if words == 0:
         score, reason = 0.0, "No explanation given, add one next round for up to +5."
     elif words < 8:

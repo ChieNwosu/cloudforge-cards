@@ -160,6 +160,17 @@ async def add_leaderboard(entry: LeaderboardCreate):
     return obj
 
 
+@api_router.delete("/leaderboard/{entry_id}")
+async def delete_leaderboard(entry_id: str):
+    """Delete a single leaderboard entry by its unique id. There is intentionally
+    no bulk/delete-all endpoint. The client only knows the id of a score it just
+    saved (kept in localStorage), so only that player's own entry can be removed."""
+    result = await db.leaderboard.delete_one({"id": entry_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Score not found")
+    return {"deleted": True, "id": entry_id}
+
+
 # Keep the original status endpoints for compatibility
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):

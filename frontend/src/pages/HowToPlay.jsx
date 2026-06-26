@@ -24,7 +24,7 @@ export default function HowToPlay() {
       <div>
         <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#7E1818] mb-3">/// how to play</div>
         <h1 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4">The rules in 60 seconds.</h1>
-        <p className="text-zinc-400 max-w-xl">A round of CloudForge takes about three minutes. No memorisation, just reasoning about trade-offs.</p>
+        <p className="text-zinc-400 max-w-xl">A round of CloudForge takes about three minutes. No memorization, just reasoning about trade-offs.</p>
       </div>
 
       <div className="space-y-3">

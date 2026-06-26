@@ -99,7 +99,7 @@ export default function Landing() {
               </h2>
             </div>
             <p className="text-zinc-400 max-w-md">
-              No memorisation. Just hands-on reasoning about cost, security,
+              No memorization. Just hands-on reasoning about cost, security,
               scalability, and trade-offs, the way real architects think.
             </p>
           </div>

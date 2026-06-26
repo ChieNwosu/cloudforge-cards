@@ -46,10 +46,11 @@ export default function Play() {
   const [scoring, setScoring] = useState(false);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(() => localStorage.getItem("cf_player_name") || "");
   const [submitted, setSubmitted] = useState(false);
   const [filter, setFilter] = useState("All");
   const [sessionIds, setSessionIds] = useState([]);
+  const playerName = (localStorage.getItem("cf_player_name") || "").trim();
 
   // Pick 3 unique scenario IDs once per session so rounds never repeat.
   useEffect(() => {
@@ -125,14 +126,16 @@ export default function Play() {
   function nextRound() { setRound((r) => r + 1); }
   function resetSession() {
     setRound(1); setHistory([]); setResult(null);
-    setSubmitted(false); setName("");
+    setSubmitted(false); setName(localStorage.getItem("cf_player_name") || "");
     getSessionScenarios(TOTAL_ROUNDS).then(setSessionIds).catch(() => {});
   }
 
   async function saveScore() {
     if (!name.trim()) { toast.warning("Enter a name to save your score."); return; }
     try {
-      await submitLeaderboard({ name: name.trim(), total_score: sessionTotal, rounds: TOTAL_ROUNDS });
+      const entry = await submitLeaderboard({ name: name.trim(), total_score: sessionTotal, rounds: TOTAL_ROUNDS });
+      localStorage.setItem("cf_player_name", name.trim());
+      localStorage.setItem("cf_my_score", JSON.stringify({ id: entry.id, name: entry.name, total_score: entry.total_score }));
       setSubmitted(true);
       toast.success("Saved to leaderboard!");
     } catch {
@@ -278,7 +281,7 @@ export default function Play() {
       ) : (
         <div className="grid lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Side panel */}
-          <aside className="lg:col-span-4 space-y-4">
+          <aside className="lg:col-span-4 space-y-4 min-w-0">
             <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6 cf-fade-up" data-testid="scenario-card">
               <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Scenario</div>
               <h3 className="text-lg sm:text-xl font-bold mb-3">{data.scenario.title}</h3>
@@ -286,8 +289,13 @@ export default function Play() {
               {data.scenario.hint && (
                 <div className="border-t border-white/5 pt-3 mb-3" data-testid="mentor-hint">
                   <div className="flex items-start gap-2">
-                    <span className="text-2xl leading-none" aria-hidden="true">🦅</span>
-                    <div className="text-xs text-zinc-300 leading-relaxed">
+                    <span className="text-2xl leading-none shrink-0" aria-hidden="true">🦅</span>
+                    <div className="text-xs text-zinc-300 leading-relaxed min-w-0">
+                      {playerName && (
+                        <p className="mb-1.5 text-zinc-200" data-testid="flock-greeting">
+                          <span className="font-semibold">Professor Flock says:</span> Welcome back, {playerName}. Ready to forge another architecture?
+                        </p>
+                      )}
                       <span className="font-semibold text-zinc-200">Professor Flock says: </span>
                       <span>{data.scenario.hint.text}</span>
                       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -326,7 +334,7 @@ export default function Play() {
           </aside>
 
           {/* Main */}
-          <main className="lg:col-span-8">
+          <main className="lg:col-span-8 min-w-0">
             {!result ? (
               <>
                 {/* Category filter */}

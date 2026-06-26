@@ -25,5 +25,8 @@ export const getLeaderboard = () =>
 export const submitLeaderboard = (entry) =>
   api.post("/leaderboard", entry).then(r => r.data);
 
+export const deleteLeaderboardEntry = (entryId) =>
+  api.delete(`/leaderboard/${entryId}`).then(r => r.data);
+
 export const getScenarios = () =>
   api.get("/cards/scenarios").then(r => r.data.scenarios);

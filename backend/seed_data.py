@@ -230,7 +230,7 @@ SCENARIOS = [
      "distractor_service_ids": ["ec2", "rds", "redshift", "kinesis", "sagemaker", "glacier", "ebs", "beanstalk"],
      "ideal_combos": [["s3", "cloudfront", "lambda", "dynamodb"],
                       ["s3", "cloudfront", "api_gateway", "lambda", "dynamodb"]]},
-    {"id": "fintech_api", "hint": {"text":'Money moves through this API. Prioritise authentication, encryption, and a relational store.', "kw":["SQL", "authentication", "encryption"]}, "title": "Fintech Transactions API",
+    {"id": "fintech_api", "hint": {"text":'Money moves through this API. Prioritize authentication, encryption, and a relational store.', "kw":["SQL", "authentication", "encryption"]}, "title": "Fintech Transactions API",
      "prompt": "REST API that records financial transactions. Strong auth, full audit trail, regional failover.",
      "ideal_categories": ["Network", "Database", "Security", "Compute"],
      "ideal_tags": ["api", "sql", "relational", "auth", "encryption", "secrets", "observability"],

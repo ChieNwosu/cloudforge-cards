@@ -61,6 +61,15 @@ code, .font-mono {
 }
 .cf-fade-up { animation: cf-fade-up 380ms cubic-bezier(.2,.7,.2,1) both; }
 
+/* Touch-friendly horizontal scroll row (filters). Hides scrollbar, contains overscroll. */
+.cf-hscroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+.cf-hscroll::-webkit-scrollbar { display: none; }
+
 @layer base {
     :root {
         --background: 220 7% 5%;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, RotateCcw, Send, Trophy, X } from "lucide-react";
+import { Loader2, RotateCcw, Send, Trophy, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios, getOwnerToken } from "@/lib/api";
 import ServiceCard from "@/components/ServiceCard";
 import ConstraintChip from "@/components/ConstraintChip";
@@ -354,13 +354,13 @@ export default function Play() {
           <aside className="lg:col-span-4 space-y-4 min-w-0">
             <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6 cf-fade-up" data-testid="scenario-card">
               <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Scenario</div>
-              <h3 className="text-lg sm:text-xl font-bold mb-3">{data.scenario.title}</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed mb-4">{data.scenario.prompt}</p>
+              <h3 className="text-lg sm:text-xl font-bold mb-3 break-words">{data.scenario.title}</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed mb-4 break-words">{data.scenario.prompt}</p>
               {data.scenario.hint && (
                 <div className="border-t border-white/5 pt-3 mb-3" data-testid="mentor-hint">
                   <div className="flex items-start gap-2">
                     <span className="text-2xl leading-none shrink-0" aria-hidden="true">🦅</span>
-                    <div className="text-xs text-zinc-300 leading-relaxed min-w-0">
+                    <div className="text-xs text-zinc-300 leading-relaxed min-w-0 break-words">
                       {playerName && (
                         <p className="mb-1.5 text-zinc-200" data-testid="flock-greeting">
                           Welcome back, {playerName}. Ready to forge another architecture?
@@ -408,21 +408,31 @@ export default function Play() {
             {!result ? (
               <>
                 {/* Category filter */}
-                <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 -mx-1 px-1 scrollbar-thin" data-testid="category-filters">
-                  {FILTERS.map((f) => (
-                    <button
-                      key={f}
-                      onClick={() => setFilter(f)}
-                      data-testid={`filter-${f.toLowerCase()}`}
-                      className={`px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.1em] whitespace-nowrap border transition-colors ${
-                        filter === f
-                          ? "bg-[#7E1818] border-[#7E1818] text-white"
-                          : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
-                      }`}
-                    >
-                      {f}
-                    </button>
-                  ))}
+                <div className="mb-3">
+                  <div className="md:hidden flex items-center gap-1 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-600 mb-1.5"
+                       data-testid="swipe-filters-hint">
+                    <ChevronLeft size={11} /> Swipe filters <ChevronRight size={11} />
+                  </div>
+                  <div className="relative">
+                    <div className="cf-hscroll flex gap-1.5 pb-2" data-testid="category-filters">
+                      {FILTERS.map((f) => (
+                        <button
+                          key={f}
+                          onClick={() => setFilter(f)}
+                          data-testid={`filter-${f.toLowerCase()}`}
+                          className={`px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.1em] whitespace-nowrap border transition-colors ${
+                            filter === f
+                              ? "bg-[#7E1818] border-[#7E1818] text-white"
+                              : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
+                          }`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="md:hidden pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#090A0B] to-transparent" aria-hidden="true" />
+                    <div className="md:hidden pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#090A0B] to-transparent" aria-hidden="true" />
+                  </div>
                 </div>
 
                 <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-3">

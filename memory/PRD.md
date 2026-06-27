@@ -48,8 +48,48 @@ visuals (no Uno/Balatro clones).
 
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
-- Persist player name across sessions (localStorage)
-- Bigger hand size selector / scenario picker
+
+## v0.2.6.1 — Leaderboard save hygiene (2026-06-26, DONE)
+- Official "personal best" upsert: names normalized (trim, collapse spaces,
+  case-insensitive). New name -> create; same name + higher score by the same
+  owner -> update; lower/equal -> keep. One canonical public row per name;
+  legacy duplicate rows are collapsed (highest kept) on the next save of that name.
+  Messages: "New personal best saved for {name}." / "Your saved best for {name} is still {score}."
+- Ownership via client `cf_owner_token` (localStorage). Saving an official name owned
+  by a different browser returns status "conflict" + 3 name suggestions
+  (Name_01, NameCloud, Name_Forge). No silent hijack, no duplicates.
+- Temporary guest scores: mode="guest", `expires_at` = now+7d, hidden from the public
+  GET via query-time filtering (no TTL index / no migration this release). Guest scores
+  never overwrite an official personal best; shown with a subtle "guest" label.
+- Save-mode choice on the final summary (official default | guest).
+- Safe delete: `DELETE /api/leaderboard/{id}?owner_token=` requires matching owner
+  token (legacy unowned rows deletable by id). No delete-all (DELETE collection -> 405).
+- Admin moderation: `DELETE /api/admin/leaderboard/{id}` guarded by `ADMIN_TOKEN` env
+  (header `X-Admin-Token`, constant-time compare); disabled with 503 if unset. Optional
+  Leaderboard "Admin cleanup" panel stores the token in sessionStorage only.
+- Preserved: cf_player_name persistence, summary name prefill, Professor Flock greeting.
+- Testing iteration_5: backend 8/8 new + 22/22 retained + scoring 5/5; frontend 100%.
+- P2 follow-ups (deferred): index on name_key; store expires_at as datetime for a real
+  TTL index to auto-purge expired guests.
+
+
+## v0.2.6 — Mobile + Leaderboard maintenance (2026-06-26, DONE)
+- Fixed Play-page mobile portrait overflow (390x844): added `min-w-0` to the
+  grid children (`aside`/`main`) and the mentor-hint text block so the
+  non-wrapping category-filter row scrolls inside its own `overflow-x-auto`
+  container instead of stretching the whole page. No page-level horizontal scroll.
+- US English copy sweep: "memorisation"->"memorization" (Landing, How to Play),
+  "Prioritise"->"Prioritize" (fintech_api hint). Scoring untouched.
+- Safe per-entry leaderboard delete: new `DELETE /api/leaderboard/{entry_id}`
+  (delete_one by app uuid, 404 if missing). NO delete-all endpoint. Client stores
+  the saved entry id in `localStorage.cf_my_score`; Leaderboard shows a "Your saved
+  score" panel + "Delete my score" button + row highlight; confirm dialog; clears
+  localStorage on success/404. Other rows have no delete control.
+- Local player name: `localStorage.cf_player_name` persists; pre-fills the final
+  summary name input and drives a static Professor Flock greeting on /play.
+- Testing: iteration_4 = 6/6 new backend + full mobile/desktop/delete/name frontend
+  flows, 100% PASS. Scoring engine unchanged (5/5 acceptance still pass).
+
 
 ## v0.2.5 — Scoring engine rewrite (2026-06-21, DONE)
 - New transparent 100-pt engine in `game_engine.py`, six sub-scores:

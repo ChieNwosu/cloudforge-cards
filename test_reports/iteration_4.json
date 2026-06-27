@@ -1,0 +1,41 @@
+{
+  "summary": "v0.2.6 maintenance release end-to-end verification PASSED. Backend: created /app/backend/tests/test_v026.py covering the new DELETE /api/leaderboard/{id} contract (single-entry delete returns {deleted:true,id}; non-existent id -> 404; NO delete-all endpoint -- DELETE /api/leaderboard and /api/leaderboard/ both return 405, and seeded entries survive the bulk-delete attempt), confirmation that POST and GET still expose 'id', and that scoring is unchanged (static_blog + s3+cloudfront+route53 still scores 90/Well-Architected with the six v0.2.5 sub-scores in correct order). 6/6 new tests pass; combined with iter3 backend_test.py the backend remains 100%. Frontend Playwright run: (1) Mobile portrait 390x844 /play round 1 has NO horizontal page overflow (document.scrollWidth=390=innerWidth); only data-testid=category-filters scrolls inside its own overflow-x:auto container by design (sw=823, cw=366). Scenario card, mentor-hint, gold keyword pills, constraint chips, single-column card-hand, selection-tray, submit-round-button and R1/R2/R3 chips all fit. No overflow after score either. (2) Mobile Landing, How to Play, Leaderboard pages all scrollWidth<=innerWidth. (3) Desktop 1920x800 /play renders the side-by-side two-column layout (aside x=344 w=395, main x=763 w=813 -> side_by_side=true) and ScoreBreakdown still renders 6 sub-scores. (4) Full 3-round game flow with 4-card picks scored 182.1/Partial Fit; six sub-scores per round; final summary appeared. (5) Save score: 'Saved to leaderboard!' toast fired, localStorage cf_player_name + cf_my_score set with correct id. (6) /leaderboard shows my-score-panel, leaderboard-row-mine highlight, delete-my-score-button; confirmed ZERO interactive controls on non-mine rows (delete-controls on non-mine rows = 0). Accepting window.confirm and clicking delete: backend entry removed, panel disappears, leaderboard-row-mine removed, localStorage cf_my_score cleared, cf_player_name preserved, 'Your score was deleted.' toast shown. (7) Name persistence: returning to /play with cf_player_name set renders data-testid=flock-greeting reading 'Professor Flock says: Welcome back, TEST_iter4_v026. Ready to forge another architecture?'. (8) Copy sweep: no British spellings (memoris/optimis/colour/behaviour/organis/favourit/catalogu/centred/recognis/customis/specialis/prioritis) found on Landing, How to Play, or Leaderboard.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Play.jsx scenario-card mentor-hint block (when cf_player_name is set)",
+        "issues": [
+          "When a returning player visits /play, the mentor-hint renders the literal label 'Professor Flock says:' twice back-to-back -- first in the flock-greeting paragraph (Welcome back, <name>...) and then again immediately before the actual scenario hint text. Visually redundant. Suggest dropping the second 'Professor Flock says: ' span when playerName is truthy (or omit it from the greeting paragraph). See Play.jsx lines 294-300."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_v026.py",
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/iter4_v026.xml"
+  ],
+  "action_items": [
+    "Optional polish: in Play.jsx mentor-hint, avoid rendering 'Professor Flock says:' twice when a flock-greeting paragraph is shown -- either remove the greeting's 'Professor Flock says:' prefix, or render only the name line and let the hint keep its label."
+  ],
+  "critical_code_review_comments": [
+    "Leaderboard.jsx handleDelete correctly handles the 404 path (entry already deleted in another tab/manually) by clearing localStorage and reloading the list -- good defensive UX.",
+    "server.py delete_leaderboard uses delete_one({'id': entry_id}) on the app-level uuid, not the Mongo ObjectId -- safe; no ObjectId leakage anywhere (GET still uses projection {_id:0}).",
+    "FastAPI's lack of a DELETE /api/leaderboard route correctly produces 405 Method Not Allowed (verified). There is no path-level catch-all that could accidentally hit the collection.",
+    "Play.jsx reads localStorage.getItem('cf_player_name') twice (line 49 useState init and line 53 module-scope const); the line-53 read happens on every render. Cheap, but consider memoizing or using the state value to remain consistent if the name changes mid-session.",
+    "deleteLeaderboardEntry in api.js uses path interpolation without URL-encoding entry_id; current ids are uuid4 (safe), but encodeURIComponent would be more robust if id format ever changes."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_v026.py"
+  ],
+  "success_rate": {"backend": "100% (6/6 v0.2.6 + 16/16 iter3 retained)", "frontend": "100% on all v0.2.6 acceptance criteria; 1 minor cosmetic design issue noted"},
+  "test_credentials": "N/A -- no auth in app",
+  "seed_data_creation": "Test entries created and self-cleaned by tests (TEST_v026_create, TEST_v026_list, TEST_v026_a/b, TEST_v026_survive_1/2). Frontend Playwright created TEST_iter4_v026 and then deleted it via the delete-my-score flow, leaving the leaderboard clean.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "v0.2.6 verified. Backend regression set: pytest /app/backend/tests/backend_test.py /app/backend/tests/test_v026.py (22 tests). DELETE contract is locked: per-id only, no bulk endpoint. Frontend delete flow uses window.confirm -- in Playwright register a one-shot dialog handler with page.once('dialog', lambda d: asyncio.create_task(d.accept())) BEFORE clicking [data-testid=delete-my-score-button]. cf_player_name persists across delete; only cf_my_score is cleared. flock-greeting only renders when cf_player_name is set. category-filters horizontal scroll inside its own container at 390px is intentional -- assert document.documentElement.scrollWidth <= innerWidth instead of checking that one element.",
+  "rca of the issue": "No bugs found. Only cosmetic redundancy in mentor-hint label when player name is stored (two 'Professor Flock says:' labels stacked). Root cause: Play.jsx renders both the flock-greeting <p> with the label and the original hint span with the label unconditionally; they should be mutually exclusive (greeting replaces the label, or greeting drops the label)."
+}

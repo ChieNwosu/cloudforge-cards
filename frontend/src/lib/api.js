@@ -25,5 +25,24 @@ export const getLeaderboard = () =>
 export const submitLeaderboard = (entry) =>
   api.post("/leaderboard", entry).then(r => r.data);
 
+export const deleteLeaderboardEntry = (entryId, ownerToken) =>
+  api.delete(`/leaderboard/${encodeURIComponent(entryId)}`, {
+    params: ownerToken ? { owner_token: ownerToken } : {},
+  }).then(r => r.data);
+
+export const adminDeleteEntry = (entryId, adminToken) =>
+  api.delete(`/admin/leaderboard/${encodeURIComponent(entryId)}`, {
+    headers: { "X-Admin-Token": adminToken },
+  }).then(r => r.data);
+
+export function getOwnerToken() {
+  let token = localStorage.getItem("cf_owner_token");
+  if (!token) {
+    token = (window.crypto?.randomUUID?.() || `o-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem("cf_owner_token", token);
+  }
+  return token;
+}
+
 export const getScenarios = () =>
   api.get("/cards/scenarios").then(r => r.data.scenarios);

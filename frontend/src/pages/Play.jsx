@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, RotateCcw, Send, Trophy, X } from "lucide-react";
-import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios } from "@/lib/api";
+import { Loader2, RotateCcw, Send, Trophy, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios, getOwnerToken } from "@/lib/api";
 import ServiceCard from "@/components/ServiceCard";
 import ConstraintChip from "@/components/ConstraintChip";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
@@ -46,10 +46,13 @@ export default function Play() {
   const [scoring, setScoring] = useState(false);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(() => localStorage.getItem("cf_player_name") || "");
   const [submitted, setSubmitted] = useState(false);
   const [filter, setFilter] = useState("All");
   const [sessionIds, setSessionIds] = useState([]);
+  const [saveMode, setSaveMode] = useState("official");
+  const [suggestions, setSuggestions] = useState([]);
+  const playerName = (localStorage.getItem("cf_player_name") || "").trim();
 
   // Pick 3 unique scenario IDs once per session so rounds never repeat.
   useEffect(() => {
@@ -125,16 +128,35 @@ export default function Play() {
   function nextRound() { setRound((r) => r + 1); }
   function resetSession() {
     setRound(1); setHistory([]); setResult(null);
-    setSubmitted(false); setName("");
+    setSubmitted(false); setName(localStorage.getItem("cf_player_name") || "");
+    setSuggestions([]); setSaveMode("official");
     getSessionScenarios(TOTAL_ROUNDS).then(setSessionIds).catch(() => {});
   }
 
   async function saveScore() {
-    if (!name.trim()) { toast.warning("Enter a name to save your score."); return; }
+    const trimmed = name.trim();
+    if (!trimmed) { toast.warning("Enter a name to save your score."); return; }
+    setSuggestions([]);
     try {
-      await submitLeaderboard({ name: name.trim(), total_score: sessionTotal, rounds: TOTAL_ROUNDS });
+      const res = await submitLeaderboard({
+        name: trimmed, total_score: sessionTotal, rounds: TOTAL_ROUNDS,
+        mode: saveMode, owner_token: getOwnerToken(),
+      });
+      if (res.status === "conflict") {
+        setSuggestions(res.suggestions || []);
+        toast.warning(res.message || "That name is already taken.");
+        return;
+      }
+      localStorage.setItem("cf_player_name", trimmed);
+      if (res.entry?.id) {
+        localStorage.setItem("cf_my_score", JSON.stringify({
+          id: res.entry.id, name: res.entry.name,
+          total_score: res.entry.total_score, mode: res.entry.mode,
+        }));
+      }
       setSubmitted(true);
-      toast.success("Saved to leaderboard!");
+      if (res.status === "kept") toast.message(res.message);
+      else toast.success(res.message || "Saved to leaderboard!");
     } catch {
       toast.error("Could not save score.");
     }
@@ -207,22 +229,73 @@ export default function Play() {
           </div>
 
           {!submitted && (
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name for the leaderboard"
-                data-testid="leaderboard-name-input"
-                className="flex-1 bg-[#121417] border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#7E1818]"
-                maxLength={32}
-              />
-              <button
-                onClick={saveScore}
-                data-testid="save-score-button"
-                className="bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center justify-center gap-2"
-              >
-                <Send size={16} /> Save Score
-              </button>
+            <div className="mb-4" data-testid="save-section">
+              <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Save mode</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3" data-testid="save-mode-choice">
+                <button
+                  type="button"
+                  onClick={() => setSaveMode("official")}
+                  data-testid="save-mode-official"
+                  className={`text-left px-4 py-3 rounded-md border text-sm transition-colors ${
+                    saveMode === "official"
+                      ? "bg-[#7E1818]/15 border-[#7E1818]/60 text-white"
+                      : "bg-white/[0.02] border-white/10 text-zinc-400 hover:border-white/20"
+                  }`}
+                >
+                  <div className="font-semibold">Save as official personal best</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">One public score per name. Updates only if higher.</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSaveMode("guest")}
+                  data-testid="save-mode-guest"
+                  className={`text-left px-4 py-3 rounded-md border text-sm transition-colors ${
+                    saveMode === "guest"
+                      ? "bg-[#7E1818]/15 border-[#7E1818]/60 text-white"
+                      : "bg-white/[0.02] border-white/10 text-zinc-400 hover:border-white/20"
+                  }`}
+                >
+                  <div className="font-semibold">Save as temporary guest score</div>
+                  <div className="text-xs text-zinc-500 mt-0.5">Expires after 7 days. Will not overwrite a personal best.</div>
+                </button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name for the leaderboard"
+                  data-testid="leaderboard-name-input"
+                  className="flex-1 min-w-0 bg-[#121417] border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#7E1818]"
+                  maxLength={32}
+                />
+                <button
+                  onClick={saveScore}
+                  data-testid="save-score-button"
+                  className="bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold inline-flex items-center justify-center gap-2"
+                >
+                  <Send size={16} /> Save Score
+                </button>
+              </div>
+
+              {suggestions.length > 0 && (
+                <div className="mt-3 border border-[#FF8A33]/30 bg-[#FF8A33]/[0.06] rounded-md p-3" data-testid="name-suggestions">
+                  <div className="text-xs text-[#FF8A33] mb-2">That name is already taken. Try one of these instead:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestions.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => { setName(s); setSuggestions([]); }}
+                        data-testid={`name-suggestion-${s}`}
+                        className="px-3 py-1.5 rounded-md text-sm bg-white/[0.03] border border-white/15 hover:border-white/30 hover:bg-white/5 text-white"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -278,16 +351,21 @@ export default function Play() {
       ) : (
         <div className="grid lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Side panel */}
-          <aside className="lg:col-span-4 space-y-4">
+          <aside className="lg:col-span-4 space-y-4 min-w-0">
             <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6 cf-fade-up" data-testid="scenario-card">
               <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Scenario</div>
-              <h3 className="text-lg sm:text-xl font-bold mb-3">{data.scenario.title}</h3>
-              <p className="text-sm text-zinc-300 leading-relaxed mb-4">{data.scenario.prompt}</p>
+              <h3 className="text-lg sm:text-xl font-bold mb-3 break-words">{data.scenario.title}</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed mb-4 break-words">{data.scenario.prompt}</p>
               {data.scenario.hint && (
                 <div className="border-t border-white/5 pt-3 mb-3" data-testid="mentor-hint">
                   <div className="flex items-start gap-2">
-                    <span className="text-2xl leading-none" aria-hidden="true">🦅</span>
-                    <div className="text-xs text-zinc-300 leading-relaxed">
+                    <span className="text-2xl leading-none shrink-0" aria-hidden="true">🦅</span>
+                    <div className="text-xs text-zinc-300 leading-relaxed min-w-0 break-words">
+                      {playerName && (
+                        <p className="mb-1.5 text-zinc-200" data-testid="flock-greeting">
+                          Welcome back, {playerName}. Ready to forge another architecture?
+                        </p>
+                      )}
                       <span className="font-semibold text-zinc-200">Professor Flock says: </span>
                       <span>{data.scenario.hint.text}</span>
                       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -326,25 +404,35 @@ export default function Play() {
           </aside>
 
           {/* Main */}
-          <main className="lg:col-span-8">
+          <main className="lg:col-span-8 min-w-0">
             {!result ? (
               <>
                 {/* Category filter */}
-                <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 -mx-1 px-1 scrollbar-thin" data-testid="category-filters">
-                  {FILTERS.map((f) => (
-                    <button
-                      key={f}
-                      onClick={() => setFilter(f)}
-                      data-testid={`filter-${f.toLowerCase()}`}
-                      className={`px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.1em] whitespace-nowrap border transition-colors ${
-                        filter === f
-                          ? "bg-[#7E1818] border-[#7E1818] text-white"
-                          : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
-                      }`}
-                    >
-                      {f}
-                    </button>
-                  ))}
+                <div className="mb-3">
+                  <div className="md:hidden flex items-center gap-1 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-600 mb-1.5"
+                       data-testid="swipe-filters-hint">
+                    <ChevronLeft size={11} /> Swipe filters <ChevronRight size={11} />
+                  </div>
+                  <div className="relative">
+                    <div className="cf-hscroll flex gap-1.5 pb-2" data-testid="category-filters">
+                      {FILTERS.map((f) => (
+                        <button
+                          key={f}
+                          onClick={() => setFilter(f)}
+                          data-testid={`filter-${f.toLowerCase()}`}
+                          className={`px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.1em] whitespace-nowrap border transition-colors ${
+                            filter === f
+                              ? "bg-[#7E1818] border-[#7E1818] text-white"
+                              : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
+                          }`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="md:hidden pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#090A0B] to-transparent" aria-hidden="true" />
+                    <div className="md:hidden pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#090A0B] to-transparent" aria-hidden="true" />
+                  </div>
                 </div>
 
                 <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-3">

@@ -5,17 +5,17 @@ const steps = [
   { n: "01", t: "Read the scenario", d: "Each round shows a unique AWS architecture problem plus two constraint chips (e.g. 'Low Cost', 'Secure')." },
   { n: "02", t: "Pick 3 to 6 service cards", d: "Build the simplest design that fits the scenario and constraints, overengineering costs you points." },
   { n: "03", t: "Optional: explain your architecture", d: "Write a short justification for your design. A relevant explanation can earn up to 5 bonus points, capped at 100, and helps make your architecture reasoning clearer." },
-  { n: "04", t: "Submit & read the review", d: "Six explainable sub-scores plus an AI architect critique tell you what worked and what didn't." },
+  { n: "04", t: "Submit and read the review", d: "Six explainable sub-scores plus an AI architect critique tell you what worked and what did not." },
   { n: "05", t: "Win the best-of-3", d: "Three scenarios per session. A final game summary appears after round 3, then save your total to the leaderboard." },
 ];
 
 const scores = [
-  ["Correct Service Selection", "0 – 30", "How well your chosen services fit the scenario; distractor picks lower this."],
-  ["Ideal Architecture Match", "0 – 25", "Closeness to a known ideal combo. Exact matches score full, partial matches earn partial credit."],
-  ["Constraint Alignment", "0 – 20", "How well the design satisfies the round's active constraints."],
-  ["Synergy Bonus", "0 – 15", "Known good AWS pairings (e.g. Lambda + API Gateway)."],
-  ["Simplicity / Overengineering", "0 – 10", "Right-sized designs score full; too many or too few services lose points."],
-  ["Explanation Bonus", "0 – 5", "A relevant written justification, capped so total never exceeds 100."],
+  ["Correct Service Selection", "0-30", "How well your chosen services fit the scenario; distractor picks lower this."],
+  ["Ideal Architecture Match", "0-25", "Closeness to a known ideal combo. Exact matches score full, partial matches earn partial credit."],
+  ["Constraint Alignment", "0-20", "How well the design satisfies the round's active constraints."],
+  ["Synergy Bonus", "0-15", "Known good AWS pairings (e.g. Lambda + API Gateway)."],
+  ["Simplicity / Overengineering", "0-10", "Right-sized designs score full; too many or too few services lose points."],
+  ["Explanation Bonus", "0-5", "A relevant written justification, capped so the total never exceeds 100."],
 ];
 
 export default function HowToPlay() {

@@ -14,9 +14,9 @@ No login required. Play a full 3-round session, view your score breakdown, and l
 
 ## Current Release
 
-**CloudForge Cards v0.2.5: Scoring Fairness Release**
+**CloudForge Cards v0.2.6: Mobile and Leaderboard Maintenance**
 
-The scoring engine is transparent, rule-based, and fair. Six sub-scores total up to 100 points with guardrails ensuring ideal architectures always score well. Every point is explainable.
+Improved mobile handheld usability for iPhone and in-app browsers.
 
 ---
 

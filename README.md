@@ -181,7 +181,7 @@ cloudforge-cards/
 
 ## Disclaimer
 
-Unofficial educational project. Not affiliated with Amazon Web Services or North Carolina Central University.
+Unofficial educational project. Not affiliated with Amazon Web Services.
 
 ## Attribution
 

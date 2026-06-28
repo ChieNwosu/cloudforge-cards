@@ -4,6 +4,7 @@ import { Cloud, Menu, X } from "lucide-react";
 
 const navItems = [
   { to: "/play", label: "Play", id: "nav-play" },
+  { to: "/learn", label: "Learn", id: "nav-learn" },
   { to: "/leaderboard", label: "Leaderboard", id: "nav-leaderboard" },
   { to: "/how-to-play", label: "How to Play", id: "nav-how" },
 ];

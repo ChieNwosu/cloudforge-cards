@@ -9,7 +9,10 @@ load_dotenv("/app/frontend/.env")
 load_dotenv("/app/backend/.env")
 
 BASE = os.environ["REACT_APP_BACKEND_URL"].rstrip("/") + "/api"
-ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "cf-admin-7Qx2Lm9Tv")
+# ADMIN_TOKEN is loaded from /app/backend/.env above (gitignored). The placeholder is a
+# clearly-fake value used only when no real token is configured; tests needing a real
+# token are skipped in that case. Never commit a real secret here.
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "test-admin-token-placeholder")
 
 
 def _new(name, score, token, mode="official", rounds=3):
@@ -168,6 +171,8 @@ def test_legacy_no_owner_deletable():
 # ----- Admin delete: header gating + no public delete-all -----
 
 def test_admin_delete_header_gating():
+    if ADMIN_TOKEN == "test-admin-token-placeholder":
+        pytest.skip("ADMIN_TOKEN not configured in environment; skipping admin-success check.")
     name = f"TEST_v0261a_{secrets.token_hex(4)}"
     owner = secrets.token_urlsafe(16)
     eid = _new(name, 55, owner).json()["entry"]["id"]

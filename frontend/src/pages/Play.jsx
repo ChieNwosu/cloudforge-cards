@@ -5,6 +5,7 @@ import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios, getOwner
 import ServiceCard from "@/components/ServiceCard";
 import ConstraintChip from "@/components/ConstraintChip";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
+import { FlockAvatar } from "@/components/FlockAvatar";
 import { toast } from "sonner";
 
 const TOTAL_ROUNDS = 3;
@@ -359,7 +360,7 @@ export default function Play() {
               {data.scenario.hint && (
                 <div className="border-t border-white/5 pt-3 mb-3" data-testid="mentor-hint">
                   <div className="flex items-start gap-2">
-                    <span className="text-2xl leading-none shrink-0" aria-hidden="true">🦅</span>
+                    <FlockAvatar size={28} className="shrink-0" />
                     <div className="text-xs text-zinc-300 leading-relaxed min-w-0 break-words">
                       {playerName && (
                         <p className="mb-1.5 text-zinc-200" data-testid="flock-greeting">

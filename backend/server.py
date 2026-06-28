@@ -16,6 +16,7 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 from seed_data import SERVICE_CARDS, SCENARIOS, CONSTRAINTS
+from learn_content import enrich_cards, EXAM_TRACKS
 from game_engine import score_round
 from commentary import generate_commentary
 
@@ -83,6 +84,17 @@ async def get_scenarios():
 @api_router.get("/cards/constraints")
 async def get_constraints():
     return {"constraints": CONSTRAINTS}
+
+
+@api_router.get("/learn/cards")
+async def get_learn_cards():
+    """Enriched service cards for Learn mode (additive study fields). Read-only."""
+    return {"cards": enrich_cards(), "tracks": EXAM_TRACKS}
+
+
+@api_router.get("/learn/tracks")
+async def get_learn_tracks():
+    return {"tracks": EXAM_TRACKS}
 
 
 @api_router.get("/game/deal")

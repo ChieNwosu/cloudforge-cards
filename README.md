@@ -14,9 +14,54 @@ No login required. Play a full 3-round session, view your score breakdown, and l
 
 ## Current Release
 
-**CloudForge Cards v0.2.6: Mobile and Leaderboard Maintenance**
+**CloudForge Cards v0.3: Perpetual Learning, Learn Flashcards**
 
-Improved mobile handheld usability for iPhone and in-app browsers.
+CloudForge Cards now includes a route-isolated Perpetual Learning experience alongside the original 3-round AWS architecture card game.
+
+Live demo: https://cloudforge-cards.emergent.host/
+
+### What is new in v0.3
+
+* Added `/learn` as the Perpetual Learning hub
+* Added `/learn/cards` as a Quizlet-style flashcard study mode
+* Added exam-track filtering for CLF/SAA, AIF, MLA, and Mixed study
+* Added Learn-only service card metadata such as use cases, common pairings, anti-patterns, study tips, and flashcard content
+* Added local-only progress for Known and Review cards
+* Added Professor Flock beta avatar across Learn and Play
+* Made Certification Prep a filter layer, not a separate mode
+* Kept Test Mode and Match Mode as coming-soon features
+* Preserved the existing 3-round game, scoring engine, final summary, and leaderboard
+
+### Perpetual Learning
+
+The Perpetual Learning mode is designed for repeat study outside the main game loop.
+
+Current modes:
+
+* **Learn Flashcards:** live in v0.3
+* **Test Mode:** coming soon
+* **Match / Fill in the Blank:** coming soon
+* **Certification Prep:** active as a track filter across learning modes
+
+Tagline:
+
+**Forge Your Cloud Mastery**
+
+### Certification Tracks
+
+The Learn experience currently supports these study filters:
+
+* CLF/SAA
+* AIF
+* MLA
+* Mixed
+
+The current content bank is strongest for CLF/SAA. AIF and MLA tags are included where relevant and will expand in later releases.
+
+### Release Notes
+
+See [`docs/release-notes/v0.3.md`](docs/release-notes/v0.3.md).
+
 
 ---
 

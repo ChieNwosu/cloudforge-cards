@@ -98,16 +98,20 @@ export default function LearnHub() {
           desc="Assemble AWS architecture pipelines with partial credit. Coming soon."
         />
 
-        <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5" data-testid="mode-cert-prep">
+        <Link
+          to="/learn/cards"
+          data-testid="mode-cert-prep"
+          className="group rounded-lg border border-white/10 bg-[#0C0E11] p-5 hover:border-[#D4AF37]/50 transition-colors"
+        >
           <div className="flex items-center justify-between mb-3">
             <GraduationCap className="text-[#D4AF37]" size={22} />
+            <ArrowRight className="text-zinc-600 group-hover:text-white transition-colors" size={18} />
           </div>
           <h3 className="font-bold text-lg mb-1">Certification Prep</h3>
           <p className="text-sm text-zinc-400 break-words">
-            Use the exam track selector above to scope your study content for CLF/SAA, AIF, or MLA.
-            More AIF and MLA cards are coming soon.
+            Open track-filtered flashcards for CLF/SAA, AIF, MLA, or Mixed study. Your selected track above scopes the deck.
           </p>
-        </div>
+        </Link>
       </div>
     </div>
   );

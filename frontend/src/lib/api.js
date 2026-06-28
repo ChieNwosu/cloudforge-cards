@@ -46,3 +46,6 @@ export function getOwnerToken() {
 
 export const getScenarios = () =>
   api.get("/cards/scenarios").then(r => r.data.scenarios);
+
+export const getLearnCards = () =>
+  api.get("/learn/cards").then(r => r.data);

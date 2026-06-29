@@ -70,28 +70,32 @@ CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expa
 
 See [`docs/release-notes/v0.3.md`](docs/release-notes/v0.3.md) for the full v0.3 changelog.
 
----
-
 ## Screenshots
 
-Screenshots will be added to [`docs/screenshots/`](docs/screenshots/README.md) as they are captured from the live deployment. See [`docs/screenshots/v0.3/README.md`](docs/screenshots/v0.3/README.md) for v0.3 planned captures.
+Screenshots are stored in [`docs/screenshots`](docs/screenshots/README.md).
 
----
+Current screenshot sets:
+
+* [`v0.2.5 deployed game screenshots`](docs/screenshots/v0.2.5/)
+* [`v0.3 Learn Flashcards screenshots`](docs/screenshots/v0.3/README.md)
+
+The v0.3 screenshot folder currently contains placeholders for Learn hub and Learn Flashcards captures. Add live app screenshots after capturing them from the deployed build.
 
 ## Features
 
-- 33 AWS service cards across 9 categories (Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, AI)
-- 10 real-world cloud architecture scenarios with varying difficulty
-- 8 constraint chips that shape design decisions (Low Cost, High Availability, Serverless, Secure, Scalable, Beginner Friendly, Low Latency, Observability)
-- Transparent, rule-based scoring engine with six explainable sub-scores
-- Synergy detection for well-known AWS service pairings
-- Ideal architecture matching with guardrails for fairness
-- Perpetual Learning hub with flashcard study mode
-- Exam-track filtering (CLF/SAA, AIF, MLA, Mixed)
-- Professor Flock beta avatar for guided learning
-- Optional LLM-powered commentary via Claude for personalized feedback
-- Leaderboard with persistent high scores
-- Dark theme "cloud lab" UI with tactile card interactions
+* 33 AWS service cards across 9 categories: Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, AI
+* 10 real-world cloud architecture scenarios with varying difficulty
+* 8 constraint chips that shape design decisions: Low Cost, High Availability, Serverless, Secure, Scalable, Beginner Friendly, Low Latency, Observability
+* Transparent rule-based scoring engine with six explainable sub-scores
+* Synergy detection for well-known AWS service pairings
+* Ideal architecture matching with guardrails for fairness
+* Perpetual Learning hub with flashcard study mode
+* Exam-track filtering: CLF/SAA, AIF, MLA, Mixed
+* Professor Flock beta avatar for guided learning
+* Optional LLM-powered commentary through Claude for personalized feedback
+* Leaderboard with persistent high scores
+* Dark theme Cloud Lab UI with tactile card interactions
+
 
 ## Gameplay Overview
 
@@ -100,6 +104,34 @@ Screenshots will be added to [`docs/screenshots/`](docs/screenshots/README.md) a
 3. **Explain Phase:** Optionally write a short rationale for your design choices (up to +5 bonus points).
 4. **Score Phase:** The engine evaluates your selection across six dimensions and provides a detailed breakdown plus commentary.
 5. **Session:** A full game session consists of 3 rounds with unique scenarios. Your total score lands on the leaderboard.
+
+## Screenshots
+
+### Landing Page
+
+![Landing Page](docs/screenshots/v0.2.5/landing-page.png)
+
+### Round 1: Play Screen
+
+![Round 1 Play Screen](docs/screenshots/v0.2.5/round-1-play-screen.png)
+
+### Score Breakdown
+
+![Round 1 Score Breakdown](docs/screenshots/v0.2.5/round-1-score-breakdown.png)
+
+### Final Game Summary
+
+![Final Game Summary](docs/screenshots/v0.2.5/final-game-summary.png)
+
+### Leaderboard
+
+![Leaderboard](docs/screenshots/v0.2.5/leaderboard.png)
+
+These screenshots show a manual QA solo run used to verify gameplay, scoring behavior, final summary, and leaderboard flow. The different scores are test examples across scenarios and should not be interpreted as a formal assessment of the creator's AWS knowledge.
+
+See the [full screenshot set in docs/screenshots](docs/screenshots).
+
+---
 
 ## Scoring Overview
 
@@ -202,10 +234,86 @@ yarn test
 
 See [docs/roadmap.md](docs/roadmap.md) for the full version plan.
 
-**Current (v0.3):** Perpetual Learning hub, Learn Flashcards, exam-track filtering
-**Next (v0.3 Phase 2):** Test Mode
-**Planned (v0.4):** AWS-native deployment, accounts, DynamoDB migration
-**Future (v0.5):** Bedrock-enhanced AI feedback
+## Roadmap
+
+### Current Release
+
+**v0.3 Phase 1: Perpetual Learning, Learn Flashcards**
+
+Status: Complete
+
+Includes:
+
+* Perpetual Learning hub
+* Learn Flashcards route
+* Exam-track filtering for CLF/SAA, AIF, MLA, and Mixed
+* Professor Flock beta avatar
+* Local-only Known and Review progress
+* Certification Prep as a filter layer
+* Test Mode and Match Mode marked as coming soon
+
+### Next Phase
+
+**v0.3 Phase 2: Test Mode**
+
+Planned focus:
+
+* 15-question quiz sessions
+* Server-side grading
+* Track-filtered question banks
+* Multiple choice, true/false, and scenario-based questions
+* Score review with explanations
+* Local best score per track
+* Link missed topics back to Learn Flashcards
+
+### Planned Later Phases
+
+**v0.3 Phase 3: Match / Fill in the Blank**
+
+* Architecture pipeline assembly
+* Tap-select MVP before drag-and-drop
+* Partial credit and explanations
+* Professor Flock hints
+
+**v0.3 Phase 4: Certification Prep Expansion**
+
+* Expand AIF and MLA content
+* Add more exam-domain metadata
+* Improve track-specific review guidance
+
+**v0.3 Phase 5: Audio and Gamification Polish**
+
+* Optional sound effects
+* Optional background music toggle
+* Count-up animation
+* Confetti or celebration effects for strong results
+
+### Completed Maintenance
+
+**v0.2.6: Mobile and Leaderboard Maintenance**
+
+* Mobile Play page responsiveness
+* US English copy sweep
+* Unique official leaderboard save behavior
+* Safe local score deletion
+* Professor Flock greeting
+* Mobile filter scroll affordance
+* Play page text wrapping fixes
+
+### Future Architecture
+
+**v0.4 and later**
+
+* Guest mode with temporary scores
+* Registered profiles
+* Score history
+* Progress over time
+* Favorite services and weak areas
+* AWS-native deployment planning
+* Microsoft Entra or Cognito authentication planning
+* DynamoDB TTL for temporary guest scores
+* Bedrock-enhanced AI feedback
+
 
 ## Project Structure
 
@@ -238,6 +346,8 @@ cloudforge-cards/
 - [AWS Deployment Options](docs/aws-deployment-options.md)
 - [CLF Knowledge Integration](docs/clf-knowledge-integration.md)
 - [Content Pipeline](docs/content-pipeline.md)
+- [Release Notes: v0.2.5](docs/release-notes/v0.2.5.md)
+- [Screenshots](docs/screenshots/README.md)
 
 ## Disclaimer
 

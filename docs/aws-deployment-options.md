@@ -4,10 +4,9 @@ This document compares deployment paths for CloudForge Cards, from the fastest n
 
 ## Important Clarifications
 
-- **Amazon Bedrock is not the primary hosting platform for this app.** Bedrock is an AI/ML service for accessing foundation models. It should be used later for AI feedback, card generation, or Professor Flock explanations, not for hosting the application itself.
-- **The fastest near-term deployment path is Emergent deployment when credits are available.** This requires no architectural changes.
-- **Emergent deployment is now live** at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/).
-- **The strongest AWS portfolio path is a later AWS-native deployment** using API Gateway, Lambda, DynamoDB, and related services. This demonstrates real cloud architecture skills.
+- **The current live demo is hosted on the Emergent platform** at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/). This is a non-AWS deployment used for quick public access.
+- **Amazon Bedrock is not the hosting platform for this app.** Bedrock is an AI/ML service for accessing foundation models. It is planned as a future AI feature layer for feedback, card generation, or Professor Flock explanations.
+- **The strongest AWS portfolio path is a future AWS-native deployment** using API Gateway, Lambda, DynamoDB, and related services. This demonstrates real cloud architecture skills and is documented below as a separate milestone.
 
 ---
 
@@ -30,7 +29,7 @@ This document compares deployment paths for CloudForge Cards, from the fastest n
 
 **When to choose:** When you need a live demo link quickly for portfolio reviews or job applications.
 
-**Status:** Live as of v0.2.5. Full-stack deployment running (React frontend, FastAPI backend, MongoDB).
+**Status:** Active. Live at [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/). No code changes were required for deployment.
 
 ---
 

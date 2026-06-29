@@ -1,6 +1,8 @@
 # CloudForge Cards
 
-A gamified AWS architecture trainer where players solve cloud architecture scenarios by selecting AWS service cards, matching constraints, and receiving explainable scoring feedback.
+**Forge Your Cloud Mastery**
+
+CloudForge Cards is a gamified AWS architecture trainer and study tool where learners practice AWS service selection, cloud architecture reasoning, and certification-aligned review through card gameplay and flashcards.
 
 ---
 
@@ -8,7 +10,7 @@ A gamified AWS architecture trainer where players solve cloud architecture scena
 
 **Try it now:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
 
-No login required. Play a full 3-round session, view your score breakdown, and land on the leaderboard.
+No login required. Play a full 3-round session, study with flashcards, view your score breakdown, and land on the leaderboard.
 
 ---
 
@@ -18,64 +20,82 @@ No login required. Play a full 3-round session, view your score breakdown, and l
 
 CloudForge Cards now includes a route-isolated Perpetual Learning experience alongside the original 3-round AWS architecture card game.
 
-Live demo: https://cloudforge-cards.emergent.host/
-
 ### What is new in v0.3
 
-* Added `/learn` as the Perpetual Learning hub
-* Added `/learn/cards` as a Quizlet-style flashcard study mode
-* Added exam-track filtering for CLF/SAA, AIF, MLA, and Mixed study
-* Added Learn-only service card metadata such as use cases, common pairings, anti-patterns, study tips, and flashcard content
-* Added local-only progress for Known and Review cards
-* Added Professor Flock beta avatar across Learn and Play
-* Made Certification Prep a filter layer, not a separate mode
-* Kept Test Mode and Match Mode as coming-soon features
-* Preserved the existing 3-round game, scoring engine, final summary, and leaderboard
+- Added `/learn` Perpetual Learning hub
+- Added `/learn/cards` Learn Flashcards (Quizlet-style flip cards)
+- Added exam-track selector for CLF/SAA, AIF, MLA, and Mixed
+- Added service-card study metadata (use cases, common pairings, anti-patterns, study tips)
+- Added Professor Flock beta avatar
+- Added Known and Review local progress tracking
+- Made Certification Prep a filter layer across learning content
+- Kept Test Mode and Match Mode as coming soon
+- Preserved the original 3-round game, v0.2.5 scoring engine, final summary, and leaderboard
 
 ### Perpetual Learning
 
 The Perpetual Learning mode is designed for repeat study outside the main game loop.
 
-Current modes:
+**Current modes:**
 
-* **Learn Flashcards:** live in v0.3
-* **Test Mode:** coming soon
-* **Match / Fill in the Blank:** coming soon
-* **Certification Prep:** active as a track filter across learning modes
-
-Tagline:
-
-**Forge Your Cloud Mastery**
+- **Learn Flashcards:** live in v0.3
+- **Test Mode:** coming soon
+- **Match / Fill in the Blank:** coming soon
+- **Certification Prep:** active as a track filter across learning modes (not a separate engine)
 
 ### Certification Tracks
 
 The Learn experience currently supports these study filters:
 
-* CLF/SAA
-* AIF
-* MLA
-* Mixed
+| Track | Coverage |
+|-------|----------|
+| CLF/SAA | Strongest coverage. Core foundation services. |
+| AIF | Early beta. AI and generative AI services tagged where relevant. |
+| MLA | Early beta. ML workflow services tagged where relevant. |
+| Mixed | All cards from all tracks combined. |
 
-The current content bank is strongest for CLF/SAA. AIF and MLA tags are included where relevant and will expand in later releases.
+CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expand in later releases.
+
+### Routes
+
+| Route | Description |
+|-------|-------------|
+| `/play` | 3-round AWS architecture card game |
+| `/learn` | Perpetual Learning hub |
+| `/learn/cards` | Learn Flashcards |
+| `/leaderboard` | Session leaderboard |
+| `/how-to-play` | Rules and scoring reference |
 
 ### Release Notes
 
-See [`docs/release-notes/v0.3.md`](docs/release-notes/v0.3.md).
+See [`docs/release-notes/v0.3.md`](docs/release-notes/v0.3.md) for the full v0.3 changelog.
 
+## Screenshots
 
----
+Screenshots are stored in [`docs/screenshots`](docs/screenshots/README.md).
+
+Current screenshot sets:
+
+* [`v0.2.5 deployed game screenshots`](docs/screenshots/v0.2.5/)
+* [`v0.3 Learn Flashcards screenshots`](docs/screenshots/v0.3/README.md)
+
+The v0.3 screenshot folder currently contains placeholders for Learn hub and Learn Flashcards captures. Add live app screenshots after capturing them from the deployed build.
 
 ## Features
 
-- 30 AWS service cards across 9 categories (Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, AI)
-- 10 real-world cloud architecture scenarios with varying difficulty
-- 8 constraint chips that shape design decisions (Low Cost, High Availability, Serverless, Secure, Scalable, Beginner Friendly, Low Latency, Observability)
-- Transparent, rule-based scoring engine with six explainable sub-scores
-- Synergy detection for well-known AWS service pairings
-- Ideal architecture matching with guardrails for fairness
-- Optional LLM-powered commentary via Claude for personalized feedback
-- Leaderboard with persistent high scores
-- Dark theme "cloud lab" UI with tactile card interactions
+* 33 AWS service cards across 9 categories: Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, AI
+* 10 real-world cloud architecture scenarios with varying difficulty
+* 8 constraint chips that shape design decisions: Low Cost, High Availability, Serverless, Secure, Scalable, Beginner Friendly, Low Latency, Observability
+* Transparent rule-based scoring engine with six explainable sub-scores
+* Synergy detection for well-known AWS service pairings
+* Ideal architecture matching with guardrails for fairness
+* Perpetual Learning hub with flashcard study mode
+* Exam-track filtering: CLF/SAA, AIF, MLA, Mixed
+* Professor Flock beta avatar for guided learning
+* Optional LLM-powered commentary through Claude for personalized feedback
+* Leaderboard with persistent high scores
+* Dark theme Cloud Lab UI with tactile card interactions
+
 
 ## Gameplay Overview
 
@@ -214,9 +234,86 @@ yarn test
 
 See [docs/roadmap.md](docs/roadmap.md) for the full version plan.
 
-**Near-term (v0.2.6):** US English copy sweep, unique leaderboard names, suggested names when taken, optional audio toggle, service-card tooltips, move "not core to scenario" feedback to What To Improve, shareable result card
-**Mid-term (v0.3):** CLF Mode, SAA Mode, Obsidian note integration, more scenarios
-**Long-term (v0.4+):** AWS-native deployment, Bedrock-enhanced AI feedback
+## Roadmap
+
+### Current Release
+
+**v0.3 Phase 1: Perpetual Learning, Learn Flashcards**
+
+Status: Complete
+
+Includes:
+
+* Perpetual Learning hub
+* Learn Flashcards route
+* Exam-track filtering for CLF/SAA, AIF, MLA, and Mixed
+* Professor Flock beta avatar
+* Local-only Known and Review progress
+* Certification Prep as a filter layer
+* Test Mode and Match Mode marked as coming soon
+
+### Next Phase
+
+**v0.3 Phase 2: Test Mode**
+
+Planned focus:
+
+* 15-question quiz sessions
+* Server-side grading
+* Track-filtered question banks
+* Multiple choice, true/false, and scenario-based questions
+* Score review with explanations
+* Local best score per track
+* Link missed topics back to Learn Flashcards
+
+### Planned Later Phases
+
+**v0.3 Phase 3: Match / Fill in the Blank**
+
+* Architecture pipeline assembly
+* Tap-select MVP before drag-and-drop
+* Partial credit and explanations
+* Professor Flock hints
+
+**v0.3 Phase 4: Certification Prep Expansion**
+
+* Expand AIF and MLA content
+* Add more exam-domain metadata
+* Improve track-specific review guidance
+
+**v0.3 Phase 5: Audio and Gamification Polish**
+
+* Optional sound effects
+* Optional background music toggle
+* Count-up animation
+* Confetti or celebration effects for strong results
+
+### Completed Maintenance
+
+**v0.2.6: Mobile and Leaderboard Maintenance**
+
+* Mobile Play page responsiveness
+* US English copy sweep
+* Unique official leaderboard save behavior
+* Safe local score deletion
+* Professor Flock greeting
+* Mobile filter scroll affordance
+* Play page text wrapping fixes
+
+### Future Architecture
+
+**v0.4 and later**
+
+* Guest mode with temporary scores
+* Registered profiles
+* Score history
+* Progress over time
+* Favorite services and weak areas
+* AWS-native deployment planning
+* Microsoft Entra or Cognito authentication planning
+* DynamoDB TTL for temporary guest scores
+* Bedrock-enhanced AI feedback
+
 
 ## Project Structure
 
@@ -225,14 +322,16 @@ cloudforge-cards/
   backend/
     server.py          # FastAPI application and routes
     game_engine.py     # v0.2.5 scoring engine (6 sub-scores)
+    learn_content.py   # v0.3 Learn mode content and study metadata
     seed_data.py       # Service cards, scenarios, constraints, synergies
     commentary.py      # LLM commentary layer (Claude Sonnet)
     tests/             # Backend test suite
   frontend/
     src/
       App.js           # Main application router
-      components/      # React components (ServiceCard, ScoreBreakdown, Nav, etc.)
-    public/            # Static assets
+      components/      # React components (ServiceCard, ScoreBreakdown, FlockAvatar, Nav, etc.)
+      pages/           # Page components (Play, LearnHub, LearnCards, Leaderboard, etc.)
+    public/            # Static assets (including Professor Flock avatar)
   docs/                # Documentation
   obsidian-export/     # Starter Obsidian notes for AWS CLF study
 ```
@@ -242,6 +341,8 @@ cloudforge-cards/
 - [Style Guide](docs/style-guide.md)
 - [Roadmap](docs/roadmap.md)
 - [Testing](docs/testing.md)
+- [Perpetual Learning](docs/perpetual-learning.md)
+- [v0.3 Release Notes](docs/release-notes/v0.3.md)
 - [AWS Deployment Options](docs/aws-deployment-options.md)
 - [CLF Knowledge Integration](docs/clf-knowledge-integration.md)
 - [Content Pipeline](docs/content-pipeline.md)
@@ -250,7 +351,7 @@ cloudforge-cards/
 
 ## Disclaimer
 
-Unofficial educational project. Not affiliated with Amazon Web Services.
+Unofficial educational project. Not affiliated with Amazon Web Services or North Carolina Central University.
 
 ## Attribution
 

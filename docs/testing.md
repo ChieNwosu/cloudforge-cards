@@ -2,7 +2,7 @@
 
 ## Overview
 
-CloudForge Cards v0.2.5 uses automated acceptance tests for the scoring engine and a manual QA checklist for gameplay validation.
+CloudForge Cards uses automated acceptance tests for the scoring engine, Learn mode API tests, and manual QA checklists for gameplay and study mode validation.
 
 ---
 
@@ -197,3 +197,44 @@ Final manual QA performed against the live deployment at [https://cloudforge-car
 - Commentary falls back to rule-based summary when no LLM key is configured.
 - Constraint chips display and influence scoring as expected.
 - No critical issues observed during deployed QA.
+
+---
+
+## v0.3 Phase 1: Learn Flashcards Testing
+
+### Automated Tests
+
+Location: `backend/tests/test_v03_learn.py`
+
+```bash
+cd backend
+python -m pytest tests/test_v03_learn.py -v
+```
+
+### Manual QA Checklist (v0.3)
+
+| Check | Result |
+|-------|--------|
+| `/learn` hub page loads | Pass |
+| `/learn/cards` flashcards page loads | Pass |
+| Flashcards flip on click/tap | Pass |
+| Track selector (CLF/SAA, AIF, MLA, Mixed) filters cards | Pass |
+| Category filter narrows displayed cards | Pass |
+| Search filters cards by title and description | Pass |
+| Known/Review local progress persists across page reloads | Pass |
+| Clear local progress resets all progress state | Pass |
+| Play mode (`/play`) still works after Learn additions | Pass |
+| Scoring acceptance tests still pass | Pass |
+| Leaderboard still works | Pass |
+| Mobile layout remains usable | Pass |
+| Frontend compiles without errors | Pass |
+| Backend tests pass | Pass |
+| No real secrets committed | Pass |
+
+### What the v0.3 Tests Validate
+
+- Learn content API returns enriched card data with study metadata
+- Exam-track filtering returns only correctly tagged cards
+- Card enrichment does not break the existing game engine (game reads raw SERVICE_CARDS)
+- Frontend routes resolve correctly for `/learn` and `/learn/cards`
+- localStorage progress operations (read, write, clear) work without errors

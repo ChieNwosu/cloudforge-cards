@@ -8,14 +8,27 @@ The scoring engine is transparent, rule-based, and fair. Six sub-scores total 10
 
 ## v0.2.6: Player Polish
 
-Focus: Quality-of-life improvements and small UX wins.
+Focus: Quality-of-life improvements, copy cleanup, and small UX wins.
 
-- [ ] Persist player name to localStorage (no re-entry between sessions)
+- [ ] US English copy sweep (memorization, behavior, color, analyze, organize)
+- [ ] Unique leaderboard names (reject duplicates)
+- [ ] Suggested available names when a player name is already taken
+- [ ] Optional audio toggle and classroom-friendly sound effects
 - [ ] Service-card tooltips visible on hover/tap during gameplay
 - [ ] Move "not core to scenario" feedback from "What You Got Right" into "What to Improve"
 - [ ] Shareable result card (image or link format for social sharing)
+- [ ] Persist player name to localStorage (no re-entry between sessions)
 - [ ] Minor copy improvements based on playtest feedback
 - [ ] Accessibility audit (keyboard navigation, screen reader labels)
+
+### Future Account System (not in v0.2.6, documented for planning)
+
+These features are candidates for a later version when AWS-native deployment is active:
+
+- Guest scores expire after 168 hours (DynamoDB TTL can support this in a future AWS version)
+- Registered users can save game history
+- User profiles can show previous runs
+- Cognito can support registered accounts in a future AWS version
 
 ---
 

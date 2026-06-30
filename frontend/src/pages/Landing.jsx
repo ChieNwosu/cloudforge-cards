@@ -26,17 +26,18 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-6 pt-20 pb-24 lg:pt-28 lg:pb-32 grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-7 cf-fade-up">
             <div className="inline-flex items-center gap-2 border border-white/10 bg-white/[0.03] px-3 py-1 rounded-full text-xs font-mono uppercase tracking-[0.18em] text-zinc-300 mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00E676]" /> Cloud architecture · card game
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00E676]" /> Play · Learn · Test
             </div>
+            <p className="text-sm font-mono uppercase tracking-[0.16em] text-[#D4AF37] mb-3" data-testid="hero-tagline">Forge Your Cloud Mastery</p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tight">
               Design AWS<br />
               architectures.<br />
               <span className="text-[#7E1818]">Card by card.</span>
             </h1>
             <p className="mt-6 text-lg text-zinc-300 max-w-xl leading-relaxed">
-              CloudForge Cards is an educational AWS card game. Read a scenario,
-              pick the right services, justify your design, and get an
-              explainable score back, instantly.
+              CloudForge Cards is a gamified AWS architecture trainer and study tool.
+              Play architecture rounds, study service flashcards, and test your cloud
+              knowledge with track-filtered quizzes.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -47,11 +48,18 @@ export default function Landing() {
                 Start solo run <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
-                to="/how-to-play"
-                data-testid="hero-rules-button"
+                to="/learn/cards"
+                data-testid="hero-flashcards-button"
                 className="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 hover:bg-white/5 text-white px-6 py-3 rounded-md font-semibold transition-colors"
               >
-                Read the rules
+                Study flashcards
+              </Link>
+              <Link
+                to="/learn/test"
+                data-testid="hero-test-button"
+                className="inline-flex items-center gap-2 border border-[#D4AF37]/40 hover:border-[#D4AF37]/70 hover:bg-[#D4AF37]/10 text-[#E6C75A] px-6 py-3 rounded-md font-semibold transition-colors"
+              >
+                Start test mode
               </Link>
             </div>
             <div className="mt-10 flex items-center gap-6 text-sm text-zinc-400 font-mono">
@@ -82,6 +90,12 @@ export default function Landing() {
               title="S3" category="Storage" tags={["object", "durable"]}
               className="absolute top-56 left-44 -rotate-3"
             />
+            {/* v0.3 study accent: a small flashcard / quiz element */}
+            <div className="absolute bottom-0 left-6 rotate-[-2deg] w-52 bg-[#0C0E11] border border-[#D4AF37]/40 rounded-lg p-4 z-20 cf-glow" data-testid="hero-study-card">
+              <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-[#D4AF37] mb-1">Flashcards · Quiz</div>
+              <div className="text-base font-bold mb-1">Test your cloud instincts</div>
+              <div className="text-[11px] text-zinc-400">Flip cards, then take a 15-question track quiz.</div>
+            </div>
           </div>
         </div>
       </section>
@@ -144,7 +158,7 @@ export default function Landing() {
           <span data-testid="footer-disclaimer">
             Unofficial educational project. Not affiliated with Amazon Web Services.
           </span>
-          <span>v0.2 · solo mode</span>
+          <span data-testid="footer-version">v0.3 · Perpetual Learning</span>
         </div>
       </footer>
     </div>

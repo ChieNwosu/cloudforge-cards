@@ -31,9 +31,9 @@ Learn Mode is the first Perpetual Learning experience, launched in v0.3 Phase 1.
 Certification Prep is not a separate engine or standalone mode. It is a filter layer that works across all learning modes (Learn, Test, and Match).
 
 When a learner selects a track:
-- Only cards tagged for that track are shown
+- Only cards and questions tagged for that track are shown
 - Content emphasis shifts to match the selected exam scope
-- Progress is tracked per-track in localStorage
+- Progress and scores are tracked per-track in localStorage
 
 **Current tracks:**
 
@@ -48,16 +48,54 @@ CLF/SAA has the strongest coverage. AIF and MLA tags are applied conservatively,
 
 ---
 
-## Planned: Test Mode (v0.3 Phase 2)
+## Test Mode (v0.3 Phase 2, complete)
 
-Test Mode will add active recall through multiple-choice and true/false questions.
+Test Mode adds active recall through multiple-choice, true/false, and scenario service-selection questions.
 
 **Key design decisions:**
 - Questions generated from the service-card study content
 - Answer keys stored server-side (not shipped to the browser)
 - Track-filtered: same exam-track selector applies
-- Professor Flock provides explanations for correct and incorrect answers
+- Review explanations for correct and incorrect answers
 - Score tracking for test completions (separate from the game leaderboard)
+
+---
+
+## Test Mode Overview
+
+Test Mode is the second Perpetual Learning experience, launched in v0.3 Phase 2.
+
+**Route:** `/learn/test`
+
+**What it does:**
+- Generates a 15-question quiz session from the service-card question bank
+- Questions include multiple choice, true/false, and scenario service-selection formats
+- Each question is graded server-side (the frontend never receives answer keys)
+- After completing all 15 questions, a final score screen shows a count-up animation
+- Review explanations are available for every question (both correct and incorrect)
+- Recommended review areas highlight weak topics based on missed questions
+- A "Reinforce in Flashcards" button links missed topics back to `/learn/cards`
+- Local best and latest scores are tracked per track in localStorage
+
+**Design principle:** Test Mode provides active recall with immediate feedback. It grades but does not penalize: learners can retake quizzes freely and track improvement over time.
+
+### Server-Side Grading
+
+Answer keys are never shipped to the browser. The grading flow:
+
+1. Frontend requests a quiz session from `GET /api/learn/test/start?track=CLF_SAA`
+2. The server returns 15 questions with answer options but no correct-answer indicators
+3. For each answer, the frontend POSTs to `/api/learn/test/grade`
+4. The server returns whether the answer was correct, the correct answer, and an explanation
+
+This design ensures players cannot inspect the page source or network traffic to find answers before submitting.
+
+### Score Tracking
+
+- Best and latest scores are stored per track in localStorage
+- Scores are displayed on the Test Mode start screen for motivation
+- Scores are separate from the game leaderboard (Test Mode does not post to the leaderboard)
+- A future account system will enable server-side score persistence
 
 ---
 

@@ -49,7 +49,59 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
-## v0.2.6.1 — Leaderboard save hygiene (2026-06-26, DONE)
+## v0.3 Phase 3 — Match mode, scoring transparency, round modes, leaderboard expansion (2026-06-30, DONE)
+Tested end-to-end (testing iteration_6: backend 14/14 e2e + 11/11 phase3 local + 5/5 scoring
+regression; frontend 100% on all acceptance criteria; zero console errors). All US English,
+no em dashes.
+
+- **Part A — Match / Fill in the Blank** (`backend/match_bank.py`, new endpoints
+  `GET /api/learn/match/session?track=` and `POST /api/learn/match/grade`, page
+  `frontend/src/pages/LearnMatch.jsx`, route `/learn/match`). Server-side grading; answer
+  keys (`correct` per slot) are stripped before reaching the client. Tap-to-select a tray
+  service then tap a slot to place; partial credit with per-slot status
+  correct/misplaced/wrong/missing; Flock explanation; per-pipeline + count-up average result
+  screen (reuses CSS-only confetti, no new dependency). 6 pipelines across CLF_SAA + MLA.
+  Hub Match card enabled (was Coming Soon). Local progress: `cf_match_progress`.
+- **Part B — Scoring transparency** (`game_engine._simplicity`, `ScoreBreakdown.jsx`,
+  `HowToPlay.jsx`). Simplicity sub-score now returns `state` (right_sized | overengineered |
+  too_thin) and `lost`. UI shows an explicit tag: green "Simplicity Score: +X / 10" or red
+  "Overengineering penalty: -X (kept +Y / 10)". How to Play rubric rewritten with +0 to +N
+  ranges and an explanation of why a perfect ideal match can still score under 100 (e.g. no
+  active constraint caps Constraint Alignment at 10/20). Ideal architectures are NOT force-set
+  to 100; transparency over artificial perfection (user decision).
+- **Part C — Explanation overflow** (`game_engine.score_round`, `Play.jsx`,
+  `ScoreBreakdown.jsx`). Raw total is computed (guardrail floors applied first), the visible
+  round score is capped at 100, and any explanation points above 100 are returned as
+  `overflow_bonus`. Round card shows an overflow note; session total adds banked overflow and
+  the final summary explains it (base from capped rounds + overflow bonus). Per-round history
+  carries `overflow`.
+- **Part D — Round modes 3R / 5R / 10R** (`Play.jsx`, `Landing.jsx`). New round-mode picker
+  on /play (data-testid round-mode-select, options round-mode-3/5/10); `rounds` state replaces
+  the old fixed best-of-3; `?rounds=N` deep link auto-starts (Landing hero quick-start chips).
+  Session denominator is rounds*100; round-progress chips wrap. 10 scenarios total so 10R uses
+  all of them. Backend `GET /api/game/session?rounds=` already supported N.
+- **Part E — Per-mode leaderboard** (`server.py` add_leaderboard, `Leaderboard.jsx`). Official
+  best is keyed by (name_key, rounds): a player keeps one best per mode. Saving a mode updates
+  only that mode; lower score is kept, higher updates; different owner_token for a name still
+  conflicts with suggestions. Desktop table Player | 3R Best | 5R Best | 10R Best (responsive,
+  contained horizontal scroll on mobile). Guest scores listed separately with a guest label.
+  "Your saved scores" panel lists each saved mode with a per-mode delete button; deleting one
+  mode removes only that entry; no remaining entries removes the row. GET limit raised to 300
+  for client aggregation. Client stores `cf_my_scores` (per-mode map) plus legacy `cf_my_score`.
+- **Part F — Professor Flock transparent avatar** (`FlockAvatar.jsx`,
+  `frontend/public/professor-flock.png`). Generated a transparent-background bust from the
+  concept art (Gemini Nano Banana); FlockAvatar now uses the PNG in a circular dark frame
+  (object-top), emoji fallback retained. Applies everywhere via the shared component (Learn hub,
+  Flashcards, Test, Match, Play hints).
+
+- Tests added: `backend/tests/test_v03_phase3_scoring.py` (5), `backend/tests/test_v03_match.py`
+  (6), `backend/tests/test_v03_phase3_e2e.py` (testing-agent authored, 14).
+- Known minor (not fixed, not user-facing): `ScoreRequest` uses field `constraint_ids`; a client
+  posting `constraints` would be silently ignored by Pydantic. The real frontend posts the
+  correct key, so no app impact. Could add `extra='forbid'` or an alias later.
+
+
+
 - Official "personal best" upsert: names normalized (trim, collapse spaces,
   case-insensitive). New name -> create; same name + higher score by the same
   owner -> update; lower/equal -> keep. One canonical public row per name;

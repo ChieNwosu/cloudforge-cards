@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Loader2, RotateCcw, Send, Trophy, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { dealRound, scoreRound, submitLeaderboard, getSessionScenarios, getOwnerToken } from "@/lib/api";
 import ServiceCard from "@/components/ServiceCard";
@@ -8,7 +8,7 @@ import ScoreBreakdown from "@/components/ScoreBreakdown";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { toast } from "sonner";
 
-const TOTAL_ROUNDS = 3;
+const ROUND_MODES = [3, 5, 10];
 const FILTERS = [
   "All", "Compute", "Storage", "Database",
   "Security", "Analytics", "Networking", "Integration", "AI",
@@ -39,6 +39,8 @@ function getSelectedCards(selected, data) {
 }
 
 export default function Play() {
+  const [searchParams] = useSearchParams();
+  const [rounds, setRounds] = useState(null);   // null until a length is chosen
   const [round, setRound] = useState(1);
   const [data, setData] = useState(null);          // {scenario, constraints, hand}
   const [selected, setSelected] = useState([]);    // service ids
@@ -55,17 +57,28 @@ export default function Play() {
   const [suggestions, setSuggestions] = useState([]);
   const playerName = (localStorage.getItem("cf_player_name") || "").trim();
 
-  // Pick 3 unique scenario IDs once per session so rounds never repeat.
+  function startGame(n) {
+    setRounds(n);
+    setRound(1);
+    setHistory([]);
+    setResult(null);
+    setSubmitted(false);
+    setSuggestions([]);
+    setSaveMode("official");
+    getSessionScenarios(n).then(setSessionIds).catch(() => {});
+  }
+
+  // Honor a ?rounds=N deep link from the landing page (3, 5, or 10).
   useEffect(() => {
-    let cancelled = false;
-    getSessionScenarios(TOTAL_ROUNDS)
-      .then((ids) => { if (!cancelled) setSessionIds(ids); })
-      .catch(() => {});
-    return () => { cancelled = true; };
+    const q = parseInt(searchParams.get("rounds"), 10);
+    if (ROUND_MODES.includes(q)) startGame(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sessionDone = round > TOTAL_ROUNDS;
-  const sessionTotal = history.reduce((s, h) => s + h.total, 0);
+  const sessionDone = rounds !== null && round > rounds;
+  const sessionBase = history.reduce((s, h) => s + h.total, 0);
+  const overflowTotal = history.reduce((s, h) => s + (h.overflow || 0), 0);
+  const sessionTotal = sessionBase + overflowTotal;
 
   const minServices = data?.scenario?.min_services ?? 3;
   const maxServices = data?.scenario?.max_services ?? 6;
@@ -75,6 +88,7 @@ export default function Play() {
   const selectedCards = getSelectedCards(selected, data);
 
   useEffect(() => {
+    if (rounds === null) return undefined;
     if (sessionDone) return undefined;
     if (sessionIds.length === 0) return undefined;
     const scenarioId = sessionIds[round - 1];
@@ -91,7 +105,7 @@ export default function Play() {
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [round, sessionDone, sessionIds]);
+  }, [round, rounds, sessionDone, sessionIds]);
 
   function toggleCard(id) {
     setSelected((prev) => {
@@ -118,7 +132,7 @@ export default function Play() {
         explanation,
       });
       setResult(res);
-      setHistory((h) => [...h, { round, total: res.total, scenario: data.scenario.title }]);
+      setHistory((h) => [...h, { round, total: res.total, overflow: res.overflow_bonus || 0, scenario: data.scenario.title }]);
     } catch (e) {
       toast.error(e?.response?.data?.detail || "Scoring failed.");
     } finally {
@@ -128,10 +142,9 @@ export default function Play() {
 
   function nextRound() { setRound((r) => r + 1); }
   function resetSession() {
-    setRound(1); setHistory([]); setResult(null);
+    setRounds(null); setRound(1); setHistory([]); setResult(null);
     setSubmitted(false); setName(localStorage.getItem("cf_player_name") || "");
-    setSuggestions([]); setSaveMode("official");
-    getSessionScenarios(TOTAL_ROUNDS).then(setSessionIds).catch(() => {});
+    setSuggestions([]); setSaveMode("official"); setSessionIds([]);
   }
 
   async function saveScore() {
@@ -140,7 +153,7 @@ export default function Play() {
     setSuggestions([]);
     try {
       const res = await submitLeaderboard({
-        name: trimmed, total_score: sessionTotal, rounds: TOTAL_ROUNDS,
+        name: trimmed, total_score: sessionTotal, rounds,
         mode: saveMode, owner_token: getOwnerToken(),
       });
       if (res.status === "conflict") {
@@ -150,10 +163,13 @@ export default function Play() {
       }
       localStorage.setItem("cf_player_name", trimmed);
       if (res.entry?.id) {
-        localStorage.setItem("cf_my_score", JSON.stringify({
-          id: res.entry.id, name: res.entry.name,
-          total_score: res.entry.total_score, mode: res.entry.mode,
-        }));
+        const mine = { id: res.entry.id, name: res.entry.name,
+          total_score: res.entry.total_score, mode: res.entry.mode, rounds };
+        localStorage.setItem("cf_my_score", JSON.stringify(mine));
+        let map = {};
+        try { map = JSON.parse(localStorage.getItem("cf_my_scores") || "{}"); } catch { map = {}; }
+        map[String(rounds)] = mine;
+        localStorage.setItem("cf_my_scores", JSON.stringify(map));
       }
       setSubmitted(true);
       if (res.status === "kept") toast.message(res.message);
@@ -161,6 +177,38 @@ export default function Play() {
     } catch {
       toast.error("Could not save score.");
     }
+  }
+
+  if (rounds === null) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20" data-testid="round-mode-select">
+        <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Solo Play</div>
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-3">Choose your session length</h1>
+        <p className="text-zinc-400 mb-8 max-w-xl text-sm sm:text-base">
+          Each round is a fresh AWS scenario, scored out of 100. Pick how many rounds you want to forge.
+          Longer sessions are tracked separately on the leaderboard.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" data-testid="round-mode-options">
+          {ROUND_MODES.map((n) => (
+            <button
+              key={n}
+              onClick={() => startGame(n)}
+              data-testid={`round-mode-${n}`}
+              className="group text-left rounded-lg border border-white/10 bg-[#0C0E11] p-6 hover:border-[#7E1818]/60 hover:bg-[#7E1818]/[0.05] transition-colors"
+            >
+              <div className="text-4xl font-bold font-mono tracking-tighter mb-1">{n}<span className="text-lg text-zinc-500 ml-1">R</span></div>
+              <div className="text-sm font-semibold mb-1">{n}-Round Session</div>
+              <div className="text-xs text-zinc-500">
+                {n === 3 ? "Quick warm-up. Best for a fast practice run." :
+                 n === 5 ? "Balanced session across more scenarios." :
+                 "Full gauntlet, all ten scenarios. Max 1000 points."}
+              </div>
+              <div className="mt-4 text-xs font-mono uppercase tracking-[0.12em] text-zinc-600 group-hover:text-[#D89090]">Out of {n * 100} pts →</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (sessionDone) {
@@ -187,14 +235,19 @@ export default function Play() {
             <Trophy className="text-[#D32F2F]" />
             <h1 className="text-2xl sm:text-3xl font-bold">Final game summary</h1>
           </div>
-          <p className="text-zinc-400 mb-6 text-sm sm:text-base">Best-of-{TOTAL_ROUNDS} finished. Here is your tally.</p>
+          <p className="text-zinc-400 mb-6 text-sm sm:text-base">Best-of-{rounds} finished. Here is your tally.</p>
 
           <div className="border border-[#7E1818]/50 cf-glow rounded-lg p-5 sm:p-6 mb-5">
             <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-400 mb-1">Final game score</div>
             <div className="flex items-end gap-3 mb-3">
               <div className="text-5xl sm:text-6xl font-bold font-mono" data-testid="session-total">{sessionTotal.toFixed(1)}</div>
-              <div className="text-zinc-500 text-xl mb-1">/ 300</div>
+              <div className="text-zinc-500 text-xl mb-1">/ {rounds * 100}</div>
             </div>
+            {overflowTotal > 0 && (
+              <div className="mb-3 text-xs text-[#00E676] font-mono" data-testid="session-overflow-note">
+                Includes +{overflowTotal.toFixed(1)} explanation overflow bonus ({sessionBase.toFixed(1)} base from capped rounds + {overflowTotal.toFixed(1)} bonus).
+              </div>
+            )}
             <div className="inline-block text-xs sm:text-sm font-mono uppercase tracking-[0.12em] px-3 py-1 rounded border bg-[#7E1818]/15 border-[#7E1818]/50 text-[#D89090]"
                  data-testid="final-overall-grade">{overallGrade}</div>
           </div>
@@ -218,7 +271,7 @@ export default function Play() {
             {history.map((h) => (
               <div key={h.round} className="border border-white/10 rounded-lg p-3 sm:p-4 bg-[#121417]">
                 <div className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1">Round {h.round}</div>
-                <div className="text-lg sm:text-2xl font-bold font-mono">{h.total}</div>
+                <div className="text-lg sm:text-2xl font-bold font-mono">{h.total}{h.overflow > 0 && <span className="text-[#00E676] text-xs ml-1">+{h.overflow}</span>}</div>
                 <div className="text-[11px] sm:text-xs text-zinc-400 mt-1 truncate">{h.scenario}</div>
               </div>
             ))}
@@ -327,14 +380,14 @@ export default function Play() {
       <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
         <div>
           <div className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.18em] text-zinc-500">
-            Best of {TOTAL_ROUNDS}
+            Best of {rounds}
           </div>
           <h2 className="text-xl sm:text-2xl font-semibold mt-1" data-testid="round-title">
-            Round {round} / {TOTAL_ROUNDS}
+            Round {round} / {rounds}
           </h2>
         </div>
-        <div className="flex gap-1.5" data-testid="round-progress">
-          {Array.from({ length: TOTAL_ROUNDS }).map((_, i) => {
+        <div className="flex flex-wrap justify-end gap-1.5 max-w-[60%]" data-testid="round-progress">
+          {Array.from({ length: rounds }).map((_, i) => {
             const past = history.find((h) => h.round === i + 1);
             return (
               <div key={`round-chip-${i + 1}`} className={roundChipClass(i + 1, round, past)}>
@@ -399,7 +452,7 @@ export default function Play() {
                 data-testid="next-round-button"
                 className="w-full bg-[#D32F2F] hover:bg-yellow-300 text-black px-5 py-3 rounded-md font-semibold"
               >
-                {round === TOTAL_ROUNDS ? "See final results →" : "Next round →"}
+                {round === rounds ? "See final results →" : "Next round →"}
               </button>
             )}
           </aside>

@@ -62,6 +62,19 @@ export default function Landing() {
                 Start test mode
               </Link>
             </div>
+            <div className="mt-4 flex flex-wrap items-center gap-2" data-testid="hero-round-modes">
+              <span className="text-xs font-mono uppercase tracking-[0.14em] text-zinc-500 mr-1">Quick start:</span>
+              {[3, 5, 10].map((n) => (
+                <Link
+                  key={n}
+                  to={`/play?rounds=${n}`}
+                  data-testid={`hero-round-${n}`}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-mono border border-white/15 text-zinc-300 hover:border-[#7E1818]/60 hover:text-white transition-colors"
+                >
+                  {n} rounds
+                </Link>
+              ))}
+            </div>
             <div className="mt-10 flex items-center gap-6 text-sm text-zinc-400 font-mono">
               <div><span className="text-white font-bold text-lg">30</span> service cards</div>
               <div className="w-px h-6 bg-white/10" />

@@ -210,22 +210,29 @@ def _simplicity(selected: List[dict], scenario: dict) -> Dict[str, Any]:
     min_ideal = scenario["min_services"]
     max_ideal = scenario["max_services"]
     reasons = []
-    score = 10.0  # default: right-sized; reassigned in every branch below
 
     if n > max_ideal:
         dev = n - max_ideal
-        score = 10 - 2 * dev
-        reasons.append(f"Overengineered: {n} services, scenario expects at most {max_ideal}.")
+        score = _clamp(10 - 2 * dev, 0, 10)
+        state = "overengineered"
+        lost = round(10 - score, 1)
+        reasons.append(f"Overengineered: {n} services, scenario expects at most {max_ideal}. "
+                       f"Lost {lost} of 10 points.")
     elif n < min_ideal:
         dev = min_ideal - n
-        score = 10 - 2 * dev
-        reasons.append(f"Too thin: {n} services, scenario needs at least {min_ideal}.")
+        score = _clamp(10 - 2 * dev, 0, 10)
+        state = "too_thin"
+        lost = round(10 - score, 1)
+        reasons.append(f"Too thin: {n} services, scenario needs at least {min_ideal}. "
+                       f"Lost {lost} of 10 points.")
     else:
-        score = 10
-        reasons.append("Right-sized, lean and complete for the scenario.")
+        score = 10.0
+        state = "right_sized"
+        reasons.append("Right-sized, lean and complete for the scenario. Full +10 simplicity credit.")
 
-    return {"label": "Simplicity / Overengineering", "score": round(_clamp(score, 0, 10), 1),
-            "max": 10, "reasons": reasons}
+    score = round(score, 1)
+    return {"label": "Simplicity / Overengineering", "score": score,
+            "max": 10, "reasons": reasons, "state": state, "lost": round(10 - score, 1)}
 
 
 # ---------- F. Explanation Bonus (0..5) ----------
@@ -262,16 +269,23 @@ def score_round(scenario_id: str, constraint_ids: List[str],
     f = _explanation(explanation)
     sub_scores = [a, b, c, d, e, f]
 
-    total = round(_clamp(sum(s["score"] for s in sub_scores), 0, 100), 1)
+    # Raw total can exceed 100 only when a near-perfect architecture (A..E close to
+    # the 100 ceiling) also earns the Explanation Bonus (F, up to +5). The visible
+    # round score is capped at 100; the spilled-over explanation points are returned
+    # as overflow_bonus so the session total can still reward a strong write-up.
+    raw_total = sum(s["score"] for s in sub_scores)
 
-    # ----- Guardrails -----
+    # ----- Guardrails (minimum floors for ideal matches) -----
     distractor_set = set(scenario.get("distractor_service_ids", []))
     distractor_count = sum(1 for s in selected if s["id"] in distractor_set)
     if matched_ideal["status"] == "full" and distractor_count == 0:
-        total = max(total, 85.0)
+        raw_total = max(raw_total, 85.0)
     elif matched_ideal["status"] == "full" and distractor_count <= 1:
-        total = max(total, 78.0)
-    total = round(_clamp(total, 0, 100), 1)
+        raw_total = max(raw_total, 78.0)
+    raw_total = round(max(0.0, raw_total), 1)
+
+    total = round(_clamp(raw_total, 0, 100), 1)
+    overflow_bonus = round(max(0.0, raw_total - 100.0), 1)
 
     rating = (
         "Well-Architected" if total >= 86 else
@@ -303,6 +317,7 @@ def score_round(scenario_id: str, constraint_ids: List[str],
 
     return {
         "total": total,
+        "overflow_bonus": overflow_bonus,
         "rating": rating,
         "breakdown": sub_scores,
         "scenario": scenario,

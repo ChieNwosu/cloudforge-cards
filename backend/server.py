@@ -18,6 +18,7 @@ load_dotenv(ROOT_DIR / '.env')
 from seed_data import SERVICE_CARDS, SCENARIOS, CONSTRAINTS
 from learn_content import enrich_cards, EXAM_TRACKS
 from test_bank import session_questions, grade_answers
+from match_bank import session_exercises, grade_match
 from game_engine import score_round
 from commentary import generate_commentary
 
@@ -128,6 +129,29 @@ async def grade_test(req: TestGradeRequest):
     return result
 
 
+@api_router.get("/learn/match/session")
+async def get_match_session(track: str = "CLF_SAA"):
+    """Return pipeline exercises for a track WITHOUT slot answer keys."""
+    track = track.upper()
+    exercises, is_beta, pool_size = session_exercises(track)
+    return {"track": track, "exercises": exercises, "total": len(exercises),
+            "beta": is_beta, "pool_size": pool_size}
+
+
+class MatchGradeRequest(BaseModel):
+    exercise_id: str
+    placements: dict = {}  # {slot_id: service_id}
+
+
+@api_router.post("/learn/match/grade")
+async def grade_match_endpoint(req: MatchGradeRequest):
+    """Grade one pipeline placement on the server. Answer keys stay server-side."""
+    try:
+        return grade_match(req.exercise_id, req.placements)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @api_router.get("/game/deal")
 async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
                     constraint_count: int = 2):
@@ -214,7 +238,7 @@ def _sanitize(doc: dict) -> dict:
 
 
 @api_router.get("/leaderboard")
-async def get_leaderboard(limit: int = 20):
+async def get_leaderboard(limit: int = 300):
     now_iso = datetime.now(timezone.utc).isoformat()
     # Hide expired guest scores; official/legacy rows have no expires_at.
     query = {"$or": [
@@ -249,57 +273,59 @@ async def add_leaderboard(entry: LeaderboardCreate):
         return {"status": "created", "message": f"Guest score saved for {name}.",
                 "entry": _sanitize(doc), "suggestions": []}
 
-    # ----- Official personal best -----
+    # ----- Official personal best (one row per name + round mode) -----
+    rounds = entry.rounds if entry.rounds in (3, 5, 10) else 3
     all_rows = await db.leaderboard.find({}, {"_id": 0}).to_list(1000)
-    matches = [r for r in all_rows
-               if r.get("mode", "official") != "guest" and _name_key(r.get("name", "")) == key]
+    name_rows = [r for r in all_rows
+                 if r.get("mode", "official") != "guest" and _name_key(r.get("name", "")) == key]
 
-    if not matches:
+    # Name-level ownership: the name is owned by whoever first claimed it (any mode).
+    name_owner = next((r.get("owner_token") for r in name_rows if r.get("owner_token")), None)
+    if name_owner and entry.owner_token and entry.owner_token != name_owner:
+        return {"status": "conflict",
+                "message": "That name is already taken. Try one of these instead.",
+                "entry": None, "suggestions": _name_suggestions(name)}
+    if name_owner and not entry.owner_token:
+        return {"status": "conflict",
+                "message": "That name is already taken. Try one of these instead.",
+                "entry": None, "suggestions": _name_suggestions(name)}
+
+    new_owner = name_owner or owner
+
+    # Rows for this specific round mode. Collapse duplicates, keep the highest as canonical.
+    mode_rows = [r for r in name_rows if r.get("rounds", 3) == rounds]
+    if not mode_rows:
         doc = {
             "id": str(uuid.uuid4()), "name": name, "name_key": key,
-            "total_score": score, "rounds": entry.rounds, "mode": "official",
-            "owner_token": owner, "created_at": now.isoformat(), "expires_at": None,
+            "total_score": score, "rounds": rounds, "mode": "official",
+            "owner_token": new_owner, "created_at": now.isoformat(), "expires_at": None,
         }
         await db.leaderboard.insert_one(doc)
-        return {"status": "created", "message": f"New personal best saved for {name}.",
+        return {"status": "created", "message": f"New {rounds}-round personal best saved for {name}.",
                 "entry": _sanitize(doc), "suggestions": []}
 
-    # Collapse any pre-existing duplicate official rows: keep the highest as canonical.
-    matches.sort(key=lambda r: r.get("total_score", 0), reverse=True)
-    canonical = matches[0]
-    for dup in matches[1:]:
+    mode_rows.sort(key=lambda r: r.get("total_score", 0), reverse=True)
+    canonical = mode_rows[0]
+    for dup in mode_rows[1:]:
         await db.leaderboard.delete_one({"id": dup["id"]})
 
-    canon_owner = canonical.get("owner_token")
-    # Name is owned by someone else -> cannot update, suggest alternatives.
-    if canon_owner and entry.owner_token and entry.owner_token != canon_owner:
-        return {"status": "conflict",
-                "message": "That name is already taken. Try one of these instead.",
-                "entry": None, "suggestions": _name_suggestions(name)}
-    if canon_owner and not entry.owner_token:
-        return {"status": "conflict",
-                "message": "That name is already taken. Try one of these instead.",
-                "entry": None, "suggestions": _name_suggestions(name)}
-
-    # Owner matches, or canonical was an unowned legacy row (claim it now).
-    new_owner = canon_owner or owner
     if score > canonical.get("total_score", 0):
         await db.leaderboard.update_one(
             {"id": canonical["id"]},
             {"$set": {"name": name, "name_key": key, "total_score": score,
-                      "rounds": entry.rounds, "mode": "official",
+                      "rounds": rounds, "mode": "official",
                       "owner_token": new_owner, "expires_at": None}},
         )
         updated = {**canonical, "name": name, "total_score": score,
-                   "rounds": entry.rounds, "mode": "official"}
-        return {"status": "updated", "message": f"New personal best saved for {name}.",
+                   "rounds": rounds, "mode": "official"}
+        return {"status": "updated", "message": f"New {rounds}-round personal best saved for {name}.",
                 "entry": _sanitize(updated), "suggestions": []}
 
-    if not canon_owner:
+    if not canonical.get("owner_token"):
         await db.leaderboard.update_one({"id": canonical["id"]},
                                         {"$set": {"owner_token": new_owner}})
     return {"status": "kept",
-            "message": f"Your saved best for {name} is still {canonical.get('total_score')}.",
+            "message": f"Your saved {rounds}-round best for {name} is still {canonical.get('total_score')}.",
             "entry": _sanitize(canonical), "suggestions": []}
 
 

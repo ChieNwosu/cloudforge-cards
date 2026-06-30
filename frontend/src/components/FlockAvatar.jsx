@@ -22,14 +22,14 @@ export function FlockAvatar({ size = 40, className = "", testid = "flock-avatar"
 
   return (
     <img
-      src="/professor-flock.jpg"
+      src="/professor-flock.png"
       alt="Professor Flock"
       data-testid={testid}
       loading="lazy"
       width={size}
       height={size}
       onError={() => setFailed(true)}
-      className={`rounded-full object-cover border border-[#D4AF37]/40 bg-[#0C0E11] ${className}`}
+      className={`rounded-full object-cover object-top border border-[#D4AF37]/40 bg-[#161013] ${className}`}
       style={dim}
     />
   );

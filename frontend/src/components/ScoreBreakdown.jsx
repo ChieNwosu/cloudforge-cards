@@ -33,6 +33,26 @@ function verdictLine(rating) {
   }
 }
 
+// Explicit credit-vs-penalty tag for the Simplicity / Overengineering sub-score.
+function SimplicityTag({ b }) {
+  if (!b.state) return null;
+  if (b.state === "right_sized") {
+    return (
+      <span className="text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]"
+            data-testid="simplicity-tag">
+        Simplicity Score: +{b.score} / 10
+      </span>
+    );
+  }
+  const word = b.state === "overengineered" ? "Overengineering" : "Too few services";
+  return (
+    <span className="text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border bg-[#D32F2F]/15 border-[#D32F2F]/40 text-[#D32F2F]"
+          data-testid="simplicity-tag">
+      {word} penalty: -{b.lost} (kept +{b.score} / 10)
+    </span>
+  );
+}
+
 function SubScoreBar({ b }) {
   const fill = b.max > 0 ? Math.min(100, Math.max(2, (b.score / b.max) * 100)) : 0;
   return (
@@ -56,7 +76,7 @@ export default function ScoreBreakdown({ result }) {
   if (!result) return null;
   const { total, rating, breakdown, commentary, ideal_combos = [],
     ideal_combos_status = [], matched_ideal = null, best_match_service_names = [],
-    selected_services = [], scenario, explanation = "" } = result;
+    selected_services = [], scenario, explanation = "", overflow_bonus = 0 } = result;
 
   // Derive "got right" vs "to improve" purely from each sub-score ratio,
   // but the headline verdict is driven by the overall rating so copy never contradicts the grade.
@@ -96,6 +116,13 @@ export default function ScoreBreakdown({ result }) {
             {rating}
           </div>
           <p className="text-sm text-zinc-300 mt-3" data-testid="round-verdict">{verdictLine(rating)}</p>
+          {overflow_bonus > 0 && (
+            <div className="mt-3 inline-flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded border bg-[#00E676]/10 border-[#00E676]/40 text-[#00E676]"
+                 data-testid="overflow-bonus-note">
+              <Sparkles size={13} />
+              Round capped at 100. +{overflow_bonus} explanation overflow bonus banked into your session total.
+            </div>
+          )}
         </div>
       </div>
 
@@ -156,6 +183,7 @@ export default function ScoreBreakdown({ result }) {
                 </div>
               </div>
               <SubScoreBar b={b} />
+              {b.state && <div className="mb-1.5"><SimplicityTag b={b} /></div>}
               <ul className="text-xs text-zinc-400 space-y-1 leading-relaxed">
                 {b.reasons.map((r) => (<li key={`${b.label}-${r}`}>· {r}</li>))}
               </ul>

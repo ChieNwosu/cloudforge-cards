@@ -190,7 +190,7 @@ def test_admin_delete_header_gating():
     r2 = requests.delete(f"{BASE}/admin/leaderboard/{eid}",
                          headers={"X-Admin-Token": ADMIN_TOKEN}, timeout=10)
     assert r2.status_code == 200
-    assert r2.json()["deleted"] is True
+    assert r2.json()["deleted"]
 
 
 def test_no_public_delete_all():

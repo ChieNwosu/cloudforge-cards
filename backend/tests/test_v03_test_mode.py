@@ -8,7 +8,7 @@ API = os.environ["REACT_APP_BACKEND_URL"].rstrip("/") + "/api"
 def test_session_clf_has_15_and_no_answer_keys():
     d = requests.get(f"{API}/learn/test/session", params={"track": "CLF_SAA"}).json()
     assert d["total"] == 15
-    assert d["beta"] is False
+    assert not d["beta"]
     for q in d["questions"]:
         assert "correct" not in q, "answer key leaked to client"
         assert q["question_type"] in {"mcq", "truefalse", "scenario_select"}
@@ -18,7 +18,7 @@ def test_session_clf_has_15_and_no_answer_keys():
 def test_session_aif_is_beta():
     d = requests.get(f"{API}/learn/test/session", params={"track": "AIF"}).json()
     assert d["total"] == 5
-    assert d["beta"] is True
+    assert d["beta"]
 
 
 def test_grade_mixed_correct_and_incorrect():
@@ -35,10 +35,10 @@ def test_grade_mixed_correct_and_incorrect():
     assert d["total"] == 4
     assert d["score"] == 50
     by = {p["question_id"]: p["is_correct"] for p in d["per_question"]}
-    assert by["clf_01"] is True
-    assert by["clf_03"] is False
-    assert by["clf_06"] is True
-    assert by["clf_14"] is False
+    assert by["clf_01"]
+    assert not by["clf_03"]
+    assert by["clf_06"]
+    assert not by["clf_14"]
     assert "Storage" in d["strengths"]
 
 

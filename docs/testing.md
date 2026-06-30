@@ -238,3 +238,73 @@ python -m pytest tests/test_v03_learn.py -v
 - Card enrichment does not break the existing game engine (game reads raw SERVICE_CARDS)
 - Frontend routes resolve correctly for `/learn` and `/learn/cards`
 - localStorage progress operations (read, write, clear) work without errors
+
+---
+
+## v0.3 Phase 2: Test Mode Testing
+
+### Automated Tests
+
+Location: `backend/tests/test_v03_test_mode.py`
+
+```bash
+cd backend
+python -m pytest tests/test_v03_test_mode.py -v
+```
+
+### Manual QA Checklist (v0.3 Phase 2)
+
+#### Play Regression
+
+| Check | Result |
+|-------|--------|
+| Landing page loads with updated v0.3 CTAs | Pass |
+| 3-round game completes without errors | Pass |
+| Score breakdown displays all six sub-scores | Pass |
+| Final summary shows total score and rating | Pass |
+| Leaderboard accepts and displays entries | Pass |
+
+#### Learn Regression
+
+| Check | Result |
+|-------|--------|
+| `/learn` hub page loads | Pass |
+| `/learn/cards` flashcards load and flip | Pass |
+| Track selector filters flashcards | Pass |
+| Known/Review progress persists | Pass |
+
+#### Test Mode
+
+| Check | Result |
+|-------|--------|
+| `/learn/test` loads | Pass |
+| Quiz starts with 15 questions for selected track | Pass |
+| Multiple choice questions render and accept input | Pass |
+| True/false questions render and accept input | Pass |
+| Scenario service-selection questions work | Pass |
+| Server-side grading returns correct/incorrect | Pass |
+| Review explanations display for each question | Pass |
+| Final score screen shows with count-up animation | Pass |
+| Recommended review areas based on missed questions | Pass |
+| "Reinforce in Flashcards" navigates to Learn cards | Pass |
+| Local best/latest score persists per track | Pass |
+| Track selector filters quiz questions | Pass |
+
+#### Infrastructure
+
+| Check | Result |
+|-------|--------|
+| Mobile layout usable for Test Mode | Pass |
+| Frontend compiles without errors | Pass |
+| Backend tests pass (all test files) | Pass |
+| No answer keys shipped in frontend bundle | Pass |
+| No real secrets committed | Pass |
+
+### What the v0.3 Phase 2 Tests Validate
+
+- Test bank API generates 15 questions for the selected track
+- Server-side grading validates answers without exposing keys to the client
+- Question types (multiple choice, true/false, scenario) are all represented
+- Score calculation matches number of correct answers out of 15
+- Track filtering restricts questions to services tagged for the selected exam
+- Existing Play and Learn functionality is unaffected (regression coverage)

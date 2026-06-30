@@ -16,11 +16,25 @@ No login required. Play a full 3-round session, study with flashcards, view your
 
 ## Current Release
 
-**CloudForge Cards v0.3: Perpetual Learning, Learn Flashcards**
+**CloudForge Cards v0.3 Phase 2: Perpetual Learning, Learn Flashcards and Test Mode**
 
-CloudForge Cards now includes a route-isolated Perpetual Learning experience alongside the original 3-round AWS architecture card game.
+CloudForge Cards now includes a route-isolated Perpetual Learning experience with both flashcard study and active-recall testing alongside the original 3-round AWS architecture card game.
 
 ### What is new in v0.3
+
+**Phase 2 (latest):**
+
+- Added `/learn/test` Test Mode with 15-question quiz sessions
+- Added server-side grading (answer keys never shipped to the browser)
+- Added multiple choice, true/false, and scenario service-selection questions
+- Added track-filtered quiz sessions (CLF/SAA, AIF, MLA, Mixed)
+- Added final score screen with count-up animation
+- Added review explanations and recommended review areas
+- Added local best/latest score tracking per track
+- Added "Reinforce in Flashcards" button linking missed topics back to Learn
+- Updated landing page with v0.3 positioning and Learn/Test CTAs
+
+**Phase 1:**
 
 - Added `/learn` Perpetual Learning hub
 - Added `/learn/cards` Learn Flashcards (Quizlet-style flip cards)
@@ -29,7 +43,6 @@ CloudForge Cards now includes a route-isolated Perpetual Learning experience alo
 - Added Professor Flock beta avatar
 - Added Known and Review local progress tracking
 - Made Certification Prep a filter layer across learning content
-- Kept Test Mode and Match Mode as coming soon
 - Preserved the original 3-round game, v0.2.5 scoring engine, final summary, and leaderboard
 
 ### Perpetual Learning
@@ -38,8 +51,8 @@ The Perpetual Learning mode is designed for repeat study outside the main game l
 
 **Current modes:**
 
-- **Learn Flashcards:** live in v0.3
-- **Test Mode:** coming soon
+- **Learn Flashcards:** live (self-directed review with flip cards)
+- **Test Mode:** live (15-question quizzes with server-side grading)
 - **Match / Fill in the Blank:** coming soon
 - **Certification Prep:** active as a track filter across learning modes (not a separate engine)
 
@@ -63,6 +76,7 @@ CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expa
 | `/play` | 3-round AWS architecture card game |
 | `/learn` | Perpetual Learning hub |
 | `/learn/cards` | Learn Flashcards |
+| `/learn/test` | Test Mode (15-question quizzes) |
 | `/leaderboard` | Session leaderboard |
 | `/how-to-play` | Rules and scoring reference |
 
@@ -89,7 +103,8 @@ The v0.3 screenshot folder currently contains placeholders for Learn hub and Lea
 * Transparent rule-based scoring engine with six explainable sub-scores
 * Synergy detection for well-known AWS service pairings
 * Ideal architecture matching with guardrails for fairness
-* Perpetual Learning hub with flashcard study mode
+* Perpetual Learning hub with flashcard study and Test Mode
+* Test Mode: 15-question quizzes with server-side grading and review explanations
 * Exam-track filtering: CLF/SAA, AIF, MLA, Mixed
 * Professor Flock beta avatar for guided learning
 * Optional LLM-powered commentary through Claude for personalized feedback

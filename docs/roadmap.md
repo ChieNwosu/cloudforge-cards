@@ -1,8 +1,8 @@
 # CloudForge Cards Roadmap
 
-## Current Version: v0.3 (Perpetual Learning, Learn Flashcards)
+## Current Version: v0.3 Phase 2 (Perpetual Learning: Flashcards and Test Mode)
 
-The app now includes the original 3-round AWS architecture game plus a Perpetual Learning hub with flashcard study mode and exam-track filtering.
+The app now includes the original 3-round AWS architecture game plus a Perpetual Learning hub with flashcard study, 15-question Test Mode with server-side grading, and exam-track filtering.
 
 ---
 
@@ -40,23 +40,21 @@ Completed highlights:
 * [x] Kept Test and Match as coming soon
 * [x] Preserved existing game, scoring, and leaderboard
 
----
+### v0.3 Phase 2: Test Mode (complete)
 
-## v0.3 Phase 2: Test Mode (next)
-
-Focus: Multiple-choice, true/false, and scenario-select quiz mode with server-side grading.
-
-* [ ] Question bank drawn from service-card study content
-* [ ] Server-side answer validation (keys not shipped to browser)
-* [ ] Track-filtered test sessions (CLF/SAA, AIF, MLA, Mixed)
-* [ ] Score tracking for test completions
-* [ ] Professor Flock explanations for correct and incorrect answers
-* [ ] Review mode to resurface missed questions
-* [ ] Link missed topics back to Learn Flashcards
+- [x] Added `/learn/test` with 15-question quiz sessions
+- [x] Server-side grading (answer keys never shipped to browser)
+- [x] Three question types: multiple choice, true/false, scenario service-selection
+- [x] Track-filtered test sessions (CLF/SAA, AIF, MLA, Mixed)
+- [x] Final score screen with count-up animation
+- [x] Review explanations and recommended review areas
+- [x] Local best/latest score tracking per track
+- [x] "Reinforce in Flashcards" button linking missed topics to Learn
+- [x] Updated landing page with v0.3 positioning and Learn/Test CTAs
 
 ---
 
-## v0.3 Phase 3: Match / Fill in the Blank
+## v0.3 Phase 3: Match / Fill in the Blank (next)
 
 Focus: Active recall through matching and typing exercises.
 
@@ -166,7 +164,8 @@ These are ideas for consideration after v0.5 is stable:
 
 | Version | Name | Key Change |
 |---------|------|-----------|
-| v0.3 | Perpetual Learning, Learn Flashcards | Learn hub, flashcards, exam tracks, Professor Flock avatar |
+| v0.3 P2 | Perpetual Learning: Test Mode | 15-question quizzes, server-side grading, review explanations |
+| v0.3 P1 | Perpetual Learning: Learn Flashcards | Learn hub, flashcards, exam tracks, Professor Flock avatar |
 | v0.2.6 | Mobile and Leaderboard Maintenance | Responsive layout, leaderboard polish |
 | v0.2.5 | Scoring Fairness Release | Transparent 6-sub-score engine, guardrails, synergy detection |
 | v0.2.0 | Core Gameplay | Deal/score/leaderboard loop, 10 scenarios, 30 cards |

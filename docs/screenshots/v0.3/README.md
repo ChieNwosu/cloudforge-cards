@@ -1,16 +1,25 @@
 # v0.3 Screenshots
 
-This folder is reserved for screenshots captured from the v0.3 Learn Flashcards release.
+This folder is reserved for screenshots captured from the v0.3 Perpetual Learning release.
 
 ## Expected Future Screenshots
 
-The following screenshots should be captured from the live deployment when available:
+### Phase 1: Learn Flashcards
 
 - `learn-hub.png`: The Perpetual Learning hub showing mode cards and track selector
 - `learn-flashcards-front.png`: A flashcard showing the front face (service name, category)
 - `learn-flashcards-back.png`: A flashcard showing the back face (study content, use cases, tips)
 - `learn-track-filter.png`: The exam-track selector in action (CLF/SAA, AIF, MLA, Mixed)
 - `professor-flock-avatar.png`: Professor Flock's beta avatar as displayed in the app
+
+### Phase 2: Test Mode
+
+- `landing-v0.3.png`: Updated landing page with Learn/Test CTAs
+- `learn-hub-test-mode.png`: Learn hub showing Test Mode as live
+- `test-question.png`: A quiz question (multiple choice or true/false)
+- `test-hint.png`: A hint or explanation during review
+- `test-results.png`: Final score screen with count-up animation
+- `test-review.png`: Review explanations and recommended review areas
 
 ## Guidelines
 

@@ -17,6 +17,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 from seed_data import SERVICE_CARDS, SCENARIOS, CONSTRAINTS
 from learn_content import enrich_cards, EXAM_TRACKS
+from test_bank import session_questions, grade_answers
 from game_engine import score_round
 from commentary import generate_commentary
 
@@ -95,6 +96,36 @@ async def get_learn_cards():
 @api_router.get("/learn/tracks")
 async def get_learn_tracks():
     return {"tracks": EXAM_TRACKS}
+
+
+@api_router.get("/learn/test/session")
+async def get_test_session(track: str = "CLF_SAA"):
+    """Return up to 15 quiz questions for a track WITHOUT answer keys."""
+    track = track.upper()
+    questions, is_beta, pool_size = session_questions(track)
+    return {"track": track, "questions": questions, "total": len(questions),
+            "beta": is_beta, "pool_size": pool_size}
+
+
+class TestAnswer(BaseModel):
+    question_id: str
+    selected: Optional[object] = None  # str (mcq/truefalse) or list[str] (scenario_select)
+
+
+class TestGradeRequest(BaseModel):
+    track: Optional[str] = None
+    answers: List[TestAnswer]
+
+
+@api_router.post("/learn/test/grade")
+async def grade_test(req: TestGradeRequest):
+    """Grade quiz answers on the server. Answer keys are never sent to the client."""
+    submitted = [a.model_dump() for a in req.answers]
+    if not submitted:
+        raise HTTPException(status_code=400, detail="No answers submitted")
+    result = grade_answers(submitted)
+    result["track"] = (req.track or "").upper() or None
+    return result
 
 
 @api_router.get("/game/deal")

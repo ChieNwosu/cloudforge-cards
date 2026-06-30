@@ -70,6 +70,24 @@ code, .font-mono {
 }
 .cf-hscroll::-webkit-scrollbar { display: none; }
 
+/* Lightweight confetti for Test mode strong-performance celebration. */
+@keyframes cf-confetti-fall {
+    0%   { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0.9; }
+}
+.cf-confetti-piece {
+    position: absolute;
+    top: 0;
+    width: 9px;
+    height: 14px;
+    border-radius: 2px;
+    will-change: transform;
+    animation: cf-confetti-fall linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+    .cf-confetti-piece { display: none; }
+}
+
 @layer base {
     :root {
         --background: 220 7% 5%;

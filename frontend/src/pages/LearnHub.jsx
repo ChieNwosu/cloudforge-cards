@@ -85,12 +85,18 @@ export default function LearnHub() {
           <p className="text-sm text-zinc-400 break-words">Flip through AWS service cards, study use cases, pairings, and anti-patterns.</p>
         </Link>
 
-        <ComingSoonCard
-          testid="mode-test"
-          icon={<ClipboardList size={22} />}
-          title="Test Mode"
-          desc="A 15-question quiz with instant explanations. Coming soon."
-        />
+        <Link
+          to="/learn/test"
+          data-testid="mode-test"
+          className="group rounded-lg border border-white/10 bg-[#0C0E11] p-5 hover:border-[#7E1818]/60 transition-colors"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <ClipboardList className="text-[#D32F2F]" size={22} />
+            <ArrowRight className="text-zinc-600 group-hover:text-white transition-colors" size={18} />
+          </div>
+          <h3 className="font-bold text-lg mb-1">Test Mode</h3>
+          <p className="text-sm text-zinc-400 break-words">A 15-question quiz with server-graded scoring, explanations, and review areas.</p>
+        </Link>
         <ComingSoonCard
           testid="mode-match"
           icon={<Workflow size={22} />}

@@ -49,3 +49,9 @@ export const getScenarios = () =>
 
 export const getLearnCards = () =>
   api.get("/learn/cards").then(r => r.data);
+
+export const getTestSession = (track) =>
+  api.get("/learn/test/session", { params: { track } }).then(r => r.data);
+
+export const gradeTest = (track, answers) =>
+  api.post("/learn/test/grade", { track, answers }).then(r => r.data);

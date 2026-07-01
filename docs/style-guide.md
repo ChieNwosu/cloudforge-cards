@@ -17,9 +17,9 @@ This style guide applies to all documentation, in-game text, tooltips, scenario 
 
 ## Affiliation and Claims
 
-- Never overclaim affiliation with Amazon Web Services, AWS, Amazon, NCCU, or any other organization.
+- Never overclaim affiliation with Amazon Web Services, AWS, Amazon, or any other organization.
 - Do not imply endorsement, certification, or partnership where none exists.
-- Use the disclaimer: "Unofficial educational project. Not affiliated with Amazon Web Services or North Carolina Central University."
+- Use the disclaimer: "Unofficial educational project. Not affiliated with Amazon Web Services."
 
 ## External Content
 

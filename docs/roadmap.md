@@ -1,8 +1,8 @@
 # CloudForge Cards Roadmap
 
-## Current Version: v0.3 Phase 3 (Match Mode, Round Modes, Scoring Transparency)
+## Current Version: v0.3.1 Phase 4A (Audio Polish Patch)
 
-The app now includes the original AWS architecture game with 3R/5R/10R session modes, per-mode leaderboard, and the full Perpetual Learning suite: Learn Flashcards, Test Mode, and Match Mode.
+The app now includes the original AWS architecture game with 3R/5R/10R session modes, the full Perpetual Learning suite (Learn Flashcards, Test Mode, Match Mode), per-mode leaderboard, and browser-native Professor Flock read-aloud with voice style selection.
 
 ---
 
@@ -65,21 +65,63 @@ Completed highlights:
 - [x] Updated landing page: Play, Learn, Test, Match positioning
 - [x] Removed outdated "Best-of-3 sessions" language
 
+### v0.3.1 Phase 4A: Audio Polish Patch (complete)
+
+- [x] Browser-native Professor Flock read-aloud using Web Speech API
+- [x] Audio: On / Audio: Muted toggle in nav (desktop and mobile)
+- [x] Persistent mute preference (localStorage key: cloudforge_audio_muted)
+- [x] Voice style toggle: Professor, Calm, and Default
+- [x] Persistent voice style preference (localStorage key: cloudforge_voice_style)
+- [x] Improved English voice selection with async voiceschanged handling
+- [x] Spoken-only text cleanup for exam codes, slashes, markdown, whitespace, label pauses
+- [x] Read-aloud wired into: Play scenarios, commentary, Test questions, Test review, Match prompts, Match explanations, Learn Flashcards (front and back)
+- [x] Safe warning-based error handling (no crashes if speech unavailable)
+- [x] No external TTS APIs, no generated audio files, no backend audio routes
+- [x] No scoring, grading, leaderboard, schema, or certification-content changes
+
 ---
 
-## v0.3 Phase 4/5: Audio, Voiceover, Shareability, and Certification Expansion (next)
+## Forward Roadmap
 
-Focus: Multi-modal learning, social sharing, and deeper certification coverage.
+### v0.3.2 or v0.4.0: Shareable Result Cards (next)
 
-* [ ] Audio pronunciations and optional voiceover support
-* [ ] Shareable result cards (image or link format for social sharing)
-* [ ] Expand AIF-tagged content across relevant services
-* [ ] Expand MLA-tagged content across data and model services
-* [ ] Study streaks tracked in localStorage
-* [ ] XP or mastery points for completing sessions
+Focus: Social sharing and portfolio visibility.
+
+* [ ] Generate shareable result card after Play session (image or link format)
+* [ ] Include session score, rating, round count, and date
+* [ ] Copy-to-clipboard and download options
+* [ ] Optional Professor Flock commentary on the card
+* [ ] Open Graph meta tags for link previews
+
+### Phase 5A: Study Streaks and XP Lite
+
+Focus: Lightweight gamification to encourage daily practice.
+
+* [ ] Daily study streak counter tracked in localStorage
+* [ ] XP points awarded for completing Learn, Test, and Match sessions
+* [ ] Visual streak indicator on the Learn hub
+* [ ] Streak-break warning and recovery grace period
+* [ ] No server-side account required (localStorage only for now)
+
+### Phase 5B: Mastery and Spaced Repetition
+
+Focus: Intelligent review scheduling based on performance.
+
+* [ ] Spaced repetition scheduling for flashcard Review queue
+* [ ] Mastery percentage per service card (based on Test and Match performance)
 * [ ] Visual progress indicators (cards mastered, track completion)
-* [ ] Spaced repetition scheduling for Review cards
+* [ ] "Weak areas" surfacing based on repeated incorrect answers
+* [ ] Integration with Test Mode to prioritize weak-area questions
+
+### Later: AIF, MLA, and Possible DEA Content Expansion
+
+Focus: Deepen non-CLF certification track coverage.
+
+* [ ] Expand AIF-tagged content across AI and generative AI services
+* [ ] Expand MLA-tagged content across data pipeline and model services
 * [ ] Consider adding DEA (Data Engineer Associate) track
+* [ ] Add track-specific scenario hints and questions
+* [ ] Community feedback on which tracks to prioritize
 
 ---
 
@@ -134,6 +176,7 @@ These are ideas for consideration after v0.5 is stable:
 
 | Version | Name | Key Change |
 |---------|------|-----------|
+| v0.3.1 | Phase 4A Audio Polish Patch | Browser-native Professor Flock read-aloud, voice style toggle, mute persistence |
 | v0.3 P3 | Match Mode, Round Modes, Scoring Transparency | Match mode, 3R/5R/10R play, per-mode leaderboard, transparent Flock |
 | v0.3 P2 | Perpetual Learning: Test Mode | 15-question quizzes, server-side grading, review explanations |
 | v0.3 P1 | Perpetual Learning: Learn Flashcards | Learn hub, flashcards, exam tracks, Professor Flock avatar |

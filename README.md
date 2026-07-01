@@ -16,9 +16,21 @@ No login required. Play a 3R, 5R, or 10R session, study with flashcards, take a 
 
 ## Current Release
 
-**CloudForge Cards v0.3 Phase 3: Match Mode, Round Modes, Scoring Transparency**
+**CloudForge Cards v0.3.1: Phase 4A Audio Polish Patch**
 
-CloudForge Cards now includes the full Perpetual Learning suite (Learn Flashcards, Test Mode, and Match Mode), flexible Play session lengths (3R, 5R, 10R), per-mode leaderboard columns, and improved scoring transparency.
+The latest stable release adds browser-native Professor Flock read-aloud across all learning and gameplay modes. No external TTS APIs, no generated audio files, no backend audio routes.
+
+### What is new in v0.3.1
+
+- Browser-native Professor Flock read-aloud using Web Speech API
+- Audio: On / Audio: Muted toggle with persistent mute preference
+- Voice style toggle: Professor, Calm, and Default
+- Persistent voice and mute preferences via localStorage
+- Improved English voice selection with async voiceschanged handling
+- Spoken-only text cleanup for exam codes, slash-heavy phrases, and markdown symbols
+- Read-aloud wired into: Play scenario prompts, architect commentary, Test Mode questions and review explanations, Match prompts and result explanations, and Learn Flashcards (front and back)
+- Safe warning-based error handling (no crashes if speech synthesis is unavailable)
+- No scoring, grading, leaderboard, schema, or certification-content changes
 
 ### What is new in v0.3
 
@@ -123,6 +135,7 @@ The v0.3 screenshot folder currently contains placeholders for Learn hub and Lea
 * 3R, 5R, and 10R Play session modes with per-mode leaderboard
 * Exam-track filtering: CLF/SAA, AIF, MLA, Mixed
 * Professor Flock transparent avatar for guided learning
+* Browser-native Professor Flock read-aloud with voice style selection
 * Optional LLM-powered commentary through Claude for personalized feedback
 * Leaderboard with persistent high scores
 * Dark theme Cloud Lab UI with tactile card interactions
@@ -294,6 +307,7 @@ cloudforge-cards/
 - [Roadmap](docs/roadmap.md)
 - [Testing](docs/testing.md)
 - [Perpetual Learning](docs/perpetual-learning.md)
+- [v0.3.1 Release Notes](docs/release-notes/v0.3.1.md)
 - [v0.3 Release Notes](docs/release-notes/v0.3.md)
 - [AWS Deployment Options](docs/aws-deployment-options.md)
 - [CLF Knowledge Integration](docs/clf-knowledge-integration.md)

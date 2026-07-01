@@ -21,6 +21,15 @@ This folder is reserved for screenshots captured from the v0.3 Perpetual Learnin
 - `test-results.png`: Final score screen with count-up animation
 - `test-review.png`: Review explanations and recommended review areas
 
+### Phase 3: Match Mode, Round Modes, Scoring Transparency
+
+- `match-start.png`: Match Mode start screen with track selector
+- `match-pipeline.png`: A tap-to-place pipeline exercise in progress
+- `match-results.png`: Match results screen with partial credit and review
+- `landing-round-modes.png`: Landing page showing 3R, 5R, 10R Play options
+- `leaderboard-round-modes.png`: Leaderboard with per-mode columns (3R, 5R, 10R)
+- `play-round-selector.png`: Round mode selector before starting a Play session
+
 ## Guidelines
 
 - Capture from the live deployment at https://cloudforge-cards.emergent.host/

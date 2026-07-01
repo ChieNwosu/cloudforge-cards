@@ -308,3 +308,80 @@ python -m pytest tests/test_v03_test_mode.py -v
 - Score calculation matches number of correct answers out of 15
 - Track filtering restricts questions to services tagged for the selected exam
 - Existing Play and Learn functionality is unaffected (regression coverage)
+
+---
+
+## v0.3 Phase 3: Match Mode, Round Modes, Scoring Transparency Testing
+
+### Automated Tests
+
+Location: `backend/tests/test_v03_match.py`, `backend/tests/test_v03_phase3_e2e.py`, `backend/tests/test_v03_phase3_scoring.py`
+
+```bash
+cd backend
+python -m pytest tests/test_v03_match.py tests/test_v03_phase3_e2e.py tests/test_v03_phase3_scoring.py -v
+```
+
+### Manual QA Checklist (v0.3 Phase 3)
+
+#### Play Mode (3R, 5R, 10R)
+
+| Check | Result |
+|-------|--------|
+| Landing page shows 3R, 5R, 10R options | Pass |
+| Landing page no longer says "Best-of-3 sessions" | Pass |
+| 3R session completes with 3 unique scenarios | Pass |
+| 5R session completes with 5 unique scenarios | Pass |
+| 10R session completes with 10 unique scenarios | Pass |
+| Score breakdown shows Simplicity feedback with expected range | Pass |
+| Explanation overflow (50+ words) earns full 5-point bonus | Pass |
+
+#### Leaderboard
+
+| Check | Result |
+|-------|--------|
+| Leaderboard shows separate 3R, 5R, 10R columns | Pass |
+| Scores post to the correct mode column | Pass |
+| Existing entries display under their original mode | Pass |
+
+#### Match Mode
+
+| Check | Result |
+|-------|--------|
+| `/learn/match` loads | Pass |
+| Match exercises generate for selected track | Pass |
+| Tap-to-place pipeline interaction works | Pass |
+| Server-side grading returns partial credit | Pass |
+| Review feedback displays after each exercise | Pass |
+| Professor Flock hints appear during exercises | Pass |
+
+#### Scoring Transparency
+
+| Check | Result |
+|-------|--------|
+| Simplicity sub-score shows expected range (min/max) in feedback | Pass |
+| Overengineering feedback is clear and actionable | Pass |
+| Explanation bonus awards 5 points for 50+ word rationale | Pass |
+
+#### Regression and Infrastructure
+
+| Check | Result |
+|-------|--------|
+| Learn Flashcards still works | Pass |
+| Test Mode still works | Pass |
+| Transparent Professor Flock avatar renders on all pages | Pass |
+| Mobile layout usable for Match Mode | Pass |
+| Frontend compiles without errors | Pass |
+| Backend tests pass (all test files including phase 3) | Pass |
+| No secrets in frontend bundle | Pass |
+
+### What the v0.3 Phase 3 Tests Validate
+
+- Match bank API generates exercises for the selected track
+- Server-side grading validates match answers with partial credit scoring
+- 3R, 5R, and 10R sessions deal the correct number of unique scenarios
+- Per-mode leaderboard correctly categorizes entries by session length
+- Simplicity / Overengineering scoring shows transparent expected range
+- Explanation overflow reliably triggers the full 5-point bonus
+- Transparent PNG avatar renders without visual artifacts on dark background
+- All prior functionality (Learn, Test, Play, Leaderboard) remains unaffected

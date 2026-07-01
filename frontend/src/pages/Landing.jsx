@@ -6,8 +6,8 @@ const features = [
   { icon: Sparkles, title: "Transparent scoring", body: "Six explainable sub-scores, no black box." },
   { icon: ShieldCheck, title: "Constraint chips", body: "Low cost, secure, serverless, scalable, and more." },
   { icon: Cpu, title: "Hybrid AI judging", body: "Rule engine + Claude commentary on every round." },
-  { icon: Zap, title: "Best-of-3 sessions", body: "Three scenarios. Win the table." },
-  { icon: BarChart3, title: "Local leaderboard", body: "Compete with your study group." },
+  { icon: Zap, title: "3, 5, or 10-round sessions", body: "Choose 3, 5, or 10 rounds. Track your best score by mode." },
+  { icon: BarChart3, title: "Local leaderboard", body: "Track 3R, 5R, and 10R best scores." },
 ];
 
 export default function Landing() {
@@ -150,8 +150,8 @@ export default function Landing() {
               Ready to ship your first architecture?
             </h2>
             <p className="text-zinc-400 max-w-md">
-              A round takes about 3 minutes. Best-of-3 takes about 10.
-              Your score and a written critique appear instantly.
+              Choose a 3, 5, or 10-round run. Your score, critique, and mode-specific
+              leaderboard update after the session.
             </p>
           </div>
           <div className="flex lg:justify-end">

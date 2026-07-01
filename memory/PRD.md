@@ -49,7 +49,7 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
-## v0.3.1 Phase 4A — Professor Flock Read-Aloud MVP (2026-07-01, DONE)
+## v0.3.1 Phase 4A: Professor Flock Read-Aloud MVP (2026-07-01, DONE)
 Frontend-only accessibility and polish release. No backend, scoring, grading, leaderboard,
 schema, or certification-content changes. US English, no em dashes.
 

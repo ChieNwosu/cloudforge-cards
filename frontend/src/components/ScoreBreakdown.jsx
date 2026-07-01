@@ -1,4 +1,5 @@
 import { CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
+import { ReadAloudButton } from "@/components/ReadAloudButton";
 
 const CAT_ICONS = {
   Compute: "▣", Storage: "◧", Database: "◉", Network: "◈",
@@ -296,7 +297,10 @@ export default function ScoreBreakdown({ result }) {
       {/* Architect review */}
       {commentary && (
         <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6">
-          <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-3">/// architect&apos;s review</h4>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h4 className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500">/// architect&apos;s review</h4>
+            <ReadAloudButton text={commentary} compact testid="read-aloud-commentary" />
+          </div>
           <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-line" data-testid="commentary-text">
             {commentary}
           </p>

@@ -4,6 +4,7 @@ import { Loader2, CheckCircle2, XCircle, ArrowRight, ArrowLeft, RotateCcw, BookO
 import { getTestSession, gradeTest } from "@/lib/api";
 import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
+import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { toast } from "sonner";
 
 const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", MIXED: "Mixed" };
@@ -184,7 +185,10 @@ export default function LearnTest() {
               {q.question_type === "mcq" ? "Multiple choice" : q.question_type === "truefalse" ? "True / False" : "Select all that fit"}
             </span>
           </div>
-          <p className="text-base sm:text-lg font-medium leading-relaxed break-words mb-4" data-testid="quiz-prompt">{q.prompt}</p>
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <p className="text-base sm:text-lg font-medium leading-relaxed break-words" data-testid="quiz-prompt">{q.prompt}</p>
+            <ReadAloudButton text={q.prompt} compact testid="read-aloud-question" className="shrink-0" />
+          </div>
 
           <div className="space-y-2" data-testid="quiz-options">
             {q.answer_options.map((opt) => {
@@ -319,7 +323,10 @@ function Results({ result, track, beta, onRetake }) {
               <div className="text-xs text-zinc-400 space-y-1 pl-6">
                 <div>Your answer: <span className={p.is_correct ? "text-[#00E676]" : "text-[#FF6666]"}>{p.selected.length ? p.selected.map(optText).join(", ") : "No answer"}</span></div>
                 {!p.is_correct && <div>Correct: <span className="text-[#00E676]">{p.correct.map(optText).join(", ")}</span></div>}
-                <div className="text-zinc-300 break-words pt-1">{p.explanation}</div>
+                <div className="flex items-start gap-2 pt-1">
+                  <div className="text-zinc-300 break-words min-w-0">{p.explanation}</div>
+                  {p.explanation && <ReadAloudButton text={p.explanation} compact testid={`read-aloud-explanation-${p.question_id}`} className="shrink-0" />}
+                </div>
               </div>
             </div>
           );

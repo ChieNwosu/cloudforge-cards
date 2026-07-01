@@ -3,6 +3,7 @@ import { Search, RotateCw, Check, Bookmark, Trash2, Loader2 } from "lucide-react
 import { getLearnCards } from "@/lib/api";
 import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
+import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { toast } from "sonner";
 
 const TRACKS = [
@@ -208,8 +209,17 @@ export default function LearnCards() {
 }
 
 function FlashCard({ card, flipped, onFlip, mark, onMark }) {
+  const readText = flipped ? card.flashcard_back : card.flashcard_front;
   return (
-    <div className="h-[340px] [perspective:1200px]" data-testid={`flashcard-${card.id}`}>
+    <div className="relative h-[340px] [perspective:1200px]" data-testid={`flashcard-${card.id}`}>
+      <div className="absolute top-3 right-3 z-30">
+        <ReadAloudButton
+          text={readText}
+          compact
+          testid={`read-aloud-flashcard-${card.id}`}
+          className="bg-[#0C0E11]/80 backdrop-blur"
+        />
+      </div>
       <div
         className={`relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
       >
@@ -220,7 +230,7 @@ function FlashCard({ card, flipped, onFlip, mark, onMark }) {
           data-testid={`flashcard-front-${card.id}`}
           className="absolute inset-0 [backface-visibility:hidden] text-left rounded-lg border border-white/10 bg-[#0C0E11] p-5 flex flex-col hover:border-[#7E1818]/60 transition-colors"
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 pr-10">
             <span className="text-2xl text-[#7E1818]">{CAT_ICONS[card.category] || "◆"}</span>
             <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-zinc-500">{card.category}</span>
           </div>
@@ -247,7 +257,7 @@ function FlashCard({ card, flipped, onFlip, mark, onMark }) {
           data-testid={`flashcard-back-${card.id}`}
           className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-lg border border-[#7E1818]/40 bg-[#0C0E11] p-4 flex flex-col"
         >
-          <button type="button" onClick={onFlip} className="text-left mb-2 flex items-center justify-between">
+          <button type="button" onClick={onFlip} className="text-left mb-2 flex items-center justify-between pr-10">
             <span className="font-bold break-words">{card.title}</span>
             <RotateCw size={14} className="text-zinc-500 shrink-0" />
           </button>

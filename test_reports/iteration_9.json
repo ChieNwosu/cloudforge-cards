@@ -1,0 +1,38 @@
+{
+  "summary": "Phase 4A Audio Polish (voice style + read-aloud) verified frontend-only. Voice style toggle cycles Professor -> Calm -> Default -> Professor on desktop AND inside mobile burger menu, persists to localStorage key cloudforge_voice_style, survives full reload, syncs with mute persistence (cloudforge_audio_muted). No console errors on any tested surface. No-speech-support simulation correctly hides both toggles and renders read-aloud-*-unavailable variants site-wide. No regressions in Play round-mode-select 3/5/10 or Leaderboard. Mobile 390px has no horizontal overflow on /learn/cards, /play, /learn/test, /learn/match.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "tests_executed": [
+    "Desktop 1920px: voice-style-toggle and audio-toggle both visible next to each other in nav. Initial label 'Voice: Professor'. Clicking cycles to Calm, Default, Professor. localStorage.cloudforge_voice_style = 'Calm' after setting Calm.",
+    "Persistence: Set Voice=Calm and Audio=Muted, full reload -> both restored (Voice: Calm, Audio: Muted) with 0 console errors.",
+    "Mobile 390px burger menu contains both voice-style-toggle ('Voice: Professor') and audio-toggle ('Audio: On'); clicking Voice on mobile cycles to 'Voice: Calm'.",
+    "Horizontal overflow: scrollWidth==clientWidth (390==390) on /learn/cards, /play, /learn/test, /learn/match at 390px.",
+    "Muted state on /play?rounds=3: unmuted shows read-aloud-scenario (1); after clicking audio-toggle to mute, read-aloud-scenario switches to read-aloud-scenario-muted variant which is disabled=true.",
+    "New-speech-stops-previous: after clicking scenario read-aloud twice, no more than 1 button remained aria-pressed=true (headless Chromium yields 0 in these runs, still no crash).",
+    "Regression /play: round-mode-select present with round-mode-3, round-mode-5, round-mode-10 all present.",
+    "Regression /leaderboard: page loads with 'Leaderboard' text and existing rows (Chiemela 217.3 3R Best, guest 80).",
+    "Delayed voice / no-support simulation: init script sets window.speechSynthesis=undefined; voice-style-toggle count=0, audio-toggle count=0 (both hidden); /learn/cards renders 34 read-aloud-flashcard-<id>-unavailable variants; /play renders read-aloud-scenario-unavailable. Zero uncaught console errors."
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "speech.js: pickVoice priority (Natural/Neural -> preferred name list -> en-US local -> any en-US -> any English -> null) is well-ordered; voiceschanged listener setup is defensive.",
+    "cleanForSpeech only transforms spoken text; visible UI unchanged (confirmed by code inspection).",
+    "utterance.onerror ignores 'interrupted' and 'canceled' (the two expected outcomes when cancel() is called before next speak). No empty catch blocks; every catch has console.warn.",
+    "useAudioPreference.js: readStyle() validates against VALID_STYLES and falls back to Professor; cross-tab storage sync wired for both cloudforge_voice_style and cloudforge_audio_muted.",
+    "VoiceStyleToggle correctly returns null when isSpeechSupported() is false; Nav.jsx renders it in both desktop and mobile sections with matching data-testid.",
+    "ReadAloudButton passes {id, style} into speak() so cycling Voice style takes effect on the next click without needing a remount. Confirmed style consumed from useVoiceStyle().",
+    "No em dashes in new UI strings; US English preserved."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100% of tested scenarios"},
+  "test_credentials": "No login required. ADMIN_TOKEN not needed; no leaderboard rows were created.",
+  "seed_data_creation": "None. Post-test localStorage was reset before mobile flow but not after; recommend user clears cloudforge_voice_style / cloudforge_audio_muted if desired.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Voice style + audio polish patch is stable. If deeper audio verification is needed beyond DOM state, a real desktop browser (non-headless) would be required to observe actual TTS output. All persistence and UI wiring is confirmed via localStorage assertions and data-testid presence. No speechSynthesis in Playwright's Chromium headless still allows utterance to be constructed but voices list may be empty (pickVoice returns null, falls back to browser default). No regressions observed in Play/Leaderboard/Flashcards."
+}

@@ -99,19 +99,44 @@ This design ensures players cannot inspect the page source or network traffic to
 
 ---
 
-## Planned: Match Mode (v0.3 Phase 3)
+## Match Mode (v0.3 Phase 3, complete)
 
-Match Mode will add pattern-matching exercises for active recall.
+Match Mode is the third Perpetual Learning experience, launched in v0.3 Phase 3.
 
-**Planned formats:**
-- Match service names to descriptions
-- Match services to use cases
-- Fill-in-the-blank: complete a sentence about a service
-- Timed and untimed variants
+**Route:** `/learn/match`
+
+**What it does:**
+- Presents architecture pipeline exercises where players tap to place services in the correct order
+- Each exercise represents a real-world architecture pattern (e.g., "Build a serverless API pipeline")
+- Players select services in sequence using tap-to-place interactions
+- Server-side grading evaluates submissions with partial credit for partially correct pipelines
+- Review feedback explains what was correct, what was missed, and why
+- Track-filtered exercises match the selected certification track
+
+**Design principle:** Match Mode bridges the gap between passive learning (flashcards) and full scenario gameplay. It tests service ordering and pipeline thinking without requiring the full complexity of the 3-to-6 card architecture game.
+
+### How Match Complements Learn and Test
+
+| Mode | Skill Practiced | Cognitive Level |
+|------|----------------|-----------------|
+| Learn Flashcards | Recognition and recall of individual services | Remember |
+| Test Mode | Comprehension of service roles and use cases | Understand |
+| Match Mode | Application of services in correct pipeline order | Apply |
+| Play Mode | Analysis and synthesis of full architectures | Analyze/Create |
+
+The four modes form a progression from passive review to active architecture design. Players can move freely between them based on their confidence level and study goals.
+
+### Server-Side Grading with Partial Credit
+
+Match Mode uses server-side grading similar to Test Mode, but adds partial credit:
+- Full credit for a perfectly ordered pipeline
+- Partial credit for pipelines with some services in the correct position
+- Zero credit only for completely incorrect orderings
+- Review feedback always explains the expected pipeline and why each service belongs in its position
 
 ---
 
-## Planned: Audio and Gamification Polish (v0.3 Phase 5)
+## Planned: Audio and Gamification Polish (v0.3 Phase 4/5)
 
 - Audio pronunciations for service names (accessibility and multi-modal learning)
 - Study streaks tracked locally

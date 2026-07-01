@@ -1,8 +1,8 @@
 # CloudForge Cards Roadmap
 
-## Current Version: v0.3 Phase 2 (Perpetual Learning: Flashcards and Test Mode)
+## Current Version: v0.3 Phase 3 (Match Mode, Round Modes, Scoring Transparency)
 
-The app now includes the original 3-round AWS architecture game plus a Perpetual Learning hub with flashcard study, 15-question Test Mode with server-side grading, and exam-track filtering.
+The app now includes the original AWS architecture game with 3R/5R/10R session modes, per-mode leaderboard, and the full Perpetual Learning suite: Learn Flashcards, Test Mode, and Match Mode.
 
 ---
 
@@ -52,64 +52,34 @@ Completed highlights:
 - [x] "Reinforce in Flashcards" button linking missed topics to Learn
 - [x] Updated landing page with v0.3 positioning and Learn/Test CTAs
 
+### v0.3 Phase 3: Match Mode, Round Modes, Scoring Transparency (complete)
+
+- [x] Added `/learn/match` Match Mode with tap-to-place pipeline interactions
+- [x] Server-side grading for Match exercises with partial credit
+- [x] Review feedback and explanations for Match results
+- [x] Added 3R, 5R, and 10R Play session modes
+- [x] Per-mode leaderboard columns for 3R, 5R, and 10R
+- [x] Scoring transparency for Simplicity / Overengineering sub-score
+- [x] Explanation overflow bonus behavior (long explanations earn full 5 points)
+- [x] Transparent Professor Flock avatar (PNG) across the app
+- [x] Updated landing page: Play, Learn, Test, Match positioning
+- [x] Removed outdated "Best-of-3 sessions" language
+
 ---
 
-## v0.3 Phase 3: Match / Fill in the Blank (next)
+## v0.3 Phase 4/5: Audio, Voiceover, Shareability, and Certification Expansion (next)
 
-Focus: Active recall through matching and typing exercises.
+Focus: Multi-modal learning, social sharing, and deeper certification coverage.
 
-* [ ] Match mode: pair service names with descriptions or use cases
-* [ ] Fill-in-the-blank mode: complete service descriptions from memory
-* [ ] Timed and untimed variants
-* [ ] Local progress integration with Learn progress
-
----
-
-## v0.3 Phase 4: Certification Prep Expansion
-
-Focus: Deepen AIF and MLA track coverage.
-
+* [ ] Audio pronunciations and optional voiceover support
+* [ ] Shareable result cards (image or link format for social sharing)
 * [ ] Expand AIF-tagged content across relevant services
 * [ ] Expand MLA-tagged content across data and model services
-* [ ] Add track-specific scenario hints in Play mode
+* [ ] Study streaks tracked in localStorage
+* [ ] XP or mastery points for completing sessions
+* [ ] Visual progress indicators (cards mastered, track completion)
+* [ ] Spaced repetition scheduling for Review cards
 * [ ] Consider adding DEA (Data Engineer Associate) track
-
-Note: Certification Prep is a filter layer across Learn, Test, and Match, not a standalone engine.
-
----
-
-## v0.3 Phase 5: Audio and Gamification Polish
-
-Focus: Optional quality-of-life improvements, classroom-friendly interaction, and social sharing.
-
-* [ ] Optional audio toggle and classroom-friendly sound effects
-* [ ] Service-card tooltips visible on hover/tap during gameplay
-* [ ] Move "not core to scenario" feedback from "What You Got Right" into "What to Improve"
-* [ ] Shareable result card (image or link format for social sharing)
-* [ ] Minor copy improvements based on playtest feedback
-* [ ] Accessibility audit (keyboard navigation, screen reader labels)
-
-
-### Future Account System (not in v0.2.6, documented for planning)
-
-These features are candidates for a later version when AWS-native deployment is active:
-
-- Guest scores expire after 168 hours (DynamoDB TTL can support this in a future AWS version)
-- Registered users can save game history
-- User profiles can show previous runs
-- Cognito can support registered accounts in a future AWS version
-
----
-
-## v0.3 Phase 5: Audio and Gamification Polish
-
-Focus: Multi-modal learning and engagement features.
-
-- [ ] Audio pronunciations for service names
-- [ ] Study streaks tracked in localStorage
-- [ ] XP or mastery points for completing study sessions
-- [ ] Visual progress indicators (cards mastered, track completion)
-- [ ] Spaced repetition scheduling for Review cards
 
 ---
 
@@ -164,6 +134,7 @@ These are ideas for consideration after v0.5 is stable:
 
 | Version | Name | Key Change |
 |---------|------|-----------|
+| v0.3 P3 | Match Mode, Round Modes, Scoring Transparency | Match mode, 3R/5R/10R play, per-mode leaderboard, transparent Flock |
 | v0.3 P2 | Perpetual Learning: Test Mode | 15-question quizzes, server-side grading, review explanations |
 | v0.3 P1 | Perpetual Learning: Learn Flashcards | Learn hub, flashcards, exam tracks, Professor Flock avatar |
 | v0.2.6 | Mobile and Leaderboard Maintenance | Responsive layout, leaderboard polish |

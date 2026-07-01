@@ -10,19 +10,32 @@ CloudForge Cards is a gamified AWS architecture trainer and study tool where lea
 
 **Try it now:** [https://cloudforge-cards.emergent.host/](https://cloudforge-cards.emergent.host/)
 
-No login required. Play a full 3-round session, study with flashcards, view your score breakdown, and land on the leaderboard.
+No login required. Play a 3R, 5R, or 10R session, study with flashcards, take a quiz, try Match Mode, and land on the leaderboard.
 
 ---
 
 ## Current Release
 
-**CloudForge Cards v0.3 Phase 2: Perpetual Learning, Learn Flashcards and Test Mode**
+**CloudForge Cards v0.3 Phase 3: Match Mode, Round Modes, Scoring Transparency**
 
-CloudForge Cards now includes a route-isolated Perpetual Learning experience with both flashcard study and active-recall testing alongside the original 3-round AWS architecture card game.
+CloudForge Cards now includes the full Perpetual Learning suite (Learn Flashcards, Test Mode, and Match Mode), flexible Play session lengths (3R, 5R, 10R), per-mode leaderboard columns, and improved scoring transparency.
 
 ### What is new in v0.3
 
-**Phase 2 (latest):**
+**Phase 3 (latest):**
+
+- Added `/learn/match` Match Mode with tap-to-place pipeline interactions
+- Added server-side grading for Match exercises with partial credit
+- Added review feedback and explanations for Match results
+- Added scoring transparency for Simplicity / Overengineering sub-score
+- Added explanation overflow bonus behavior (long explanations always earn full 5 points)
+- Added 3R, 5R, and 10R Play modes (choose session length before starting)
+- Added per-mode leaderboard columns for 3R, 5R, and 10R sessions
+- Added transparent Professor Flock avatar (PNG with transparency) across the app
+- Updated landing page with Play, Learn, Test, and Match positioning
+- Removed outdated "Best-of-3 sessions" language from landing page
+
+**Phase 2:**
 
 - Added `/learn/test` Test Mode with 15-question quiz sessions
 - Added server-side grading (answer keys never shipped to the browser)
@@ -53,8 +66,8 @@ The Perpetual Learning mode is designed for repeat study outside the main game l
 
 - **Learn Flashcards:** live (self-directed review with flip cards)
 - **Test Mode:** live (15-question quizzes with server-side grading)
-- **Match / Fill in the Blank:** coming soon
-- **Certification Prep:** active as a track filter across learning modes (not a separate engine)
+- **Match Mode:** live (tap-to-place pipeline exercises with partial credit)
+- **Certification Prep:** active as a track filter across all learning modes (not a separate engine)
 
 ### Certification Tracks
 
@@ -73,11 +86,12 @@ CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expa
 
 | Route | Description |
 |-------|-------------|
-| `/play` | 3-round AWS architecture card game |
+| `/play` | AWS architecture card game (3R, 5R, or 10R sessions) |
 | `/learn` | Perpetual Learning hub |
 | `/learn/cards` | Learn Flashcards |
 | `/learn/test` | Test Mode (15-question quizzes) |
-| `/leaderboard` | Session leaderboard |
+| `/learn/match` | Match Mode (tap-to-place pipeline exercises) |
+| `/leaderboard` | Per-mode leaderboard (3R, 5R, 10R columns) |
 | `/how-to-play` | Rules and scoring reference |
 
 ### Release Notes
@@ -103,10 +117,12 @@ The v0.3 screenshot folder currently contains placeholders for Learn hub and Lea
 * Transparent rule-based scoring engine with six explainable sub-scores
 * Synergy detection for well-known AWS service pairings
 * Ideal architecture matching with guardrails for fairness
-* Perpetual Learning hub with flashcard study and Test Mode
+* Perpetual Learning hub with Learn Flashcards, Test Mode, and Match Mode
 * Test Mode: 15-question quizzes with server-side grading and review explanations
+* Match Mode: tap-to-place pipeline exercises with partial credit and review feedback
+* 3R, 5R, and 10R Play session modes with per-mode leaderboard
 * Exam-track filtering: CLF/SAA, AIF, MLA, Mixed
-* Professor Flock beta avatar for guided learning
+* Professor Flock transparent avatar for guided learning
 * Optional LLM-powered commentary through Claude for personalized feedback
 * Leaderboard with persistent high scores
 * Dark theme Cloud Lab UI with tactile card interactions
@@ -114,11 +130,12 @@ The v0.3 screenshot folder currently contains placeholders for Learn hub and Lea
 
 ## Gameplay Overview
 
-1. **Deal Phase:** Each round, you receive a scenario prompt, constraint chips, and a hand of service cards. The hand always contains at least one ideal architecture combination.
-2. **Build Phase:** Select 3 to 6 service cards to build your architecture. Consider the scenario requirements and active constraints.
-3. **Explain Phase:** Optionally write a short rationale for your design choices (up to +5 bonus points).
-4. **Score Phase:** The engine evaluates your selection across six dimensions and provides a detailed breakdown plus commentary.
-5. **Session:** A full game session consists of 3 rounds with unique scenarios. Your total score lands on the leaderboard.
+1. **Choose Mode:** Select a session length: 3 rounds (3R), 5 rounds (5R), or 10 rounds (10R).
+2. **Deal Phase:** Each round, you receive a scenario prompt, constraint chips, and a hand of service cards. The hand always contains at least one ideal architecture combination.
+3. **Build Phase:** Select 3 to 6 service cards to build your architecture. Consider the scenario requirements and active constraints.
+4. **Explain Phase:** Optionally write a short rationale for your design choices (up to +5 bonus points).
+5. **Score Phase:** The engine evaluates your selection across six dimensions and provides a detailed breakdown plus commentary.
+6. **Session:** Your total score across all rounds lands on the per-mode leaderboard (3R, 5R, or 10R column).
 
 ## Screenshots
 

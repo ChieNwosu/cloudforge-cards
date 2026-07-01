@@ -49,7 +49,38 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
-## v0.3 Phase 3 — Match mode, scoring transparency, round modes, leaderboard expansion (2026-06-30, DONE)
+## v0.3.1 Phase 4A — Professor Flock Read-Aloud MVP (2026-07-01, DONE)
+Frontend-only accessibility and polish release. No backend, scoring, grading, leaderboard,
+schema, or certification-content changes. US English, no em dashes.
+
+- **Browser-native text to speech** via `window.speechSynthesis` + `SpeechSynthesisUtterance`.
+  No external TTS APIs, no stored audio files, no backend audio routes, no microphone, no
+  speech recognition.
+- **New files:** `src/utils/speech.js` (support detection, speak, stop-before-speak, cancel,
+  ignores empty/whitespace text, never throws, tiny pub/sub so only one button shows Stop),
+  `src/hooks/useAudioPreference.js` (localStorage key `cloudforge_audio_muted`, default false,
+  syncs across components via a window event and the storage event),
+  `src/components/ReadAloudButton.jsx` (reusable, accessible aria-labels, keyboard friendly,
+  compact and labeled variants), `src/components/AudioToggle.jsx` (global Audio: On / Audio:
+  Muted control in the nav).
+- **Audio: On / Audio: Muted** global toggle in the nav (desktop and mobile). Preference
+  persists across refresh. When muted, read-aloud buttons show a disabled Audio muted state and
+  do not play. When speech synthesis is unavailable, buttons show a disabled Audio unavailable
+  state and the global toggle hides itself. No crashes in any state.
+- **Read-aloud wired into:** Play scenario (title + prompt), Play round architect commentary,
+  Test Mode question, Test Mode review explanations (per question), Match / Fill prompt (title +
+  prompt), Match result explanation, and Learn Flashcards via a single side-aware control that
+  reads the front when showing the front and the back when flipped (avoids nested buttons).
+- **Behavior:** starting a new read-aloud stops the previous speech; muting stops any current
+  speech immediately. Long text does not break layout (compact icon buttons, shrink-0 placement,
+  reserved padding on flashcards).
+- **Limitations:** available voices, quality, and language depend on the user's browser and OS;
+  some browsers require a user gesture before speaking (the button click satisfies this);
+  headless test environments have no audio device so playback audio cannot be asserted, only
+  button state, mute behavior, and absence of crashes/regressions.
+
+
+
 Tested end-to-end (testing iteration_6: backend 14/14 e2e + 11/11 phase3 local + 5/5 scoring
 regression; frontend 100% on all acceptance criteria; zero console errors). All US English,
 no em dashes.

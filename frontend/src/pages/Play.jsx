@@ -6,6 +6,7 @@ import ServiceCard from "@/components/ServiceCard";
 import ConstraintChip from "@/components/ConstraintChip";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import { FlockAvatar } from "@/components/FlockAvatar";
+import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { toast } from "sonner";
 
 const ROUND_MODES = [3, 5, 10];
@@ -407,7 +408,13 @@ export default function Play() {
           {/* Side panel */}
           <aside className="lg:col-span-4 space-y-4 min-w-0">
             <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6 cf-fade-up" data-testid="scenario-card">
-              <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Scenario</div>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F]">Scenario</div>
+                <ReadAloudButton
+                  text={`${data.scenario.title}. ${data.scenario.prompt}`}
+                  testid="read-aloud-scenario"
+                />
+              </div>
               <h3 className="text-lg sm:text-xl font-bold mb-3 break-words">{data.scenario.title}</h3>
               <p className="text-sm text-zinc-300 leading-relaxed mb-4 break-words">{data.scenario.prompt}</p>
               {data.scenario.hint && (

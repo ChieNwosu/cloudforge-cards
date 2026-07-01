@@ -7,6 +7,7 @@ import {
 import { getMatchSession, gradeMatch } from "@/lib/api";
 import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
+import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { toast } from "sonner";
 
 const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", MIXED: "Mixed" };
@@ -225,7 +226,15 @@ export default function LearnMatch() {
 
       <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 sm:p-6 mb-4">
         <h2 className="text-lg sm:text-xl font-bold break-words mb-1" data-testid="match-title">{exercise.title}</h2>
-        <p className="text-sm text-zinc-300 leading-relaxed break-words mb-4" data-testid="match-prompt">{exercise.prompt}</p>
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <p className="text-sm text-zinc-300 leading-relaxed break-words" data-testid="match-prompt">{exercise.prompt}</p>
+          <ReadAloudButton
+            text={`${exercise.title}. ${exercise.prompt}`}
+            compact
+            testid="read-aloud-match-prompt"
+            className="shrink-0"
+          />
+        </div>
 
         {/* Slots */}
         <div className="space-y-2.5 mb-5" data-testid="match-slots">
@@ -315,6 +324,9 @@ export default function LearnMatch() {
             <div className="flex items-baseline justify-between mb-2">
               <span className="text-xs font-mono uppercase tracking-[0.16em] text-zinc-400">Pipeline score</span>
               <span className="font-mono font-bold text-lg" data-testid="match-exercise-score">{graded.partial_score}<span className="text-zinc-500 text-sm">%</span> · {graded.correct_count}/{graded.total}</span>
+            </div>
+            <div className="flex items-start justify-end mb-1">
+              <ReadAloudButton text={graded.explanation} compact testid="read-aloud-match-explanation" />
             </div>
             <FlockSays size={28}>{graded.explanation}</FlockSays>
           </div>

@@ -266,86 +266,6 @@ yarn test
 
 See [docs/roadmap.md](docs/roadmap.md) for the full version plan.
 
-## Roadmap
-
-### Current Release
-
-**v0.3 Phase 1: Perpetual Learning, Learn Flashcards**
-
-Status: Complete
-
-Includes:
-
-* Perpetual Learning hub
-* Learn Flashcards route
-* Exam-track filtering for CLF/SAA, AIF, MLA, and Mixed
-* Professor Flock beta avatar
-* Local-only Known and Review progress
-* Certification Prep as a filter layer
-* Test Mode and Match Mode marked as coming soon
-
-### Next Phase
-
-**v0.3 Phase 2: Test Mode**
-
-Planned focus:
-
-* 15-question quiz sessions
-* Server-side grading
-* Track-filtered question banks
-* Multiple choice, true/false, and scenario-based questions
-* Score review with explanations
-* Local best score per track
-* Link missed topics back to Learn Flashcards
-
-### Planned Later Phases
-
-**v0.3 Phase 3: Match / Fill in the Blank**
-
-* Architecture pipeline assembly
-* Tap-select MVP before drag-and-drop
-* Partial credit and explanations
-* Professor Flock hints
-
-**v0.3 Phase 4: Certification Prep Expansion**
-
-* Expand AIF and MLA content
-* Add more exam-domain metadata
-* Improve track-specific review guidance
-
-**v0.3 Phase 5: Audio and Gamification Polish**
-
-* Optional sound effects
-* Optional background music toggle
-* Count-up animation
-* Confetti or celebration effects for strong results
-
-### Completed Maintenance
-
-**v0.2.6: Mobile and Leaderboard Maintenance**
-
-* Mobile Play page responsiveness
-* US English copy sweep
-* Unique official leaderboard save behavior
-* Safe local score deletion
-* Professor Flock greeting
-* Mobile filter scroll affordance
-* Play page text wrapping fixes
-
-### Future Architecture
-
-**v0.4 and later**
-
-* Guest mode with temporary scores
-* Registered profiles
-* Score history
-* Progress over time
-* Favorite services and weak areas
-* AWS-native deployment planning
-* Microsoft Entra or Cognito authentication planning
-* DynamoDB TTL for temporary guest scores
-* Bedrock-enhanced AI feedback
-
 
 ## Project Structure
 
@@ -383,7 +303,9 @@ cloudforge-cards/
 
 ## Disclaimer
 
-Unofficial educational project. Not affiliated with Amazon Web Services or North Carolina Central University.
+Student-built educational AWS learning project.
+
+Unofficial educational project. Not affiliated with Amazon Web Services.
 
 ## Attribution
 

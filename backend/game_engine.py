@@ -210,6 +210,8 @@ def _simplicity(selected: List[dict], scenario: dict) -> Dict[str, Any]:
     min_ideal = scenario["min_services"]
     max_ideal = scenario["max_services"]
     reasons = []
+    score = 10.0            # defensive defaults; reassigned in every branch below
+    state = "right_sized"
 
     if n > max_ideal:
         dev = n - max_ideal

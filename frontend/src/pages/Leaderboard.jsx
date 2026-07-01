@@ -18,7 +18,9 @@ function readMyScores() {
     try {
       const legacy = JSON.parse(localStorage.getItem("cf_my_score") || "null");
       if (legacy?.id) map[String(legacy.rounds || 3)] = legacy;
-    } catch { /* ignore */ }
+    } catch (err) {
+      console.debug("cf_my_score legacy migration skipped:", err);
+    }
   }
   return map;
 }

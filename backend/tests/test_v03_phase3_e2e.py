@@ -5,11 +5,16 @@ Covers: /api/game/score overflow + simplicity state, /api/learn/match/session +
 import os
 import uuid
 import time
+from pathlib import Path
 import requests
 import pytest
+from dotenv import load_dotenv
+
+# Load backend/.env so the admin token comes from the environment, never a literal.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://cloudforge-cards.preview.emergentagent.com").rstrip("/")
-ADMIN_TOKEN = "cf-admin-7Qx2Lm9Tv"
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")  # never hardcode a secret in tests
 LONG_EXPL = ("We serve static files from S3 behind CloudFront for global low latency caching "
              "and Route 53 for DNS, near zero cost no servers, highly available across edge "
              "locations worldwide for every visitor.")
@@ -22,7 +27,9 @@ CREATED_IDS = []
 @pytest.fixture(scope="module", autouse=True)
 def cleanup_after_module():
     yield
-    # admin cleanup
+    # admin cleanup (skipped if no admin token is configured)
+    if not ADMIN_TOKEN:
+        return
     for eid in CREATED_IDS:
         try:
             requests.delete(f"{BASE_URL}/api/admin/leaderboard/{eid}",
@@ -208,7 +215,7 @@ class TestLeaderboardPerMode:
         assert r2.status_code == 200
         data = r2.json()
         assert data["status"] == "conflict"
-        assert data.get("entry") in (None, {}, ) or data["entry"] is None
+        assert data.get("entry") in (None, {})
         assert isinstance(data.get("suggestions"), list)
         assert len(data["suggestions"]) >= 1
 
@@ -234,7 +241,7 @@ class TestLeaderboardPerMode:
         d = requests.delete(f"{BASE_URL}/api/leaderboard/{id3}",
                             params={"owner_token": self.token_a}, timeout=15)
         assert d.status_code == 200
-        assert d.json().get("deleted") is True
+        assert d.json().get("deleted") == True
         # 5R row still present
         lb = requests.get(f"{BASE_URL}/api/leaderboard", timeout=15).json()
         ids = {row["id"] for row in lb.get("entries", lb if isinstance(lb, list) else [])}
@@ -247,6 +254,8 @@ class TestLeaderboardPerMode:
         assert id3 not in ids
 
     def test_admin_delete(self):
+        if not ADMIN_TOKEN:
+            pytest.skip("ADMIN_TOKEN not configured in environment")
         r = self._post(self.name, self.token_a, 10, 850)
         eid = r.json()["entry"]["id"]
         # no token -> 403
@@ -256,4 +265,4 @@ class TestLeaderboardPerMode:
         ok = requests.delete(f"{BASE_URL}/api/admin/leaderboard/{eid}",
                              headers={"X-Admin-Token": ADMIN_TOKEN}, timeout=10)
         assert ok.status_code == 200
-        assert ok.json().get("deleted") is True
+        assert ok.json().get("deleted") == True

@@ -49,7 +49,33 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
-## v0.3.1 Phase 4A: Professor Flock Read-Aloud MVP (2026-07-01, DONE)
+## v0.3.1 Phase 4A Audio Polish Patch (2026-07-01, DONE)
+Frontend-only voice quality patch on top of the read-aloud MVP. No backend, scoring, grading,
+leaderboard, schema, or certification-content changes. US English, no em dashes.
+
+- **Smoother Professor Flock tuning:** utterances now set lang en-US and use style profiles
+  (Professor rate 0.9 pitch 0.98, Calm rate 0.86 pitch 1.0, Default rate 1 pitch 1, volume 1).
+- **Best available English voice selection** in `src/utils/speech.js` via
+  `speechSynthesis.getVoices()`, with async loading handled through the `voiceschanged` event.
+  Preference order: any English Natural or Neural voice, then a preferred-name list
+  (Google US English, Microsoft Aria or Jenny, Samantha, Alex, Ava, and others), then an en-US
+  local service voice, then the first en-US voice, then the first English voice, then the browser
+  default.
+- **Voice style preference:** new `useVoiceStyle` hook, localStorage key `cloudforge_voice_style`,
+  default Professor, valid values Professor, Calm, Default. New `VoiceStyleToggle` control in the
+  nav (desktop and mobile) that cycles the three styles. Persists across refresh.
+- **Spoken-text cleanup (spoken only, visible text unchanged):** collapses whitespace, strips
+  markdown symbols and heading markers, converts slash-heavy phrases to readable words
+  (CLF/SAA becomes CLF, SAA), reads exam codes clearly (AIF-C01 becomes A I F C zero one), and
+  adds light pauses after labels like Scenario and Question.
+- **Better error handling:** no empty catch blocks; speech and localStorage failures use single
+  safe console.warn messages; expected interrupted or canceled speech events are not logged;
+  the app never crashes if speech fails.
+- **Preserved:** existing Audio: On / Audio: Muted toggle and mute persistence
+  (`cloudforge_audio_muted`), stop-before-speak, and mute stops current speech immediately.
+
+
+
 Frontend-only accessibility and polish release. No backend, scoring, grading, leaderboard,
 schema, or certification-content changes. US English, no em dashes.
 

@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import { Volume2, Square, VolumeX } from "lucide-react";
 import { isSpeechSupported, speak, stopSpeech, subscribeSpeaking } from "@/utils/speech";
-import { useAudioPreference } from "@/hooks/useAudioPreference";
+import { useAudioPreference, useVoiceStyle } from "@/hooks/useAudioPreference";
 
 // Reusable read-aloud control. Feels like Professor Flock reading the content.
 // Shows a disabled Audio unavailable state when the browser lacks speech
@@ -10,6 +10,7 @@ export function ReadAloudButton({ text, label = "Read aloud", compact = false, c
   const id = useId();
   const supported = isSpeechSupported();
   const { muted } = useAudioPreference();
+  const { style } = useVoiceStyle();
   const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function ReadAloudButton({ text, label = "Read aloud", compact = false, c
 
   function handleClick() {
     if (speaking) { stopSpeech(); return; }
-    speak(text, { id });
+    speak(text, { id, style });
   }
 
   return (

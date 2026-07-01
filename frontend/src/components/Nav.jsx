@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { Cloud, Menu, X } from "lucide-react";
 import { AudioToggle } from "@/components/AudioToggle";
+import { VoiceStyleToggle } from "@/components/VoiceStyleToggle";
 
 const navItems = [
   { to: "/play", label: "Play", id: "nav-play" },
@@ -47,6 +48,7 @@ export default function Nav() {
             </NavLink>
           ))}
           <span className="w-px h-6 bg-white/10 mx-1" />
+          <VoiceStyleToggle />
           <AudioToggle />
         </nav>
 
@@ -82,7 +84,8 @@ export default function Nav() {
                 {n.label}
               </NavLink>
             ))}
-            <div className="px-4 pt-2">
+            <div className="px-4 pt-2 flex flex-col gap-2">
+              <VoiceStyleToggle className="w-full justify-center" />
               <AudioToggle className="w-full justify-center" />
             </div>
           </nav>

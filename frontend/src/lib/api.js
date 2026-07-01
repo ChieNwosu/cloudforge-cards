@@ -55,3 +55,9 @@ export const getTestSession = (track) =>
 
 export const gradeTest = (track, answers) =>
   api.post("/learn/test/grade", { track, answers }).then(r => r.data);
+
+export const getMatchSession = (track) =>
+  api.get("/learn/match/session", { params: { track } }).then(r => r.data);
+
+export const gradeMatch = (exercise_id, placements) =>
+  api.post("/learn/match/grade", { exercise_id, placements }).then(r => r.data);

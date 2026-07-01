@@ -7,7 +7,7 @@ import HowToPlay from "@/pages/HowToPlay";
 import LearnHub from "@/pages/LearnHub";
 import LearnCards from "@/pages/LearnCards";
 import LearnTest from "@/pages/LearnTest";
-import Nav from "@/components/Nav";
+import LearnMatch from "@/pages/LearnMatch";import Nav from "@/components/Nav";
 import { Toaster } from "@/components/ui/sonner";
 
 function App() {
@@ -23,6 +23,7 @@ function App() {
           <Route path="/learn" element={<LearnHub />} />
           <Route path="/learn/cards" element={<LearnCards />} />
           <Route path="/learn/test" element={<LearnTest />} />
+          <Route path="/learn/match" element={<LearnMatch />} />
         </Routes>
         <Toaster theme="dark" position="top-right" />
       </BrowserRouter>

@@ -7,8 +7,8 @@ import ConstraintChip from "@/components/ConstraintChip";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
+import { ShareResultCard } from "@/components/ShareResultCard";
 import { toast } from "sonner";
-
 const ROUND_MODES = [3, 5, 10];
 const FILTERS = [
   "All", "Compute", "Storage", "Database",
@@ -281,6 +281,20 @@ export default function Play() {
           <div className="rounded-lg border border-white/10 bg-[#121417] p-5 mb-6" data-testid="final-architect-review">
             <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">/// final architect&apos;s review</div>
             <p className="text-sm text-zinc-200 leading-relaxed">{finalReview}</p>
+          </div>
+
+          <div className="mb-6">
+            <ShareResultCard
+              testid="share-play"
+              result={{
+                kind: "play",
+                modeLabel: `${rounds}R`,
+                total: Number(sessionTotal.toFixed(1)),
+                maxTotal: rounds * 100,
+                overflow: Number(overflowTotal.toFixed(1)),
+                roundsCompleted: history.length,
+              }}
+            />
           </div>
 
           {!submitted && (

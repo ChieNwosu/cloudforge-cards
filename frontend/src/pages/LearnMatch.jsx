@@ -8,6 +8,7 @@ import { getMatchSession, gradeMatch } from "@/lib/api";
 import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
+import { ShareResultCard } from "@/components/ShareResultCard";
 import { toast } from "sonner";
 
 const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", MIXED: "Mixed" };
@@ -396,6 +397,13 @@ function MatchResults({ avg, history, track, beta, onRetake }) {
           This track has a small pipeline pool for now. More are coming soon.
         </div>
       )}
+
+      <div className="mb-5">
+        <ShareResultCard
+          testid="share-match"
+          result={{ kind: "match", percent: avg, total: history.length }}
+        />
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
         <button onClick={onRetake} data-testid="match-retake" className="inline-flex items-center justify-center gap-2 bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold text-sm">

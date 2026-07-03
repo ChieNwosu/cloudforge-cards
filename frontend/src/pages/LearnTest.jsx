@@ -5,6 +5,7 @@ import { getTestSession, gradeTest } from "@/lib/api";
 import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
+import { ShareResultCard } from "@/components/ShareResultCard";
 import { toast } from "sonner";
 
 const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", MIXED: "Mixed" };
@@ -299,6 +300,13 @@ function Results({ result, track, beta, onRetake }) {
           This track is early beta. More questions are coming soon.
         </div>
       )}
+
+      <div className="mb-5">
+        <ShareResultCard
+          testid="share-test"
+          result={{ kind: "test", percent: result.score, correct: result.correct_count, total: result.total }}
+        />
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <button onClick={onRetake} data-testid="retake-button" className="inline-flex items-center justify-center gap-2 bg-[#7E1818] hover:bg-[#A02828] text-white px-5 py-3 rounded-md font-semibold text-sm">

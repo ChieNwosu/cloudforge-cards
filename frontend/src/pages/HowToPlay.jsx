@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Volume2 } from "lucide-react";
 
 const steps = [
-  { n: "01", t: "Read the scenario", d: "Each round shows a unique AWS architecture problem plus two constraint chips (e.g. 'Low Cost', 'Secure')." },
-  { n: "02", t: "Pick 3 to 6 service cards", d: "Build the simplest design that fits the scenario and constraints, overengineering costs you points." },
-  { n: "03", t: "Optional: explain your architecture", d: "Write a short justification for your design. A relevant explanation earns up to 5 bonus points. Your round score is capped at 100, but if the bonus pushes you past 100 the extra points are banked as an overflow bonus added to your final session total." },
-  { n: "04", t: "Submit & read the review", d: "Six explainable sub-scores plus an AI architect critique tell you what worked and what didn't." },
-  { n: "05", t: "Win the best-of-3", d: "Three scenarios per session. A final game summary appears after round 3, then save your total to the leaderboard." },
+  { n: "01", t: "Read the scenario", d: "Each round shows a unique AWS architecture problem plus two constraint chips, such as Low Cost or Secure." },
+  { n: "02", t: "Pick 3 to 6 service cards", d: "Build the simplest design that fits the scenario and constraints. Overengineering can cost you points." },
+  { n: "03", t: "Optional: explain your architecture", d: "Write a short justification for your design. A relevant explanation earns up to 5 bonus points. Your round score is capped at 100, but if the bonus pushes you past 100, the extra points are banked as an overflow bonus and added to your final session total." },
+  { n: "04", t: "Submit and read the review", d: "Six explainable sub-scores plus an architect critique tell you what worked, what missed, and how your design matched the scenario." },
+  { n: "05", t: "Finish your selected session", d: "Complete 3, 5, or 10 rounds depending on your mode. A final session summary appears after the last round, then you can save your total to the matching leaderboard." },
 ];
 
 const scores = [
@@ -24,7 +24,14 @@ export default function HowToPlay() {
       <div>
         <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#7E1818] mb-3">/// how to play</div>
         <h1 className="text-4xl lg:text-5xl font-bold tracking-tight mb-4">The rules in 60 seconds.</h1>
-        <p className="text-zinc-400 max-w-xl">A round of CloudForge takes about three minutes. No memorization, just reasoning about trade-offs.</p>
+        <p className="text-zinc-400 max-w-xl">Choose a 3-round, 5-round, or 10-round CloudForge session. No memorization, just reasoning about AWS architecture trade-offs.</p>
+      </div>
+
+      <div className="rounded-lg border border-[#7E1818]/30 bg-[#7E1818]/[0.05] p-4 flex items-start gap-3" data-testid="accessibility-note">
+        <Volume2 size={18} className="text-[#D89090] shrink-0 mt-0.5" />
+        <p className="text-sm text-zinc-300 leading-relaxed">
+          Use the Audio and Voice controls to have Professor Flock read scenarios, questions, flashcards, prompts, and explanations aloud.
+        </p>
       </div>
 
       <div className="space-y-3">

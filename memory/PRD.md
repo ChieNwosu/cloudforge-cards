@@ -49,7 +49,24 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
-## v0.3.1 Phase 4A Audio Polish Patch (2026-07-01, DONE)
+## v0.3.2 Phase 4B: Shareable Result Cards and How to Play Refresh (2026-07-03, DONE)
+Frontend-only release. No scoring, grading, leaderboard, backend, schema, or
+certification-content changes. US English, no em dashes. Public AWS disclaimer preserved.
+
+- **Shareable result cards** on Play final summary, Test Mode results, and Match / Fill results.
+  New `src/components/ShareResultCard.jsx` + `src/utils/shareResults.js`. Styled in-app visual
+  card (CloudForge Cards header, Professor Flock, result lines, short message, live app link),
+  a Copy result button (Clipboard API with hidden-textarea fallback), an optional native Share
+  button via `navigator.share` when available, and an accessible aria-live status message using
+  an icon plus text (not color alone). Uses only result data already in the browser; missing
+  values are omitted cleanly. No downloads, no new dependencies, no stored data.
+- **How to Play refresh** (`HowToPlay.jsx`): title "The rules in 60 seconds", intro and steps
+  updated for 3R, 5R, and 10R sessions and explanation overflow, plus a new accessibility note
+  about the Audio and Voice read-aloud controls. Scoring table already matches the six sub-score
+  model (+0 to +30, +25, +20, +15, +10, +5).
+
+
+
 Frontend-only voice quality patch on top of the read-aloud MVP. No backend, scoring, grading,
 leaderboard, schema, or certification-content changes. US English, no em dashes.
 

@@ -45,7 +45,7 @@ function aggregate(entries) {
 }
 
 function ScoreCell({ entry, mine, adminToken, onAdminDelete }) {
-  if (!entry) return <span className="text-zinc-700">—</span>;
+  if (!entry) return <span className="text-zinc-700">-</span>;
   return (
     <span className="inline-flex items-center justify-end gap-1.5">
       <span className={`font-mono font-bold ${mine ? "text-[#D89090]" : ""}`}>{entry.total_score}</span>

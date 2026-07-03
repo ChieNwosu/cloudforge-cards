@@ -8,12 +8,11 @@ const steps = [
   { n: "04", t: "Submit and read the review", d: "Six explainable sub-scores plus an architect critique tell you what worked, what missed, and how your design matched the scenario." },
   { n: "05", t: "Finish your selected session", d: "Complete 3, 5, or 10 rounds depending on your mode. A final session summary appears after the last round, then you can save your total to the matching leaderboard." },
 ];
-
 const scores = [
   ["Correct Service Selection", "+0 to +30", "How well your chosen services fit the scenario. Distractor picks lower this."],
   ["Ideal Architecture Match", "+0 to +25", "Closeness to a known ideal combo. Exact matches score full, partial matches earn partial credit."],
   ["Constraint Alignment", "+0 to +20", "How well the design satisfies the round's active constraints. With no constraints, this is judged on general best-practice fit."],
-  ["Synergy Bonus", "+0 to +15", "Known good AWS pairings (e.g. Lambda + API Gateway). Two or more strong pairings earn the full bonus."],
+  ["Synergy Bonus", "+0 to +15", "Known good AWS pairings, such as Lambda plus API Gateway. Two or more strong pairings earn the full bonus."],
   ["Simplicity / Overengineering", "+0 to +10", "Right-sized designs earn the full +10 credit. Too many or too few services apply a penalty and you lose points from the 10."],
   ["Explanation Bonus", "+0 to +5", "A relevant written justification. The round stays capped at 100, and any bonus beyond 100 carries over as an overflow bonus to your session total."],
 ];

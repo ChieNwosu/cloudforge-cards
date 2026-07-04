@@ -49,7 +49,28 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
-## v0.3.2 Phase 4B: Shareable Result Cards and How to Play Refresh (2026-07-03, DONE)
+## v0.4.0 Phase 5A: Certification Prep Expansion (2026-07-04, DONE)
+Frontend and additive content release. No scoring, grading, leaderboard, backend schema, or
+authentication changes. US English, no em dashes. Public AWS disclaimer preserved. All content
+original and synthesized from broad public exam objectives.
+
+- **DEA added as a real Learn track** (Data Engineer Associate, short label DEA, status Expanding)
+  across the Learn Hub, Flashcards, Test Mode, and Match / Fill selectors, plus backend
+  EXAM_TRACKS. Mixed mode includes the new content.
+- **Flashcards expanded** with original concept cards (Learn only, never enter the Play game):
+  12 AIF, 12 MLA, 15 DEA. Final track totals: AIF 14, MLA 19, DEA 15, CLF/SAA 34, Mixed 73.
+- **Test Mode expanded** with original questions (server-graded, keys stay server-side):
+  AIF now 15, MLA now 15, DEA 13 (10, 10, and 13 added). All include explanations and fair
+  distractors.
+- **Match / Fill expanded** with original prompts: 4 AIF, 4 MLA, 5 DEA (plus existing CLF/SAA and
+  one MLA). All slots use real service cards so trays resolve and grade correctly.
+- **Learn Hub repositioned** as the main certification prep center: track cards with descriptions
+  and status labels (Strongest, Expanding, Mixed), clear CTAs (Study Flashcards, Take Test Mode,
+  Practice Match Mode), and two notes clarifying that CloudForge Cards is an unofficial
+  student-built tool and content is for practice and review, not official AWS exam material.
+
+
+
 Frontend-only release. No scoring, grading, leaderboard, backend, schema, or
 certification-content changes. US English, no em dashes. Public AWS disclaimer preserved.
 

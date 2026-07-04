@@ -15,10 +15,11 @@ def test_session_clf_has_15_and_no_answer_keys():
         assert q["answer_options"]
 
 
-def test_session_aif_is_beta():
+def test_session_aif_full_pool():
+    # v0.4.0 Phase 5A: AIF expanded to 15 questions (was 5/beta)
     d = requests.get(f"{API}/learn/test/session", params={"track": "AIF"}).json()
-    assert d["total"] == 5
-    assert d["beta"]
+    assert d["total"] == 15
+    assert not d["beta"]
 
 
 def test_grade_mixed_correct_and_incorrect():

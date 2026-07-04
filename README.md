@@ -125,13 +125,19 @@ CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expa
 - 10 cloud architecture scenarios with varying difficulty
 - 8 constraint chips that shape design decisions: Low Cost, High Availability, Serverless, Secure, Scalable, Beginner Friendly, Low Latency, and Observability
 - Transparent rule-based scoring engine with six explainable sub-scores
+- Explanation bonus with an overflow rule that banks extra points into the session total
 - Synergy detection for common AWS service pairings
 - Ideal architecture matching with fairness guardrails
 - Perpetual Learning hub with Learn Flashcards, Test Mode, and Match Mode
+- Expanded Certification Prep for CLF/SAA, AIF, MLA, DEA, and Mixed tracks
+- DEA track support across Learn Hub, Flashcards, Test Mode, and Match Mode
+- AIF, MLA, and DEA flashcard expansion with original concept cards
+- AIF, MLA, and DEA Test Mode question expansion with server-side grading
+- AIF, MLA, and DEA Match Mode prompt expansion with partial credit and review feedback
 - Test Mode with server-side grading and review explanations
 - Match Mode with tap-to-place pipeline exercises, partial credit, and review feedback
 - 3R, 5R, and 10R Play session modes with per-mode leaderboard
-- Exam-track filtering for CLF/SAA, AIF, MLA, and Mixed
+- Exam-track filtering for CLF/SAA, AIF, MLA, DEA, and Mixed
 - Professor Flock transparent avatar for guided learning
 - Browser-native Professor Flock read-aloud with voice style selection
 - Shareable result cards with copyable summaries

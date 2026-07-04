@@ -10,6 +10,7 @@ const TRACKS = [
   { id: "CLF_SAA", label: "CLF / SAA" },
   { id: "AIF", label: "AIF" },
   { id: "MLA", label: "MLA" },
+  { id: "DEA", label: "DEA" },
   { id: "MIXED", label: "Mixed" },
 ];
 
@@ -87,7 +88,7 @@ export default function LearnCards() {
 
   const knownCount = Object.values(progress).filter((v) => v === "known").length;
   const reviewCount = Object.values(progress).filter((v) => v === "review").length;
-  const isBetaTrack = track === "AIF" || track === "MLA";
+  const isBetaTrack = track === "AIF" || track === "MLA" || track === "DEA";
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 min-w-0" data-testid="learn-cards-page">

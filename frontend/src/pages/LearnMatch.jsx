@@ -11,7 +11,7 @@ import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { ShareResultCard } from "@/components/ShareResultCard";
 import { toast } from "sonner";
 
-const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", MIXED: "Mixed" };
+const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", DEA: "DEA", MIXED: "Mixed" };
 const CONFETTI_COLORS = ["#7E1818", "#D4AF37", "#D32F2F", "#00E676", "#E6C75A"];
 const CAT_ICONS = {
   Compute: "▣", Storage: "◧", Database: "◉", Network: "◈",

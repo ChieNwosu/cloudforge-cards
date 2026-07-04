@@ -9,6 +9,7 @@ import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { ShareResultCard } from "@/components/ShareResultCard";
+import { recordSession } from "@/utils/studyProgress";
 import { toast } from "sonner";
 
 const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", DEA: "DEA", MIXED: "Mixed" };
@@ -86,6 +87,7 @@ export default function LearnMatch() {
   const [graded, setGraded] = useState(null);
   const [grading, setGrading] = useState(false);
   const [history, setHistory] = useState([]);
+  const [xpEarned, setXpEarned] = useState(0);
 
   const exercise = exercises[idx];
 
@@ -149,6 +151,8 @@ export default function LearnMatch() {
       const prev = prog[track] || {};
       prog[track] = { last: avg, best: Math.max(prev.best || 0, avg), lastDate: new Date().toISOString() };
       localStorage.setItem("cf_match_progress", JSON.stringify(prog));
+      const xpRes = recordSession("match");
+      setXpEarned(xpRes.xpEarned);
       setPhase("results");
       window.scrollTo(0, 0);
       return;
@@ -205,7 +209,7 @@ export default function LearnMatch() {
   // ---------------- Results screen ----------------
   if (phase === "results") {
     const avg = history.length ? Math.round(history.reduce((a, b) => a + b.partial_score, 0) / history.length) : 0;
-    return <MatchResults avg={avg} history={history} track={track} beta={beta} onRetake={() => setPhase("start")} />;
+    return <MatchResults avg={avg} history={history} track={track} beta={beta} xpEarned={xpEarned} onRetake={() => setPhase("start")} />;
   }
 
   // ---------------- Play screen ----------------
@@ -360,7 +364,7 @@ export default function LearnMatch() {
   );
 }
 
-function MatchResults({ avg, history, track, beta, onRetake }) {
+function MatchResults({ avg, history, track, beta, xpEarned, onRetake }) {
   const strong = avg >= 80;
   const count = useCountUp(avg, true);
   return (
@@ -371,6 +375,11 @@ function MatchResults({ avg, history, track, beta, onRetake }) {
         <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Your pipelines, {TRACK_LABEL[track] || track}</div>
         <div className="text-6xl font-bold font-mono tracking-tighter" data-testid="match-results-score">{count}<span className="text-2xl text-zinc-500">%</span></div>
         <div className="text-sm text-zinc-300 mt-2" data-testid="match-results-count">Average across {history.length} pipelines</div>
+        {xpEarned > 0 && (
+          <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-mono px-3 py-1 rounded border bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#E6C75A]" data-testid="match-xp-earned">
+            +{xpEarned} XP earned
+          </div>
+        )}
         <div className="mt-4 flex justify-center"><FlockAvatar size={44} /></div>
         <p className="text-sm text-zinc-300 mt-2 break-words">
           {strong ? "Professor Flock says: Clean wiring. You are connecting AWS services like an architect."

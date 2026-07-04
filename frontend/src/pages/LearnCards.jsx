@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Search, RotateCw, Check, Bookmark, Trash2, Loader2 } from "lucide-react";
+import { Search, RotateCw, Check, Bookmark, Trash2, Loader2, Award } from "lucide-react";
 import { getLearnCards } from "@/lib/api";
 import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
+import {
+  loadProgress, recordCardMark, resetProgress, isDueToday, migrateLegacyProgress,
+} from "@/utils/studyProgress";
 import { toast } from "sonner";
 
 const TRACKS = [
@@ -14,15 +17,12 @@ const TRACKS = [
   { id: "MIXED", label: "Mixed" },
 ];
 
+const MASTERY_FILTERS = ["All", "Due Today", "New", "Review", "Known", "Mastered"];
+
 const CAT_ICONS = {
   Compute: "▣", Storage: "◧", Database: "◉", Network: "◈",
   Security: "✦", Analytics: "≡", Integration: "⇆", Monitoring: "◐", AI: "✺",
 };
-
-function readProgress() {
-  try { return JSON.parse(localStorage.getItem("cf_learn_progress") || "{}"); }
-  catch { return {}; }
-}
 
 export default function LearnCards() {
   const [cards, setCards] = useState([]);
@@ -30,8 +30,9 @@ export default function LearnCards() {
   const [track, setTrack] = useState(getLearnTrack);
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
+  const [masteryFilter, setMasteryFilter] = useState("All");
   const [flipped, setFlipped] = useState(() => new Set());
-  const [progress, setProgress] = useState(readProgress);
+  const [progress, setProgress] = useState(() => migrateLegacyProgress());
 
   useEffect(() => {
     let cancelled = false;
@@ -42,10 +43,18 @@ export default function LearnCards() {
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => {
+    const onChange = () => setProgress(loadProgress());
+    window.addEventListener("cf-progress-change", onChange);
+    return () => window.removeEventListener("cf-progress-change", onChange);
+  }, []);
+
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(cards.map((c) => c.category))).sort()],
     [cards]
   );
+
+  const cardState = useCallback((id) => progress.mastery[id] || "new", [progress]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -53,9 +62,16 @@ export default function LearnCards() {
       const trackOk = track === "MIXED" || (c.exam_tracks || []).includes(track);
       const catOk = category === "All" || c.category === category;
       const qOk = !q || c.title.toLowerCase().includes(q);
-      return trackOk && catOk && qOk;
+      const state = progress.mastery[c.id] || "new";
+      let masteryOk = true;
+      if (masteryFilter === "Due Today") masteryOk = isDueToday(c.id, progress);
+      else if (masteryFilter === "New") masteryOk = state === "new";
+      else if (masteryFilter === "Review") masteryOk = state === "review";
+      else if (masteryFilter === "Known") masteryOk = state === "known";
+      else if (masteryFilter === "Mastered") masteryOk = state === "mastered";
+      return trackOk && catOk && qOk && masteryOk;
     });
-  }, [cards, track, category, query]);
+  }, [cards, track, category, query, masteryFilter, progress]);
 
   function pickTrack(id) {
     setTrack(id);
@@ -71,23 +87,28 @@ export default function LearnCards() {
   }, []);
 
   function setMark(id, mark) {
-    setProgress((prev) => {
-      const next = { ...prev };
-      if (next[id] === mark) delete next[id]; else next[id] = mark;
-      localStorage.setItem("cf_learn_progress", JSON.stringify(next));
-      return next;
-    });
+    const res = recordCardMark(id, mark);
+    setProgress(loadProgress());
+    if (res.xpEarned > 0) {
+      toast.success(`+${res.xpEarned} XP`, { description: res.state === "mastered" ? "Mastered!" : `Marked ${res.state}.` });
+    } else if (res.cleared) {
+      toast.message("Mark cleared.");
+    } else if (res.state === "mastered") {
+      toast.success("Mastered!");
+    }
   }
 
   function clearProgress() {
-    if (!window.confirm("Clear all your local Learn progress (known and review marks)?")) return;
-    localStorage.removeItem("cf_learn_progress");
-    setProgress({});
-    toast.success("Local Learn progress cleared.");
+    if (!window.confirm("Reset all local study progress? This clears your XP, streak, and mastery marks, and cannot be undone.")) return;
+    resetProgress();
+    setProgress(loadProgress());
+    toast.success("Study progress reset.");
   }
 
-  const knownCount = Object.values(progress).filter((v) => v === "known").length;
-  const reviewCount = Object.values(progress).filter((v) => v === "review").length;
+  const states = Object.values(progress.mastery);
+  const knownCount = states.filter((v) => v === "known").length;
+  const reviewCount = states.filter((v) => v === "review").length;
+  const masteredCount = states.filter((v) => v === "mastered").length;
   const isBetaTrack = track === "AIF" || track === "MLA" || track === "DEA";
 
   return (
@@ -161,18 +182,40 @@ export default function LearnCards() {
         </div>
       </div>
 
+      {/* Mastery filter */}
+      <div className="mb-3">
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-1.5">Study filter</div>
+        <div className="cf-hscroll flex gap-1.5 pb-1" data-testid="mastery-filters">
+          {MASTERY_FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setMasteryFilter(f)}
+              data-testid={`mastery-filter-${f.toLowerCase().replace(/\s+/g, "-")}`}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap border transition-colors ${
+                masteryFilter === f
+                  ? "bg-[#7E1818] border-[#7E1818] text-white"
+                  : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Progress summary */}
       <div className="flex flex-wrap items-center gap-3 mb-5 text-xs text-zinc-400" data-testid="progress-summary">
         <span>Showing <span className="text-white font-mono">{visible.length}</span> cards</span>
         <span className="text-[#00E676]">Known: <span className="font-mono">{knownCount}</span></span>
         <span className="text-[#D4AF37]">Review: <span className="font-mono">{reviewCount}</span></span>
-        {(knownCount > 0 || reviewCount > 0) && (
+        <span className="text-[#00E676] inline-flex items-center gap-1"><Award size={12} /> Mastered: <span className="font-mono">{masteredCount}</span></span>
+        {(knownCount > 0 || reviewCount > 0 || masteredCount > 0) && (
           <button
             onClick={clearProgress}
             data-testid="clear-progress-button"
             className="inline-flex items-center gap-1 text-[#FF6666] hover:text-[#FF3333]"
           >
-            <Trash2 size={13} /> Clear progress
+            <Trash2 size={13} /> Reset progress
           </button>
         )}
       </div>
@@ -199,7 +242,8 @@ export default function LearnCards() {
               card={card}
               flipped={flipped.has(card.id)}
               onFlip={() => toggleFlip(card.id)}
-              mark={progress[card.id]}
+              state={cardState(card.id)}
+              due={isDueToday(card.id, progress)}
               onMark={(m) => setMark(card.id, m)}
             />
           ))}
@@ -209,11 +253,24 @@ export default function LearnCards() {
   );
 }
 
-function FlashCard({ card, flipped, onFlip, mark, onMark }) {
+function FlashCard({ card, flipped, onFlip, state, due, onMark }) {
   const readText = flipped ? card.flashcard_back : card.flashcard_front;
+  const knownActive = state === "known" || state === "mastered";
+  const badge = state === "mastered"
+    ? { text: "mastered", cls: "border-[#00E676]/50 text-[#00E676] bg-[#00E676]/10" }
+    : state === "known"
+    ? { text: "known", cls: "border-[#00E676]/40 text-[#00E676]" }
+    : state === "review"
+    ? { text: "review", cls: "border-[#D4AF37]/40 text-[#E6C75A]" }
+    : null;
   return (
     <div className="relative h-[340px] [perspective:1200px]" data-testid={`flashcard-${card.id}`}>
-      <div className="absolute top-3 right-3 z-30">
+      <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5">
+        {due && (
+          <span className="text-[9px] font-mono uppercase tracking-[0.12em] px-1.5 py-0.5 rounded border border-[#E6C75A]/40 text-[#E6C75A] bg-[#0C0E11]/80 backdrop-blur" data-testid={`due-badge-${card.id}`}>
+            due
+          </span>
+        )}
         <ReadAloudButton
           text={readText}
           compact
@@ -244,11 +301,9 @@ function FlashCard({ card, flipped, onFlip, mark, onMark }) {
           <div className="mt-auto flex items-center gap-1 text-xs text-zinc-500">
             <RotateCw size={13} /> Tap to flip
           </div>
-          {mark && (
-            <span className={`absolute bottom-4 right-4 text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border ${
-              mark === "known" ? "border-[#00E676]/40 text-[#00E676]" : "border-[#D4AF37]/40 text-[#E6C75A]"
-            }`}>
-              {mark === "known" ? "known" : "review"}
+          {badge && (
+            <span className={`absolute bottom-4 right-4 text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border ${badge.cls}`}>
+              {badge.text}
             </span>
           )}
         </button>
@@ -305,17 +360,17 @@ function FlashCard({ card, flipped, onFlip, mark, onMark }) {
               onClick={() => onMark("known")}
               data-testid={`mark-known-${card.id}`}
               className={`flex-1 inline-flex items-center justify-center gap-1 px-2 py-2 rounded-md text-xs font-semibold border transition-colors ${
-                mark === "known" ? "bg-[#00E676]/15 border-[#00E676]/50 text-[#00E676]" : "border-white/15 text-zinc-300 hover:bg-white/5"
+                knownActive ? "bg-[#00E676]/15 border-[#00E676]/50 text-[#00E676]" : "border-white/15 text-zinc-300 hover:bg-white/5"
               }`}
             >
-              <Check size={13} /> Known
+              <Check size={13} /> {state === "mastered" ? "Mastered" : state === "known" ? "Master" : "Known"}
             </button>
             <button
               type="button"
               onClick={() => onMark("review")}
               data-testid={`mark-review-${card.id}`}
               className={`flex-1 inline-flex items-center justify-center gap-1 px-2 py-2 rounded-md text-xs font-semibold border transition-colors ${
-                mark === "review" ? "bg-[#D4AF37]/15 border-[#D4AF37]/50 text-[#E6C75A]" : "border-white/15 text-zinc-300 hover:bg-white/5"
+                state === "review" ? "bg-[#D4AF37]/15 border-[#D4AF37]/50 text-[#E6C75A]" : "border-white/15 text-zinc-300 hover:bg-white/5"
               }`}
             >
               <Bookmark size={13} /> Review

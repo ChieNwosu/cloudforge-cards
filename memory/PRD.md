@@ -70,6 +70,33 @@ original and synthesized from broad public exam objectives.
   student-built tool and content is for practice and review, not official AWS exam material.
 
 
+## v0.4.1 Phase 5B Pass A: Study Progress, XP Lite, Mastery, Spaced Review (2026-06, DONE)
+Frontend-only, localStorage-only release. No backend, DB schema, leaderboard, auth, or
+track-aware Play changes (Pass B deferred). US English, no em dashes. AWS disclaimer preserved.
+
+- **`src/utils/studyProgress.js`** (single localStorage object `cloudforge_learning_progress`):
+  XP, current/longest streak, level (250 XP per level), per-card mastery (new/review/known/
+  mastered), spaced-review due dates (review 1d, known 3d, mastered 7d), sessionsCompleted.
+  XP: play3=30, play5=50, play10=100, test=40, match=35, known=5, review=3, due bonus=8.
+  Anti-farming via an `awarded` map: known/review XP granted only the first time a card reaches
+  that state; due bonus once per card per calendar day. `recordCardMark` promotes known->mastered
+  on a second Known click (promotion checked before the toggle-off short-circuit).
+  `migrateLegacyProgress()` does a one-time, non-destructive import of old `cf_learn_progress`
+  Known/Review marks (no retroactive XP; legacy key left in place; `migratedFromCfLearnProgress`
+  flag guards re-runs; graceful fallback on failure).
+- **LearnHub**: Study Progress panel (Streak, XP, Level, Mastered with Known/Review sub-counts,
+  Due Today, Sessions) + Reset progress button with confirm. Live-updates via `cf-progress-change`.
+- **LearnCards**: migrated to studyProgress; mastery filter row (All, Due Today, New, Review,
+  Known, Mastered); recordCardMark integration with XP toasts; due badge; mastered state/badge;
+  Reset progress in the summary.
+- **Play / LearnTest / LearnMatch**: award session XP on completion via recordSession and show a
+  `+N XP earned` badge on the result screens (play-xp-earned, test-xp-earned, match-xp-earned).
+- **speech.js**: Professor (brisk, higher pitch, firmer voice prefs) and Calm (slower, lower,
+  softer, warmer voice prefs) profiles made distinct; pickVoice is now style-aware.
+- **Landing footer**: version updated to "v0.4.1 Study Progress, XP Lite, Mastery, and Spaced Review".
+- Verified: iteration_13 frontend pass (95%); Known->Mastered promotion fixed and re-verified.
+
+
 
 Frontend-only release. No scoring, grading, leaderboard, backend, schema, or
 certification-content changes. US English, no em dashes. Public AWS disclaimer preserved.

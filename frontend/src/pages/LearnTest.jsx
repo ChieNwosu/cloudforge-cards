@@ -6,6 +6,7 @@ import { getLearnTrack } from "@/pages/LearnHub";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { ShareResultCard } from "@/components/ShareResultCard";
+import { recordSession } from "@/utils/studyProgress";
 import { toast } from "sonner";
 
 const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", DEA: "DEA", MIXED: "Mixed" };
@@ -65,6 +66,7 @@ export default function LearnTest() {
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [grading, setGrading] = useState(false);
+  const [xpEarned, setXpEarned] = useState(0);
 
   async function startQuiz() {
     setLoading(true);
@@ -107,6 +109,8 @@ export default function LearnTest() {
         lastDate: new Date().toISOString(),
       };
       localStorage.setItem("cf_test_progress", JSON.stringify(prog));
+      const xpRes = recordSession("test");
+      setXpEarned(xpRes.xpEarned);
       setPhase("results");
       window.scrollTo(0, 0);
     } catch {
@@ -255,10 +259,10 @@ export default function LearnTest() {
   }
 
   // results
-  return <Results result={result} track={track} beta={beta} onRetake={() => setPhase("start")} />;
+  return <Results result={result} track={track} beta={beta} xpEarned={xpEarned} onRetake={() => setPhase("start")} />;
 }
 
-function Results({ result, track, beta, onRetake }) {
+function Results({ result, track, beta, xpEarned, onRetake }) {
   const strong = result.score >= 80;
   const count = useCountUp(result.score, true);
   return (
@@ -271,6 +275,11 @@ function Results({ result, track, beta, onRetake }) {
         <div className="text-sm text-zinc-300 mt-2" data-testid="results-correct">
           {result.correct_count} of {result.total} correct
         </div>
+        {xpEarned > 0 && (
+          <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-mono px-3 py-1 rounded border bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#E6C75A]" data-testid="test-xp-earned">
+            +{xpEarned} XP earned
+          </div>
+        )}
         <div className="mt-4 flex justify-center">
           <FlockAvatar size={44} />
         </div>

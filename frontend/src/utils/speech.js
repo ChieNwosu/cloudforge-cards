@@ -6,13 +6,23 @@
 let subscribers = new Set();
 let activeId = null;
 
-// Professor Flock voice style profiles. Rate and pitch stay in a warm,
-// scholarly range while remaining fully browser-native.
+// Professor Flock voice style profiles. Professor is brisk, articulate, and
+// slightly higher for a scholarly, lecturing tone. Calm is slower, lower, and
+// softer for relaxed review. Both stay fully browser-native.
 export const VOICE_STYLES = ["Professor", "Calm", "Default"];
 const STYLE_PROFILES = {
-  Professor: { rate: 0.9, pitch: 0.98, volume: 1 },
-  Calm: { rate: 0.86, pitch: 1.0, volume: 1 },
+  Professor: { rate: 0.97, pitch: 1.08, volume: 1 },
+  Calm: { rate: 0.82, pitch: 0.9, volume: 0.9 },
   Default: { rate: 1, pitch: 1, volume: 1 },
+};
+
+// Per-style voice name preferences. Professor leans toward firmer, more
+// authoritative voices; Calm leans toward warmer, softer ones. Matched
+// case-insensitively by name, English voices only.
+const STYLE_VOICE_PREF = {
+  Professor: ["guy", "alex", "microsoft guy", "daniel", "matthew", "google uk english male"],
+  Calm: ["samantha", "aria", "jenny", "microsoft aria", "ava", "karen", "google us english"],
+  Default: [],
 };
 
 // Preferred natural-sounding voices, matched case-insensitively by name.
@@ -81,13 +91,20 @@ if (isSpeechSupported()) {
   }
 }
 
-function pickVoice() {
+function pickVoice(style = "Professor") {
   const voices = (cachedVoices && cachedVoices.length) ? cachedVoices : loadVoices();
   if (!voices.length) return null;
 
   const isEnglish = (v) => v.lang && v.lang.toLowerCase().startsWith("en");
   const byNeedle = (needle) =>
     voices.find((v) => v.name && v.name.toLowerCase().includes(needle));
+
+  // 0. Style-specific preferred voices come first so Professor and Calm sound distinct.
+  const stylePrefs = STYLE_VOICE_PREF[style] || [];
+  for (const name of stylePrefs) {
+    const found = byNeedle(name);
+    if (found && isEnglish(found)) return found;
+  }
 
   // 1. Any English Natural or Neural voice reads the smoothest.
   const naturalNeural = voices.find(
@@ -173,7 +190,7 @@ export function speak(text, { id = null, style = "Professor", onend, onerror } =
     utterance.pitch = profile.pitch;
     utterance.volume = profile.volume;
 
-    const voice = pickVoice();
+    const voice = pickVoice(style);
     if (voice) utterance.voice = voice;
 
     utterance.onend = () => {

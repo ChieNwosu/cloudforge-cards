@@ -8,6 +8,7 @@ import ScoreBreakdown from "@/components/ScoreBreakdown";
 import { FlockAvatar } from "@/components/FlockAvatar";
 import { ReadAloudButton } from "@/components/ReadAloudButton";
 import { ShareResultCard } from "@/components/ShareResultCard";
+import { recordSession } from "@/utils/studyProgress";
 import { toast } from "sonner";
 const ROUND_MODES = [3, 5, 10];
 const FILTERS = [
@@ -56,6 +57,7 @@ export default function Play() {
   const [sessionIds, setSessionIds] = useState([]);
   const [saveMode, setSaveMode] = useState("official");
   const [suggestions, setSuggestions] = useState([]);
+  const [xpEarned, setXpEarned] = useState(null);
   const playerName = (localStorage.getItem("cf_player_name") || "").trim();
 
   function startGame(n) {
@@ -80,6 +82,15 @@ export default function Play() {
   const sessionBase = history.reduce((s, h) => s + h.total, 0);
   const overflowTotal = history.reduce((s, h) => s + (h.overflow || 0), 0);
   const sessionTotal = sessionBase + overflowTotal;
+
+  // Award session XP once when a completed session finishes.
+  useEffect(() => {
+    if (sessionDone && rounds && history.length > 0) {
+      const res = recordSession("play", { rounds });
+      setXpEarned(res.xpEarned);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionDone]);
 
   const minServices = data?.scenario?.min_services ?? 3;
   const maxServices = data?.scenario?.max_services ?? 6;
@@ -145,7 +156,7 @@ export default function Play() {
   function resetSession() {
     setRounds(null); setRound(1); setHistory([]); setResult(null);
     setSubmitted(false); setName(localStorage.getItem("cf_player_name") || "");
-    setSuggestions([]); setSaveMode("official"); setSessionIds([]);
+    setSuggestions([]); setSaveMode("official"); setSessionIds([]); setXpEarned(null);
   }
 
   async function saveScore() {
@@ -251,6 +262,11 @@ export default function Play() {
             )}
             <div className="inline-block text-xs sm:text-sm font-mono uppercase tracking-[0.12em] px-3 py-1 rounded border bg-[#7E1818]/15 border-[#7E1818]/50 text-[#D89090]"
                  data-testid="final-overall-grade">{overallGrade}</div>
+            {xpEarned > 0 && (
+              <div className="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-mono px-3 py-1 rounded border bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#E6C75A] ml-2" data-testid="play-xp-earned">
+                +{xpEarned} XP earned
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5" data-testid="final-stats">

@@ -4,11 +4,18 @@ import { BookOpen, ClipboardList, Workflow, GraduationCap, ArrowRight } from "lu
 import { FlockAvatar } from "@/components/FlockAvatar";
 
 const TRACKS = [
-  { id: "CLF_SAA", label: "CLF / SAA" },
-  { id: "AIF", label: "AIF" },
-  { id: "MLA", label: "MLA" },
-  { id: "MIXED", label: "Mixed" },
+  { id: "CLF_SAA", label: "CLF / SAA", status: "Strongest", desc: "Cloud foundations and architecture service selection. Best current coverage." },
+  { id: "AIF", label: "AIF", status: "Expanding", desc: "AI, ML, generative AI, responsible AI, and AWS AI service concepts." },
+  { id: "MLA", label: "MLA", status: "Expanding", desc: "Machine learning engineering, SageMaker workflows, deployment, monitoring, and MLOps." },
+  { id: "DEA", label: "DEA", status: "Expanding", desc: "Data ingestion, transformation, orchestration, data lakes, warehouses, governance, and quality." },
+  { id: "MIXED", label: "Mixed", status: "Mixed", desc: "Combined review across all available study tracks." },
 ];
+
+const STATUS_STYLES = {
+  Strongest: "bg-[#00E676]/15 border-[#00E676]/40 text-[#00E676]",
+  Expanding: "bg-[#D4AF37]/15 border-[#D4AF37]/40 text-[#E6C75A]",
+  Mixed: "bg-white/10 border-white/20 text-zinc-300",
+};
 
 export function getLearnTrack() {
   return localStorage.getItem("cf_learn_track") || "CLF_SAA";
@@ -16,6 +23,7 @@ export function getLearnTrack() {
 
 export default function LearnHub() {
   const [track, setTrack] = useState(getLearnTrack);
+  const activeTrack = TRACKS.find((t) => t.id === track) || TRACKS[0];
 
   function pickTrack(id) {
     setTrack(id);
@@ -28,13 +36,19 @@ export default function LearnHub() {
       <div className="flex items-start gap-4 mb-6">
         <FlockAvatar size={64} className="shrink-0 hidden sm:block" testid="learn-hero-flock" />
         <div className="min-w-0">
-          <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Perpetual Learning</div>
+          <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Certification Prep</div>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight break-words">Forge Your Cloud Mastery</h1>
           <p className="text-zinc-400 mt-3 max-w-2xl break-words">
-            Study AWS service cards at your own pace, outside the 3-round game. Flip cards, learn
-            pairings, and mark what to review. No score, no pressure.
+            Your certification prep center for CLF/SAA, AIF, MLA, and DEA. Pick a track, then study
+            flashcards, take server-graded Test Mode quizzes, and practice Match Mode pipelines. No
+            score, no pressure, just focused review.
           </p>
         </div>
+      </div>
+
+      <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-4 mb-8 text-xs text-zinc-500 leading-relaxed" data-testid="cert-disclaimer">
+        CloudForge Cards is an unofficial, student-built learning tool. Content is original and
+        intended for practice and review, not official AWS exam material.
       </div>
 
       <div className="rounded-lg border border-[#7E1818]/30 bg-[#7E1818]/[0.05] p-4 mb-8">
@@ -46,9 +60,9 @@ export default function LearnHub() {
         </div>
       </div>
 
-      {/* Exam track selector */}
+      {/* Certification track selector */}
       <div className="mb-8">
-        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Exam track</div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Certification track</div>
         <div className="flex flex-wrap gap-2" data-testid="track-selector">
           {TRACKS.map((t) => (
             <button
@@ -65,9 +79,12 @@ export default function LearnHub() {
             </button>
           ))}
         </div>
-        <p className="text-xs text-zinc-500 mt-2">
-          Certification Prep is a filter across learning modes, not a separate engine. Your track choice scopes the cards you study.
-        </p>
+        <div className="mt-3 flex items-start gap-2 flex-wrap" data-testid="track-detail">
+          <span className={`text-[10px] font-mono uppercase tracking-[0.12em] px-2 py-0.5 rounded border shrink-0 ${STATUS_STYLES[activeTrack.status] || STATUS_STYLES.Mixed}`}>
+            {activeTrack.status}
+          </span>
+          <p className="text-sm text-zinc-400 min-w-0 break-words">{activeTrack.desc}</p>
+        </div>
       </div>
 
       {/* Mode cards */}
@@ -121,10 +138,14 @@ export default function LearnHub() {
           </div>
           <h3 className="font-bold text-lg mb-1">Certification Prep</h3>
           <p className="text-sm text-zinc-400 break-words">
-            Open track-filtered flashcards for CLF/SAA, AIF, MLA, or Mixed study. Your selected track above scopes the deck.
+            Open track-filtered flashcards for CLF/SAA, AIF, MLA, DEA, or Mixed study. Your selected track above scopes the deck.
           </p>
         </Link>
       </div>
+
+      <p className="text-xs text-zinc-500 mt-6 text-center" data-testid="cert-practice-note">
+        Content is for practice and review only. It is not official AWS exam material and does not guarantee exam results.
+      </p>
     </div>
   );
 }

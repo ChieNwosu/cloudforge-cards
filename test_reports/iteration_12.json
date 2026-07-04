@@ -1,0 +1,46 @@
+{
+  "summary": "v0.4.0 Phase 5A (Certification Prep Expansion: DEA track + AIF/MLA/DEA content) verified end to end. Added 20 new backend tests in test_v040_phase5a.py (all pass) and updated 3 stale assertions in prior suites for the new content counts. Full backend regression: 88/88 pass across 9 files. Frontend Playwright pass on desktop 1920 and mobile 390 confirmed Learn Hub with 5 tracks (CLF_SAA/AIF/MLA/DEA/MIXED), track-detail, cert-disclaimer, and cert-practice-note; Flashcards per-track counts DEA=15, AIF=14, MLA=19, CLF_SAA=34, MIXED=73 (exact match, spec on the dot); flashcard flip + read-aloud on DEA cards; Test Mode DEA loads 13 questions and server-grades end to end with share-test-card on results; Match Mode DEA loads 'Batch Data Lake Pipeline' with 3 slots and 6 tray items; no full-page horizontal overflow on /learn, /learn/cards, /learn/test, /learn/match, /; 0 console errors. Answer keys ('correct') are absent from Test session and Match session payloads (verified by backend tests). Every DEA/AIF/MLA match exercise grades 100 when all slots are placed correctly and every slot's correct id resolves to a real SERVICE_CARDS service.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "tests_executed": [
+    "New: /app/backend/tests/test_v040_phase5a.py - 20/20 PASSED (tracks include DEA, cards total=73, per-track counts, no _id leak, DEA/AIF/MLA test sessions strip answer keys, AIF/MLA are no longer beta with 15 questions, DEA pool=13, DEA/AIF/MLA/CLF_SAA test grading 100% end to end, DEA/AIF/MLA match sessions strip 'correct', all AIF/MLA/DEA match exercises grade 100 via API and their slot service ids resolve, per-track exercise counts AIF=4/MLA=5/DEA=5, MIXED sessions).",
+    "Updated: /app/backend/tests/test_v03_learn.py - 34-card assertion -> 73-card assertion; tracks set now {CLF_SAA, AIF, MLA, DEA}. All 8 tests pass.",
+    "Updated: /app/backend/tests/test_v03_test_mode.py - AIF-is-beta assertion flipped to AIF has 15 questions and beta=False. All 4 tests pass.",
+    "Full backend suite (backend_test, test_v026, test_v0261_leaderboard, test_v03_learn, test_v03_match, test_v03_phase3_e2e, test_v03_phase3_scoring, test_v03_test_mode, test_v040_phase5a) run against preview URL: 88/88 PASSED.",
+    "Frontend desktop 1920: Learn Hub renders 5 track buttons with data-testid track-CLF_SAA/AIF/MLA/DEA/MIXED; cert-disclaimer + cert-practice-note + track-detail visible; DEA selection persists to localStorage cf_learn_track=DEA.",
+    "Frontend Flashcards page: per-track 'Showing N cards' verified exactly - DEA=15, AIF=14, MLA=19, CLF_SAA=34, MIXED=73. Sample DEA card (dea_s3_data_lake) flips and shows read-aloud button.",
+    "Frontend Test Mode DEA: test-track-label reads 'DEA', started quiz shows 'Question 1 of 13', full 13-question walkthrough grades server-side and renders test-results with results-score and share-test-card.",
+    "Frontend Match Mode DEA: match-track-label reads 'DEA', match-play shows 'Batch Data Lake Pipeline' with 3 slots + 6 tray items.",
+    "Mobile 390px overflow audit: scrollWidth==clientWidth (both 390) on /learn, /learn/cards, /learn/test, /learn/match, /. No overflow, track selectors wrap cleanly.",
+    "Console error monitor across all navigations: 0 pageerrors, 0 console.error entries."
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_v040_phase5a.py",
+    "/app/backend/tests/test_v03_learn.py",
+    "/app/backend/tests/test_v03_test_mode.py",
+    "/app/test_reports/pytest/iter12_v040_phase5a.xml",
+    "/app/test_reports/pytest/iter12_full.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "learn_content.py enrich_cards() cleanly appends _EXTRA_CARDS (AIF/MLA/DEA concept cards) after the game's SERVICE_CARDS so Play data is untouched. 12 AIF + 12 MLA + 15 DEA concept cards + 2 pre-existing MLA-tagged service cards (redshift, kinesis) etc. yield the exact 14/19/15/34/73 per-track counts the spec called for. Clean.",
+    "test_bank.py Phase 5A additions: AIF now 15 questions (aif_01..aif_15), MLA 15 (mla_01..mla_15), DEA 13 (dea_01..dea_13). SESSION_SIZE=15 -> AIF/MLA return 15 and beta=False (pool>=n), DEA returns 13 and beta=True (pool<n). Behavior matches spec's 'small beta note is acceptable' for DEA.",
+    "match_bank.py Phase 5A additions: 4 AIF + 5 MLA + 5 DEA exercises added. Every slot's 'correct' service id resolves to SERVICE_CARDS. Every exercise grades 100 with perfect placement (verified via API loop). Sanitizer strips 'correct' from every slot in session responses.",
+    "LearnHub.jsx: TRACKS array has DEA and MIXED with track-status badges (Expanding/Mixed) driving STATUS_STYLES color palette. cert-disclaimer and cert-practice-note both render US English with no em dashes. localStorage 'cf_learn_track' round-trips correctly.",
+    "LearnCards.jsx isBetaTrack now includes DEA in addition to AIF/MLA; MIXED/CLF_SAA hide the beta note. Correct behavior for the interim.",
+    "LearnTest.jsx and LearnMatch.jsx TRACK_LABEL both include DEA; getLearnTrack() from LearnHub reads localStorage so switching track on the Hub carries into Test/Match reliably.",
+    "No em dashes introduced in the new content (Phase 5A cards/questions/exercises use plain ASCII hyphens and periods). US English throughout.",
+    "No AWS or NCCU affiliation implied; cert-disclaimer states 'unofficial, student-built learning tool' and 'not official AWS exam material'."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_v040_phase5a.py (new)",
+    "/app/backend/tests/test_v03_learn.py (updated 34 -> 73 card count and tracks set to include DEA)",
+    "/app/backend/tests/test_v03_test_mode.py (renamed test_session_aif_is_beta -> test_session_aif_full_pool; assertion flipped to total==15 and beta==False)"
+  ],
+  "success_rate": {"backend": "100% (88/88 pytest tests passed, including 20 new Phase 5A tests)", "frontend": "100% of Phase 5A scenarios validated"},
+  "test_credentials": "None required for Phase 5A. ADMIN_TOKEN in /app/backend/.env not exercised (no leaderboard rows created).",
+  "seed_data_creation": "None. Only localStorage writes on the test machine (cf_learn_track=DEA at various points during the frontend run) which are ephemeral to that browser session.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 5A shipped clean. Backend: run pytest backend/tests/ (about 2 minutes). Learn content counts locked in as CLF_SAA=34, AIF=14, MLA=19, DEA=15, MIXED=73; test-bank AIF=15, MLA=15, DEA=13; match-bank AIF=4, MLA=5, DEA=5. If a future release adds more DEA questions to bump the pool past 15 (removing the beta note), also update test_v040_phase5a.py::test_test_session_dea_pool_size_13 accordingly. Frontend uses localStorage cf_learn_track as the single source of truth handed from Hub -> Test/Match; the Flashcards page has its own inline selector too. Share cards render on Test and Match results via ShareResultCard (share-test-card, share-match-card); Play share-play-card unchanged from iteration_10/11. Regression areas (Play 3R/5R/10R end-to-end, leaderboard save+admin delete, Audio/Voice persistence, mobile 390 no-overflow, landing footer disclaimer, README, em dash scrub) were exhaustively covered in iteration_10 and iteration_11 and no code path there has changed for Phase 5A."
+}

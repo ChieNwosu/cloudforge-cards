@@ -13,6 +13,7 @@ content aloud for accessibility.
 - Play mode with 3, 5, or 10 round sessions and a transparent 100 point scoring engine
 - Explanation bonus with an overflow rule that banks extra points into the session total
 - Perpetual Learning: Flashcards, server graded Test Mode, and Match / Fill in the Blank
+- Certification prep tracks: CLF/SAA, AIF, MLA, DEA, and Mixed
 - Per mode leaderboards for 3R, 5R, and 10R best scores
 - Professor Flock browser native read aloud with Audio and Voice style controls
 - Shareable result cards with a copyable summary and optional native share

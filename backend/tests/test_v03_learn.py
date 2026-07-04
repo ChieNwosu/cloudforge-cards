@@ -13,21 +13,22 @@ def test_learn_tracks_returns_three_tracks():
     data = r.json()
     assert "tracks" in data
     ids = {t["id"] for t in data["tracks"]}
-    assert ids == {"CLF_SAA", "AIF", "MLA"}
+    assert ids == {"CLF_SAA", "AIF", "MLA", "DEA"}
     for t in data["tracks"]:
         assert t["name"]
         assert t["description"]
 
 
 # ---------- /api/learn/cards ----------
-def test_learn_cards_returns_34_cards_and_tracks():
+def test_learn_cards_returns_73_cards_and_tracks():
     r = requests.get(f"{API}/learn/cards")
     assert r.status_code == 200
     data = r.json()
     assert "cards" in data and "tracks" in data
-    assert len(data["cards"]) == 34, f"Expected 34 cards, got {len(data['cards'])}"
+    # v0.4.0 Phase 5A: 34 service cards + 12 AIF + 12 MLA + 15 DEA = 73
+    assert len(data["cards"]) == 73, f"Expected 73 cards, got {len(data['cards'])}"
     track_ids = {t["id"] for t in data["tracks"]}
-    assert track_ids == {"CLF_SAA", "AIF", "MLA"}
+    assert track_ids == {"CLF_SAA", "AIF", "MLA", "DEA"}
 
 
 def test_learn_cards_have_required_study_fields():

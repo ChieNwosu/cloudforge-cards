@@ -106,18 +106,16 @@ export function recordCardMark(cardId, requested) {
   const prev = p.mastery[cardId] || "new";
   const wasDue = p.due[cardId] && daysBetween(p.due[cardId], today) >= 0;
 
-  // Toggling the same mark off returns the card to new (no XP change).
-  if (prev === requested) {
+  // Known on an already-known or mastered card promotes to Mastered.
+  // Otherwise, re-marking the same state toggles the card back to new.
+  let nextState = requested;
+  if (requested === "known" && (prev === "known" || prev === "mastered")) {
+    nextState = "mastered";
+  } else if (prev === requested) {
     p.mastery[cardId] = "new";
     delete p.due[cardId];
     save(p);
     return { xpEarned: 0, cleared: true, state: "new", progress: p };
-  }
-
-  // Marking Known on an already-known or mastered card promotes to Mastered.
-  let nextState = requested;
-  if (requested === "known" && (prev === "known" || prev === "mastered")) {
-    nextState = "mastered";
   }
 
   let earned = 0;

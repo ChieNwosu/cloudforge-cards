@@ -374,6 +374,10 @@ for _card in SERVICE_CARDS:
 for _scenario in SCENARIOS:
     _scenario["tracks"] = BASE_SCENARIO_TRACKS.get(_scenario["id"], ["CLF_SAA"])
 
+# The original Play game service cards, captured before the Phase 5C expansion.
+# Learn Flashcards enrich only these so the study deck stays exactly as it was.
+BASE_SERVICE_CARDS = list(SERVICE_CARDS)
+
 SERVICE_CARDS.extend(EXPANSION_CARDS)
 SCENARIOS.extend(EXPANSION_SCENARIOS)
 SYNERGIES.extend(EXPANSION_SYNERGIES)

@@ -83,6 +83,12 @@ public AWS service knowledge and certification objectives (no copied exam wordin
   (ideal combo always dealt), full-ideal scoring guardrail (>= 78), distractor penalty, and
   3R/5R/10R session integrity per track. Verified: backend 88/88 base + 6/6 track tests pass;
   frontend iteration_15 all Phase 5C items pass, no console errors, no mobile overflow.
+- **Post-merge hotfix (2026-06)**: adding the 26 Play expansion cards to SERVICE_CARDS had
+  leaked them into the Learn Flashcards deck (via enrich_cards) and mis-tagged them as CLF/SAA
+  study cards. Fixed by capturing `BASE_SERVICE_CARDS` (the original 34 Play cards) before the
+  expansion and enriching only those, so the Learn deck stays exactly 73 (CLF_SAA 34, AIF 14,
+  MLA 19, DEA 15). `/cards/services` correctly returns 60 game cards. All 88 base + 6 track
+  tests pass.
 
 
 ## v0.4.0 Phase 5A: Certification Prep Expansion (2026-07-04, DONE)

@@ -171,7 +171,7 @@ export default function Landing() {
           <span data-testid="footer-disclaimer">
             Unofficial educational project. Not affiliated with Amazon Web Services.
           </span>
-          <span data-testid="footer-version">v0.3 · Perpetual Learning</span>
+          <span data-testid="footer-version">v0.4.1 Study Progress, XP Lite, Mastery, and Spaced Review</span>
         </div>
       </footer>
     </div>

@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, ClipboardList, Workflow, GraduationCap, ArrowRight } from "lucide-react";
+import { BookOpen, ClipboardList, Workflow, GraduationCap, ArrowRight, Flame, Star, Award, Clock, RotateCcw } from "lucide-react";
 import { FlockAvatar } from "@/components/FlockAvatar";
+import { getSummary, resetProgress, migrateLegacyProgress } from "@/utils/studyProgress";
+import { toast } from "sonner";
 
 const TRACKS = [
   { id: "CLF_SAA", label: "CLF / SAA", status: "Strongest", desc: "Cloud foundations and architecture service selection. Best current coverage." },
@@ -23,7 +25,23 @@ export function getLearnTrack() {
 
 export default function LearnHub() {
   const [track, setTrack] = useState(getLearnTrack);
+  const [summary, setSummary] = useState(getSummary);
   const activeTrack = TRACKS.find((t) => t.id === track) || TRACKS[0];
+
+  useEffect(() => {
+    migrateLegacyProgress();
+    setSummary(getSummary());
+    const onChange = () => setSummary(getSummary());
+    window.addEventListener("cf-progress-change", onChange);
+    return () => window.removeEventListener("cf-progress-change", onChange);
+  }, []);
+
+  function handleReset() {
+    if (!window.confirm("Reset all local study progress? This clears your XP, streak, and mastery marks, and cannot be undone.")) return;
+    resetProgress();
+    setSummary(getSummary());
+    toast.success("Study progress reset.");
+  }
 
   function pickTrack(id) {
     setTrack(id);
@@ -58,6 +76,49 @@ export default function LearnHub() {
             <span className="font-semibold">Professor Flock says:</span> Pick a track, then build your study deck.
           </p>
         </div>
+      </div>
+
+      {/* Study progress panel */}
+      <div className="rounded-lg border border-white/10 bg-[#0C0E11] p-5 mb-8" data-testid="study-progress-panel">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500">Your study progress</div>
+          <button
+            onClick={handleReset}
+            data-testid="reset-progress-button"
+            className="inline-flex items-center gap-1.5 text-xs text-[#FF6666] hover:text-[#FF3333] transition-colors"
+          >
+            <RotateCcw size={13} /> Reset progress
+          </button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="rounded-md border border-white/10 bg-[#121417] p-3" data-testid="stat-streak">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.12em] text-zinc-500 mb-1"><Flame size={12} className="text-[#FF8A33]" /> Streak</div>
+            <div className="text-xl font-bold font-mono">{summary.currentStreak}<span className="text-xs text-zinc-500 ml-1">d</span></div>
+            <div className="text-[10px] text-zinc-600 mt-0.5">Best {summary.longestStreak}d</div>
+          </div>
+          <div className="rounded-md border border-white/10 bg-[#121417] p-3" data-testid="stat-xp">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.12em] text-zinc-500 mb-1"><Star size={12} className="text-[#D4AF37]" /> XP</div>
+            <div className="text-xl font-bold font-mono">{summary.totalXP}</div>
+          </div>
+          <div className="rounded-md border border-white/10 bg-[#121417] p-3" data-testid="stat-level">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.12em] text-zinc-500 mb-1"><Award size={12} className="text-[#00E676]" /> Level</div>
+            <div className="text-xl font-bold font-mono">{summary.level}</div>
+          </div>
+          <div className="rounded-md border border-white/10 bg-[#121417] p-3" data-testid="stat-mastered">
+            <div className="text-[10px] font-mono uppercase tracking-[0.12em] text-zinc-500 mb-1">Mastered</div>
+            <div className="text-xl font-bold font-mono text-[#00E676]">{summary.mastered}</div>
+            <div className="text-[10px] text-zinc-600 mt-0.5">Known {summary.known} · Review {summary.review}</div>
+          </div>
+          <div className="rounded-md border border-white/10 bg-[#121417] p-3" data-testid="stat-due">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.12em] text-zinc-500 mb-1"><Clock size={12} className="text-[#E6C75A]" /> Due today</div>
+            <div className="text-xl font-bold font-mono text-[#E6C75A]">{summary.dueToday}</div>
+          </div>
+          <div className="rounded-md border border-white/10 bg-[#121417] p-3" data-testid="stat-sessions">
+            <div className="text-[10px] font-mono uppercase tracking-[0.12em] text-zinc-500 mb-1">Sessions</div>
+            <div className="text-xl font-bold font-mono">{summary.sessionsCompleted}</div>
+          </div>
+        </div>
+        <p className="text-[11px] text-zinc-600 mt-3">Progress is stored only in this browser. There is no account and nothing is uploaded.</p>
       </div>
 
       {/* Certification track selector */}

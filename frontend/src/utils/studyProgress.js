@@ -19,6 +19,7 @@ function defaults() {
     currentStreak: 0, longestStreak: 0, lastStudyDate: null, totalStudyDays: 0,
     totalXP: 0, sessionsCompleted: 0,
     mastery: {}, due: {}, awarded: {},
+    migratedFromCfLearnProgress: false,
   };
 }
 
@@ -177,6 +178,32 @@ export function resetProgress() {
   } catch (e) {
     console.warn("CloudForge progress: could not reset", e);
   }
+}
+
+// One-time, non-destructive migration of the old cf_learn_progress store.
+// Existing Known and Review marks move into the new store. No XP is awarded
+// retroactively: the awarded flags are pre-set so migrated marks never grant
+// XP later. The legacy key is left in place as a safe fallback.
+export function migrateLegacyProgress() {
+  const p = loadProgress();
+  if (p.migratedFromCfLearnProgress) return p;
+  try {
+    const legacy = JSON.parse(localStorage.getItem("cf_learn_progress") || "null");
+    if (legacy && typeof legacy === "object") {
+      for (const [id, mark] of Object.entries(legacy)) {
+        if ((mark === "known" || mark === "review") && !p.mastery[id]) {
+          p.mastery[id] = mark;
+          p.awarded[`${id}:${mark}`] = true;
+          p.due[id] = addDaysStr(DUE_DAYS[mark] || DUE_DAYS.known);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("CloudForge progress: legacy migration failed, starting fresh", e);
+  }
+  p.migratedFromCfLearnProgress = true;
+  save(p);
+  return p;
 }
 
 export { MASTERY_ORDER };

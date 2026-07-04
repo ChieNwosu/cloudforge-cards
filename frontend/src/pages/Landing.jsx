@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Layers, Sparkles, ShieldCheck, Cpu, Zap, BarChart3 } from "lucide-react";
 
 const features = [
-  { icon: Layers, title: "30+ AWS service cards", body: "Each with category, cost, security & scale ratings." },
+  { icon: Layers, title: "60+ AWS service cards", body: "Each with category, cost, security & scale ratings." },
   { icon: Sparkles, title: "Transparent scoring", body: "Six explainable sub-scores, no black box." },
   { icon: ShieldCheck, title: "Constraint chips", body: "Low cost, secure, serverless, scalable, and more." },
   { icon: Cpu, title: "Hybrid AI judging", body: "Rule engine + Claude commentary on every round." },
@@ -76,11 +76,11 @@ export default function Landing() {
               ))}
             </div>
             <div className="mt-10 flex items-center gap-6 text-sm text-zinc-400 font-mono">
-              <div><span className="text-white font-bold text-lg">30</span> service cards</div>
+              <div><span className="text-white font-bold text-lg">60</span> service cards</div>
               <div className="w-px h-6 bg-white/10" />
-              <div><span className="text-white font-bold text-lg">10</span> scenarios</div>
+              <div><span className="text-white font-bold text-lg">38</span> scenarios</div>
               <div className="w-px h-6 bg-white/10" />
-              <div><span className="text-white font-bold text-lg">8</span> constraints</div>
+              <div><span className="text-white font-bold text-lg">5</span> tracks</div>
             </div>
           </div>
 
@@ -171,7 +171,7 @@ export default function Landing() {
           <span data-testid="footer-disclaimer">
             Unofficial educational project. Not affiliated with Amazon Web Services.
           </span>
-          <span data-testid="footer-version">v0.4.1 Study Progress, XP Lite, Mastery, and Spaced Review</span>
+          <span data-testid="footer-version">v0.4.2 Track-Aware Play and Domain Scenarios</span>
         </div>
       </footer>
     </div>

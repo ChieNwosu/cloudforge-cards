@@ -61,20 +61,25 @@ export function buildShare(result) {
     const scoreStr = `${result.total} / ${result.maxTotal}`;
     const lines = [
       { label: "Mode", value: result.modeLabel },
-      { label: "Final session total", value: scoreStr },
     ];
+    if (result.trackLabel) lines.push({ label: "Track", value: result.trackLabel });
+    lines.push({ label: "Final session total", value: scoreStr });
     if (Number.isFinite(result.overflow) && result.overflow > 0) {
       lines.push({ label: "Overflow bonus", value: `+${result.overflow}` });
     }
     if (Number.isFinite(result.roundsCompleted)) {
       lines.push({ label: "Rounds completed", value: String(result.roundsCompleted) });
     }
+    if (Number.isFinite(result.xpEarned) && result.xpEarned > 0) {
+      lines.push({ label: "XP earned", value: `+${result.xpEarned}` });
+    }
+    const modeText = result.trackLabel ? `${result.modeLabel} ${result.trackLabel}` : result.modeLabel;
     return {
       shareTitle: SHARE_TITLE,
       link,
       lines,
       message: "I practiced AWS architecture decisions with CloudForge Cards.",
-      copyText: `I scored ${result.total} in ${result.modeLabel} on CloudForge Cards, a student-built AWS learning tool for practicing cloud architecture decisions. Try it here: ${link}`,
+      copyText: `I scored ${result.total} in ${modeText} mode on CloudForge Cards, a student-built AWS learning tool for cloud and AI learners. Try it here: ${link}`,
     };
   }
 

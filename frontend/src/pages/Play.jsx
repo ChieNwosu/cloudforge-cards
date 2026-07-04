@@ -11,6 +11,14 @@ import { ShareResultCard } from "@/components/ShareResultCard";
 import { recordSession } from "@/utils/studyProgress";
 import { toast } from "sonner";
 const ROUND_MODES = [3, 5, 10];
+const PLAY_TRACKS = [
+  { id: "CLF_SAA", label: "CLF / SAA", desc: "Cloud foundations and solutions architecture." },
+  { id: "AIF", label: "AIF", desc: "AI, generative AI, and responsible AI scenarios." },
+  { id: "MLA", label: "MLA", desc: "ML engineering, SageMaker, training, and MLOps." },
+  { id: "DEA", label: "DEA", desc: "Data lakes, ETL, streaming, and analytics pipelines." },
+  { id: "MIXED", label: "Mixed", desc: "All Play scenarios across every track." },
+];
+const TRACK_LABEL = { CLF_SAA: "CLF / SAA", AIF: "AIF", MLA: "MLA", DEA: "DEA", MIXED: "Mixed" };
 const FILTERS = [
   "All", "Compute", "Storage", "Database",
   "Security", "Analytics", "Networking", "Integration", "AI",
@@ -58,6 +66,7 @@ export default function Play() {
   const [saveMode, setSaveMode] = useState("official");
   const [suggestions, setSuggestions] = useState([]);
   const [xpEarned, setXpEarned] = useState(null);
+  const [track, setTrack] = useState(() => localStorage.getItem("cf_play_track") || "CLF_SAA");
   const playerName = (localStorage.getItem("cf_player_name") || "").trim();
 
   function startGame(n) {
@@ -68,13 +77,34 @@ export default function Play() {
     setSubmitted(false);
     setSuggestions([]);
     setSaveMode("official");
-    getSessionScenarios(n).then(setSessionIds).catch(() => {});
+    getSessionScenarios(n, track).then(setSessionIds).catch(() => {});
   }
 
-  // Honor a ?rounds=N deep link from the landing page (3, 5, or 10).
+  function pickTrack(id) {
+    setTrack(id);
+    localStorage.setItem("cf_play_track", id);
+  }
+
+  // Honor ?rounds=N and optional ?track=T deep links from other pages.
   useEffect(() => {
+    const qt = (searchParams.get("track") || "").toUpperCase();
+    const validTrack = PLAY_TRACKS.find((t) => t.id === qt);
+    const chosen = validTrack ? qt : (localStorage.getItem("cf_play_track") || "CLF_SAA");
+    if (validTrack) {
+      setTrack(qt);
+      localStorage.setItem("cf_play_track", qt);
+    }
     const q = parseInt(searchParams.get("rounds"), 10);
-    if (ROUND_MODES.includes(q)) startGame(q);
+    if (ROUND_MODES.includes(q)) {
+      setRounds(q);
+      setRound(1);
+      setHistory([]);
+      setResult(null);
+      setSubmitted(false);
+      setSuggestions([]);
+      setSaveMode("official");
+      getSessionScenarios(q, chosen).then(setSessionIds).catch(() => {});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -110,7 +140,7 @@ export default function Play() {
     setSelected([]);
     setExplanation("");
     setFilter("All");
-    dealRound(scenarioId, 12, 2)
+    dealRound(scenarioId, 12, 2, track)
       .then((dealt) => { if (!cancelled) setData(dealt); })
       .catch(() => {
         if (!cancelled) toast.error("Failed to deal a round. Is the backend running?");
@@ -197,9 +227,35 @@ export default function Play() {
         <div className="text-xs font-mono uppercase tracking-[0.18em] text-[#D32F2F] mb-2">Solo Play</div>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-3">Choose your session length</h1>
         <p className="text-zinc-400 mb-8 max-w-xl text-sm sm:text-base">
-          Each round is a fresh AWS scenario, scored out of 100. Pick how many rounds you want to forge.
+          Each round is a fresh AWS scenario, scored out of 100. Pick a certification track and how many rounds you want to forge.
           Longer sessions are tracked separately on the leaderboard.
         </p>
+
+        {/* Certification track selector */}
+        <div className="mb-8" data-testid="play-track-select">
+          <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Certification track</div>
+          <div className="flex flex-wrap gap-2" data-testid="play-track-options">
+            {PLAY_TRACKS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => pickTrack(t.id)}
+                data-testid={`play-track-${t.id}`}
+                className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+                  track === t.id
+                    ? "bg-[#7E1818] border-[#7E1818] text-white"
+                    : "bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-sm text-zinc-400 mt-2 break-words" data-testid="play-track-desc">
+            {(PLAY_TRACKS.find((t) => t.id === track) || PLAY_TRACKS[0]).desc}
+          </p>
+        </div>
+
+        <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 mb-2">Session length</div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" data-testid="round-mode-options">
           {ROUND_MODES.map((n) => (
             <button
@@ -248,6 +304,15 @@ export default function Play() {
             <h1 className="text-2xl sm:text-3xl font-bold">Final game summary</h1>
           </div>
           <p className="text-zinc-400 mb-6 text-sm sm:text-base">Best-of-{rounds} finished. Here is your tally.</p>
+
+          <div className="mb-5 flex flex-wrap gap-2" data-testid="final-track-badges">
+            <span className="inline-block text-xs font-mono uppercase tracking-[0.12em] px-3 py-1 rounded border bg-white/[0.03] border-white/15 text-zinc-300" data-testid="final-mode-label">
+              Mode: {rounds}R
+            </span>
+            <span className="inline-block text-xs font-mono uppercase tracking-[0.12em] px-3 py-1 rounded border bg-[#7E1818]/15 border-[#7E1818]/50 text-[#D89090]" data-testid="final-track-label">
+              Track: {TRACK_LABEL[track] || track}
+            </span>
+          </div>
 
           <div className="border border-[#7E1818]/50 cf-glow rounded-lg p-5 sm:p-6 mb-5">
             <div className="text-xs font-mono uppercase tracking-[0.18em] text-zinc-400 mb-1">Final game score</div>
@@ -305,10 +370,12 @@ export default function Play() {
               result={{
                 kind: "play",
                 modeLabel: `${rounds}R`,
+                trackLabel: TRACK_LABEL[track] || track,
                 total: Number(sessionTotal.toFixed(1)),
                 maxTotal: rounds * 100,
                 overflow: Number(overflowTotal.toFixed(1)),
                 roundsCompleted: history.length,
+                xpEarned: xpEarned || 0,
               }}
             />
           </div>

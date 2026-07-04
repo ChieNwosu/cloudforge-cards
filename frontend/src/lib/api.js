@@ -8,13 +8,13 @@ export const CACHE_DURATION_MS = 60000;
 
 export const api = axios.create({ baseURL: API, timeout: API_TIMEOUT_MS });
 
-export const dealRound = (scenarioId, handSize = 10, constraintCount = 2) =>
+export const dealRound = (scenarioId, handSize = 10, constraintCount = 2, track) =>
   api.get("/game/deal", {
-    params: { hand_size: handSize, constraint_count: constraintCount, scenario_id: scenarioId },
+    params: { hand_size: handSize, constraint_count: constraintCount, scenario_id: scenarioId, track },
   }).then(r => r.data);
 
-export const getSessionScenarios = (rounds = 3) =>
-  api.get("/game/session", { params: { rounds } }).then(r => r.data.scenario_ids);
+export const getSessionScenarios = (rounds = 3, track) =>
+  api.get("/game/session", { params: { rounds, track } }).then(r => r.data.scenario_ids);
 
 export const scoreRound = (payload) =>
   api.post("/game/score", payload).then(r => r.data);

@@ -15,7 +15,10 @@ from datetime import datetime, timezone, timedelta
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-from seed_data import SERVICE_CARDS, SCENARIOS, CONSTRAINTS
+from seed_data import (
+    SERVICE_CARDS, SCENARIOS, CONSTRAINTS,
+    scenarios_for_track, cards_for_track,
+)
 from learn_content import enrich_cards, EXAM_TRACKS
 from test_bank import session_questions, grade_answers
 from match_bank import session_exercises, grade_match
@@ -154,10 +157,12 @@ async def grade_match_endpoint(req: MatchGradeRequest):
 
 @api_router.get("/game/deal")
 async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
-                    constraint_count: int = 2):
+                    constraint_count: int = 2, track: Optional[str] = None):
     """Deal a randomized round: 1 scenario, N constraint chips, M service cards.
     Hand is guaranteed to contain every service from one ideal combo for the scenario,
-    so the post-round 'Ideal Architecture' recommendation is always reachable."""
+    so the post-round 'Ideal Architecture' recommendation is always reachable.
+    When a track is given, filler cards are drawn from that track's pool (plus the
+    scenario's own cards) so distractors stay relevant and fair."""
     hand_size = max(6, min(14, hand_size))
     constraint_count = max(1, min(4, constraint_count))
     rng = secrets.SystemRandom()
@@ -167,7 +172,8 @@ async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
         if not scenario:
             raise HTTPException(status_code=404, detail="Scenario not found")
     else:
-        scenario = rng.choice(SCENARIOS)
+        pool_scenarios = scenarios_for_track(track)
+        scenario = rng.choice(pool_scenarios)
 
     constraints = rng.sample(CONSTRAINTS, k=min(constraint_count, len(CONSTRAINTS)))
 
@@ -175,7 +181,16 @@ async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
     combos = scenario.get("ideal_combos") or []
     required_ids = set(rng.choice(combos)) if combos else set()
     required = [s for s in SERVICE_CARDS if s["id"] in required_ids]
-    pool = [s for s in SERVICE_CARDS if s["id"] not in required_ids]
+
+    # Filler candidates: the track's card pool plus this scenario's own cards, so
+    # the scenario is always self-contained and the hand has relevant distractors.
+    scenario_ids = set(scenario.get("core_service_ids", [])) \
+        | set(scenario.get("supporting_service_ids", [])) \
+        | set(scenario.get("distractor_service_ids", []))
+    track_ids = {c["id"] for c in cards_for_track(track)}
+    candidate_ids = (track_ids | scenario_ids) - required_ids
+    pool = [s for s in SERVICE_CARDS if s["id"] in candidate_ids]
+
     filler_n = max(0, min(hand_size, len(SERVICE_CARDS)) - len(required))
     filler = rng.sample(pool, k=min(filler_n, len(pool)))
     hand = required + filler
@@ -184,11 +199,13 @@ async def deal_round(hand_size: int = 10, scenario_id: Optional[str] = None,
 
 
 @api_router.get("/game/session")
-async def session_scenarios(rounds: int = 3):
-    """Pre-pick N unique scenarios for a session so rounds never repeat."""
+async def session_scenarios(rounds: int = 3, track: Optional[str] = None):
+    """Pre-pick N unique scenarios for a session so rounds never repeat.
+    Scenarios are scoped to the selected track (MIXED uses all)."""
     rng = secrets.SystemRandom()
-    n = max(1, min(rounds, len(SCENARIOS)))
-    picks = rng.sample(SCENARIOS, k=n)
+    pool = scenarios_for_track(track)
+    n = max(1, min(rounds, len(pool)))
+    picks = rng.sample(pool, k=n)
     return {"scenario_ids": [s["id"] for s in picks]}
 
 

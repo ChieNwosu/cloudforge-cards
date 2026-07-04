@@ -6,22 +6,29 @@
 let subscribers = new Set();
 let activeId = null;
 
-// Professor Flock voice style profiles. Professor is brisk, articulate, and
-// slightly higher for a scholarly, lecturing tone. Calm is slower, lower, and
-// softer for relaxed review. Both stay fully browser-native.
+// Professor Flock voice style profiles. Professor is a male academic mentor:
+// lower register, measured pace. Calm is warmer, softer, and a touch higher.
+// All fully browser-native.
 export const VOICE_STYLES = ["Professor", "Calm", "Default"];
 const STYLE_PROFILES = {
-  Professor: { rate: 0.97, pitch: 1.08, volume: 1 },
-  Calm: { rate: 0.82, pitch: 0.9, volume: 0.9 },
+  Professor: { rate: 0.88, pitch: 0.9, volume: 1 },
+  Calm: { rate: 0.78, pitch: 1.08, volume: 1 },
   Default: { rate: 1, pitch: 1, volume: 1 },
 };
 
-// Per-style voice name preferences. Professor leans toward firmer, more
-// authoritative voices; Calm leans toward warmer, softer ones. Matched
-// case-insensitively by name, English voices only.
+// Per-style voice name preferences. Professor prefers masculine or lower-register
+// English voices; Calm prefers warmer, softer, often feminine English voices.
+// Matched case-insensitively by name, English voices only.
 const STYLE_VOICE_PREF = {
-  Professor: ["guy", "alex", "microsoft guy", "daniel", "matthew", "google uk english male"],
-  Calm: ["samantha", "aria", "jenny", "microsoft aria", "ava", "karen", "google us english"],
+  Professor: [
+    "alex", "daniel", "guy", "microsoft guy", "microsoft david", "david",
+    "google us english male", "english male", "fred", "oliver", "arthur",
+  ],
+  Calm: [
+    "samantha", "ava", "allison", "susan", "jenny", "aria",
+    "microsoft jenny", "microsoft aria", "google us english female",
+    "english female", "karen", "moira",
+  ],
   Default: [],
 };
 
@@ -104,6 +111,19 @@ function pickVoice(style = "Professor") {
   for (const name of stylePrefs) {
     const found = byNeedle(name);
     if (found && isEnglish(found)) return found;
+  }
+
+  // 0b. Gender-hint fallback by voice name. Professor prefers a voice tagged
+  // "male" (but not "female"); Calm prefers one tagged "female".
+  const englishVoices = voices.filter(isEnglish);
+  if (style === "Professor") {
+    const male = englishVoices.find(
+      (v) => /\bmale\b/i.test(v.name || "") && !/female/i.test(v.name || "")
+    );
+    if (male) return male;
+  } else if (style === "Calm") {
+    const female = englishVoices.find((v) => /female/i.test(v.name || ""));
+    if (female) return female;
   }
 
   // 1. Any English Natural or Neural voice reads the smoothest.

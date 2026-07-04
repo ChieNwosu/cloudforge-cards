@@ -360,3 +360,41 @@ SYNERGIES = [
     ("glue_catalog", "s3"),
     ("glue_catalog", "redshift"),
 ]
+
+# ---------- v0.4.2 Phase 5C: track-aware Play expansion ----------
+from play_expansion import (
+    EXPANSION_CARDS, EXPANSION_SCENARIOS, EXPANSION_SYNERGIES,
+    BASE_CARD_TRACKS, BASE_SCENARIO_TRACKS, DEFAULT_CARD_TRACK,
+)
+
+# Tag base cards and scenarios with certification tracks. Every base card and
+# scenario keeps CLF_SAA, so existing CLF/SAA Play behavior is unchanged.
+for _card in SERVICE_CARDS:
+    _card["tracks"] = BASE_CARD_TRACKS.get(_card["id"], [DEFAULT_CARD_TRACK])
+for _scenario in SCENARIOS:
+    _scenario["tracks"] = BASE_SCENARIO_TRACKS.get(_scenario["id"], ["CLF_SAA"])
+
+SERVICE_CARDS.extend(EXPANSION_CARDS)
+SCENARIOS.extend(EXPANSION_SCENARIOS)
+SYNERGIES.extend(EXPANSION_SYNERGIES)
+
+PLAY_TRACKS = ["CLF_SAA", "AIF", "MLA", "DEA", "MIXED"]
+
+
+def scenarios_for_track(track):
+    """Play scenario pool for a track. MIXED and unknown tracks return all."""
+    t = (track or "MIXED").upper()
+    if t == "MIXED":
+        return SCENARIOS
+    scoped = [s for s in SCENARIOS if t in s.get("tracks", [])]
+    return scoped or SCENARIOS
+
+
+def cards_for_track(track):
+    """Service card pool for a track. MIXED and unknown tracks return all."""
+    t = (track or "MIXED").upper()
+    if t == "MIXED":
+        return SERVICE_CARDS
+    scoped = [c for c in SERVICE_CARDS if t in c.get("tracks", [])]
+    return scoped or SERVICE_CARDS
+

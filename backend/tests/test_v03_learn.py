@@ -81,7 +81,8 @@ def test_services_still_34_for_game():
     r = requests.get(f"{API}/cards/services")
     assert r.status_code == 200
     services = r.json()["services"]
-    assert len(services) == 34
+    # v0.4.2 Phase 5C: 34 original Play cards + 26 track expansion cards = 60.
+    assert len(services) == 60
     # Ensure NO learn-only fields leaked into the game cards payload
     leaked = [s for s in services if "flashcard_front" in s or "study_tip" in s]
     assert not leaked, "Game services should not carry Learn enrichment"

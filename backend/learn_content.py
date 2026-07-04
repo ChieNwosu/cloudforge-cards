@@ -10,7 +10,7 @@ Future Test/Match question banks will live in sibling JSON/modules. Grading for
 those modes is planned to be SERVER-SIDE (answer keys not shipped to the browser).
 Not implemented in this phase.
 """
-from seed_data import SERVICE_CARDS, SYNERGIES
+from seed_data import SERVICE_CARDS, BASE_SERVICE_CARDS, SYNERGIES
 
 EXAM_TRACKS = [
     {"id": "CLF_SAA", "name": "CLF / SAA", "description": "Cloud Practitioner and Solutions Architect Associate foundations."},
@@ -366,7 +366,7 @@ def enrich_cards():
     (AIF, MLA, DEA). The Play game reads SERVICE_CARDS directly and never sees these.
     """
     enriched = []
-    for card in SERVICE_CARDS:
+    for card in BASE_SERVICE_CARDS:
         ov = _OVERRIDES.get(card["id"], {})
         pairings = sorted(_PAIRINGS.get(card["id"], set()))
         enriched.append({

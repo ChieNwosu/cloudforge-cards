@@ -121,8 +121,12 @@ CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expa
 
 ## Features
 
-- 33 AWS service cards across Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, and AI
-- 10 cloud architecture scenarios with varying difficulty
+## Features
+
+- 60 AWS service cards across Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, AI, ML, and Data Engineering
+- 38 cloud architecture and certification-style Play scenarios with varying difficulty
+- Track-aware Play mode for CLF/SAA, AIF, MLA, DEA, and Mixed scenario pools
+- Track-aware service-card pools with relevant cards, fair distractors, and guaranteed ideal-combo availability
 - 8 constraint chips that shape design decisions: Low Cost, High Availability, Serverless, Secure, Scalable, Beginner Friendly, Low Latency, and Observability
 - Transparent rule-based scoring engine with six explainable sub-scores
 - Explanation bonus with an overflow rule that banks extra points into the session total
@@ -130,32 +134,38 @@ CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expa
 - Ideal architecture matching with fairness guardrails
 - Perpetual Learning hub with Learn Flashcards, Test Mode, and Match Mode
 - Expanded Certification Prep for CLF/SAA, AIF, MLA, DEA, and Mixed tracks
-- DEA track support across Learn Hub, Flashcards, Test Mode, and Match Mode
+- DEA track support across Learn Hub, Flashcards, Test Mode, Match Mode, and Play Mode
 - AIF, MLA, and DEA flashcard expansion with original concept cards
 - AIF, MLA, and DEA Test Mode question expansion with server-side grading
 - AIF, MLA, and DEA Match Mode prompt expansion with partial credit and review feedback
+- Domain-specific Play scenarios for AIF, MLA, DEA, and CLF/SAA
 - Test Mode with server-side grading and review explanations
 - Match Mode with tap-to-place pipeline exercises, partial credit, and review feedback
 - 3R, 5R, and 10R Play session modes with per-mode leaderboard
 - Exam-track filtering for CLF/SAA, AIF, MLA, DEA, and Mixed
 - Professor Flock transparent avatar for guided learning
 - Browser-native Professor Flock read-aloud with voice style selection
+- Professor voice profile tuned toward masculine or lower-register English voices when available
 - Shareable result cards with copyable summaries
+- Play result and share cards show selected track and XP earned where available
 - Optional native share support when available
+- Study progress with local-only XP, daily streaks, levels, card mastery, and spaced review
+- Due Today, New, Review, Known, and Mastered flashcard filters
 - Optional LLM-powered commentary through Claude for personalized feedback
-- Leaderboard with persistent high scores
+- Leaderboard with persistent high scores grouped by 3R, 5R, and 10R mode
 - Dark theme Cloud Lab UI with tactile card interactions
 - Mobile-friendly experience
 
 ## Gameplay Overview
 
 1. **Choose Mode:** Select a session length: 3 rounds, 5 rounds, or 10 rounds.
-2. **Deal Phase:** Each round gives you a scenario prompt, constraint chips, and a hand of service cards. The hand always contains at least one ideal architecture combination.
-3. **Build Phase:** Select 3 to 6 service cards to build your architecture. Consider the scenario requirements and active constraints.
-4. **Explain Phase:** Optionally write a short rationale for your design choices for up to 5 bonus points.
-5. **Score Phase:** The engine evaluates your selection across six dimensions and provides a detailed breakdown plus commentary.
-6. **Session Summary:** Your total score across all rounds can be saved to the per-mode leaderboard.
-7. **Share Result:** Copy or share a result summary after Play, Test Mode, or Match Mode.
+2. **Choose Track:** Select CLF/SAA, AIF, MLA, DEA, or Mixed to focus the Play session.
+3. **Deal Phase:** Each round gives you a scenario prompt, constraint chips, and a hand of service cards. The hand always contains at least one ideal architecture combination.
+4. **Build Phase:** Select 3 to 6 service cards to build your architecture. Consider the scenario requirements and active constraints.
+5. **Explain Phase:** Optionally write a short rationale for your design choices for up to 5 bonus points.
+6. **Score Phase:** The engine evaluates your selection across six dimensions and provides a detailed breakdown plus commentary.
+7. **Session Summary:** Your total score across all rounds can be saved to the per-mode leaderboard.
+8. **Share Result:** Copy or share a result summary after Play, Test Mode, or Match Mode.
 
 ## Scoring Overview
 

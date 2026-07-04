@@ -146,6 +146,13 @@ export default function LearnHub() {
           </span>
           <p className="text-sm text-zinc-400 min-w-0 break-words">{activeTrack.desc}</p>
         </div>
+        <Link
+          to={`/play?track=${track}`}
+          data-testid="practice-track-in-play"
+          className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#D89090] hover:text-white transition-colors"
+        >
+          Practice this track in Play <ArrowRight size={14} />
+        </Link>
       </div>
 
       {/* Mode cards */}

@@ -1,0 +1,39 @@
+{
+  "summary": "FINAL post-merge regression sign-off for v0.4.1 Phase 5B Pass A on preview URL. All 15 review-request items PASS. Key highlights: Play 3R/5R/10R end-to-end each award the exact XP (+30/+50/+100) with the play-xp-earned badge and share-play-card + share-play-copy present. Test Mode (15Q) awards +40 XP and Match Mode awards +35 XP with respective share cards and copy buttons. The Known->Mastered promotion bug flagged in iteration_13 is FIXED: two consecutive Known clicks on a fresh card now correctly promotes to 'mastered', the button label becomes 'Mastered', the progress-summary shows 'Mastered: 1', and no double XP is awarded (state stays 5 XP). Anti-farming holds on a 3rd Known click (state remains mastered, XP unchanged at 5). All 6 mastery-filter chips (mastery-filter-all / due-today / new / review / known / mastered) render with the exact expected data-testids. Reset progress via the native window.confirm dialog clears XP to 0 and totally leaves the leaderboard untouched (verified by capturing table innerText before and after reset - identical). Landing shows the exact v0.4.1 tagline 'Study Progress, XP Lite, Mastery, and Spaced Review' and 'Not affiliated with Amazon Web Services' with 0 em dashes. Mobile viewport 375x844 shows 0 horizontal overflow on Learn Hub, Flashcards, Play, Landing, and Leaderboard (scrollWidth==clientWidth==375 on all five). Audio toggle On <-> Muted and Voice toggle cycles Professor -> Calm -> Default -> Professor without console errors. All 5 tracks (CLF/SAA, AIF, MLA, DEA, Mixed) render in the Flashcards track picker. Zero console errors and zero page errors across every flow tested.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "tests_executed": [
+    "Playwright: /play?rounds=5 five rounds each with 3+ services (auto-scaled to scenario min), server scoring works, play-xp-earned badge='+50 XP earned', share-play-card+share-play-copy present, localStorage totalXP=50, sessionsCompleted=1.",
+    "Playwright: /play?rounds=10 ten rounds end-to-end, play-xp-earned='+100 XP earned', localStorage totalXP=100, sessionsCompleted=1.",
+    "Playwright: /play?rounds=3 three rounds end-to-end, play-xp-earned='+30 XP earned', localStorage totalXP=30, sessionsCompleted=1.",
+    "Playwright: /learn/test 15-question quiz (auto-answer first option), test-xp-earned='+40 XP earned', share-test-card and share-test-copy present.",
+    "Playwright: /learn/match end-to-end exercises using click-to-place (tray click -> slot click), match-xp-earned='+35 XP earned', share-match-card and share-match-copy present.",
+    "Playwright: Known->Mastered promotion on card 'lambda' via mark-known-lambda: 1st click state=known xp=5, 2nd click state=mastered xp=5 (no double award), button label 'Mastered', progress-summary contains 'Mastered: 1'. 3rd click leaves state=mastered xp=5 (anti-farming intact).",
+    "Playwright: Mastery filter chips enumerated by data-testid ['mastery-filter-all','mastery-filter-due-today','mastery-filter-new','mastery-filter-review','mastery-filter-known','mastery-filter-mastered'] each clickable and rewires the visible card list (Mastered filter shows only 'Showing 1 cards' with the promoted Lambda card visible).",
+    "Playwright: /leaderboard captured innerText, then set fake progress in localStorage, went to /learn, clicked reset-progress-button with auto-accept confirm dialog, verified stat-xp reset from 'XP100' to 'XP0' and localStorage cleared. Returned to /leaderboard and confirmed innerText IDENTICAL to pre-reset snapshot (rows=2 both times).",
+    "Playwright: Mobile 375x844 overflow audit on /learn, /learn/cards, /play?rounds=3, /, /leaderboard - scrollWidth==clientWidth==375 on all pages.",
+    "Playwright: Header Audio: On -> Muted toggles once and Voice: Professor -> Calm -> Default -> Professor cycles cleanly, no console errors.",
+    "Playwright: Flashcards track buttons list ['CLF / SAA', 'AIF', 'MLA', 'DEA', 'Mixed'] all present.",
+    "Playwright: Landing footer contains 'v0.4.1', 'Study Progress', 'XP Lite', 'Mastery', 'Spaced Review', and 'Not affiliated with Amazon Web Services'. 0 em dashes in visible body text.",
+    "Console monitor across every flow above: 0 console.error entries, 0 pageerror entries."
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "studyProgress.recordCardMark now correctly orders promotion BEFORE the toggle-off short-circuit: `if (requested === 'known' && (prev === 'known' || prev === 'mastered')) nextState = 'mastered'; else if (prev === requested) return cleared;`. This resolves the HIGH-severity spec deviation from iteration_13 without disturbing the anti-farming awarded-map behavior. The promotion path is guarded by `awarded['<cardId>:mastered']` so no XP is granted on promotion (consistent with the spec where mastery XP was never listed).",
+    "LearnCards.jsx button label logic `state === 'known' ? 'Master' : 'Known'` and progression to 'Mastered' after promotion is now visually consistent with the actual state machine. Users see 'Known' on new cards, 'Master' on known cards (invitation to promote), and 'Mastered' on the final state.",
+    "The share-*-card and share-*-copy testids are consistently named across Play/Test/Match via the ShareResultCard testid prop. Clean reuse pattern.",
+    "Reset uses `localStorage.removeItem('cloudforge_learning_progress')` which only touches the study progress key. Leaderboard entries live server-side (backend leaderboard collection) and are unaffected. Verified by direct innerText comparison of the leaderboard table before and after reset.",
+    "US English + no em dashes preserved across landing, learn hub, flashcards, play, test, match, and leaderboard pages (verified via em-dash count on landing body innerText = 0).",
+    "Mobile responsiveness: no overflow at 375px on any of the five audited pages. Track selector wraps cleanly, sticky Play submit tray fits, share result card breaks long URL string via break-all/leading-relaxed.",
+    "Audio/Voice toggle state is header-level; both persisted in localStorage (audio_enabled and voice_style keys) and rendered by AudioToggle.jsx and VoiceStyleToggle.jsx without console errors during cycle."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "not tested (frontend-only per review request; backend was already 88/88 in iteration_12)", "frontend": "100% (all 15 review-request items pass)"},
+  "test_credentials": "None. localStorage-only study progress, no login required.",
+  "seed_data_creation": "None. localStorage was cleared at the start of each script and only ephemeral test data was written (auto-cleared per browser session).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "v0.4.1 Phase 5B Pass A is fully green and cleared for production redeploy. The one HIGH bug from iteration_13 (Known->Mastered promotion dead code) has been fixed by reordering the promotion check ahead of the toggle-off short-circuit in studyProgress.recordCardMark. XP economy (play3=30, play5=50, play10=100, test=40, match=35, known=5, review=3) is locked in and verified end to end via the preview URL. Reset behavior is a hard local-only clear that leaves the server leaderboard untouched. All 5 tracks, all 6 mastery filters, all three share cards + copy buttons render correctly. Mobile 375px has no overflow. Pass B (track-aware Play) is NOT in scope and was intentionally not tested. If the next iteration touches backend endpoints, re-run the 88 pytest suite in /app/backend/tests/.",
+  "rca of the issue": "N/A. All issues from iteration_13 are resolved. No new issues found."
+}

@@ -49,6 +49,42 @@ visuals (no Uno/Balatro clones).
 ## P0 backlog (next)
 - Tooltip popover on service cards (`tooltip` field is dataset-only right now)
 
+## v0.4.2 Phase 5C: Track-Aware Play and Domain Scenarios (2026-06, DONE)
+Adds certification track filtering to Play mode plus original domain content. No scoring
+engine rewrite, no leaderboard schema change, no DB schema change, no auth. US English, no
+em dashes. Public AWS disclaimer preserved. All content is original and synthesized from broad
+public AWS service knowledge and certification objectives (no copied exam wording).
+
+- **Track-aware Play**: new track selector on the Play start screen (CLF/SAA, AIF, MLA, DEA,
+  Mixed). `backend/seed_data.py` adds `scenarios_for_track` and `cards_for_track`; every base
+  card and scenario is tagged with a `tracks` list (all keep CLF_SAA so existing behavior is
+  unchanged). `/api/game/session` and `/api/game/deal` accept a `track` param. The deal still
+  guarantees a full ideal combo is in the hand and scopes filler cards to the track pool plus
+  the scenario's own cards, so hands stay relevant and every round is playable. Mixed = all.
+- **New Play content** (`backend/play_expansion.py`): 8 AIF, 8 MLA, 8 DEA, and 4 refined
+  CLF/SAA Play scenarios, plus 26 new service cards (AIF: Titan, Nova, Amazon Q, Lex, Textract,
+  Comprehend, Transcribe, Polly, Rekognition, Bedrock Knowledge Bases, Bedrock Guardrails;
+  MLA: SageMaker Training/Endpoint/Batch/Pipelines/Model Registry/Feature Store/Model Monitor,
+  ECR; DEA: Glue, Glue Crawler, Kinesis Data Firehose, MSK, Lake Formation, Step Functions,
+  QuickSight). Vector search is represented via Bedrock Knowledge Bases (no separate vector-DB
+  card). New synergy pairs added for fair synergy scoring.
+- **Play scenario pool by track**: CLF_SAA 14, AIF 8, MLA 9, DEA 10, Mixed 38 (all). Card pool
+  by track: CLF_SAA 34, AIF 21, MLA 23, DEA 22, Mixed 60 (all).
+- **Result and share cards** now show the selected track: final summary shows Mode + Track
+  badges; the Play share card and copy text include Track and XP earned lines.
+- **Learn Hub**: added a small "Practice this track in Play" link that deep-links to
+  `/play?track=<track>` and preserves the selection through localStorage.
+- **Audio voice profiles** made distinct per request: Professor prefers masculine or
+  lower-register English voices (Alex, Daniel, Guy, Microsoft David, etc.), rate 0.88, pitch 0.9;
+  Calm prefers warmer/softer voices (Samantha, Ava, Jenny, Aria, etc.), rate 0.78, pitch 1.08;
+  Default rate 1, pitch 1. Gender-hint fallback added. Fully browser-native, no external TTS.
+- **Leaderboard unchanged**: scores stay grouped by round mode (3R/5R/10R), not by track.
+- **Tests**: `backend/tests/test_v042_track_play.py` covers per-track pools, deal integrity
+  (ideal combo always dealt), full-ideal scoring guardrail (>= 78), distractor penalty, and
+  3R/5R/10R session integrity per track. Verified: backend 88/88 base + 6/6 track tests pass;
+  frontend iteration_15 all Phase 5C items pass, no console errors, no mobile overflow.
+
+
 ## v0.4.0 Phase 5A: Certification Prep Expansion (2026-07-04, DONE)
 Frontend and additive content release. No scoring, grading, leaderboard, backend schema, or
 authentication changes. US English, no em dashes. Public AWS disclaimer preserved. All content

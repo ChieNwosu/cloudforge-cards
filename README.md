@@ -11,6 +11,8 @@ content aloud for accessibility.
 ## Features
 
 - Play mode with 3, 5, or 10 round sessions and a transparent 100 point scoring engine
+- Track-aware Play: choose CLF/SAA, AIF, MLA, DEA, or Mixed to scope the scenario and
+  service-card pools, with the track shown on the result and share cards (v0.4.2)
 - Explanation bonus with an overflow rule that banks extra points into the session total
 - Perpetual Learning: Flashcards, server graded Test Mode, and Match / Fill in the Blank
 - Certification prep tracks: CLF/SAA, AIF, MLA, DEA, and Mixed

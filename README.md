@@ -17,6 +17,8 @@ content aloud for accessibility.
 - Per mode leaderboards for 3R, 5R, and 10R best scores
 - Professor Flock browser native read aloud with Audio and Voice style controls
 - Shareable result cards with a copyable summary and optional native share
+- Study progress (local only): XP, daily streaks, levels, card mastery, and spaced review, with
+  Due Today, New, Review, Known, and Mastered flashcard filters (v0.4.1)
 
 ## Tech stack
 

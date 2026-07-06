@@ -208,9 +208,9 @@ Current screenshot sets:
 
 ### Landing Page (v0.4.2)
 
-![Landing Page](docs/screenshots/v0.2.5/landing-page.png)
+![Landing Page](docs/screenshots/v0.4.2/landing-page.png)
 
-Note: This screenshot shows an earlier version's landing page visual. A v0.4.2 landing page screenshot has been provided for the repo but shows stale hero stats (30 service cards, 10 scenarios). The actual v0.4.2 app has 60 service cards and 38 scenarios. Once the screenshot file is committed to `docs/screenshots/v0.4.2/landing-page.jpg` and the landing stats are updated in-app, the image path should be updated here.
+The landing page shows the current v0.4.2 state: 60 service cards, 38 scenarios, 5 tracks, with Play/Learn/Test CTAs and 3R/5R/10R quick-start options.
 
 See the [full screenshot archive in docs/screenshots](docs/screenshots) for older Play, Score Breakdown, and Leaderboard captures from prior versions.
 

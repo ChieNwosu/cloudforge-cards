@@ -16,22 +16,26 @@ No login required. Play a 3R, 5R, or 10R session, study with flashcards, take a 
 
 ## Current Release
 
-**CloudForge Cards v0.3.2: Phase 4B Shareable Result Cards and How to Play Refresh**
+**CloudForge Cards v0.4.2: Track-Aware AWS Learning Platform**
 
-The latest stable release adds shareable result cards for Play, Test Mode, and Match / Fill Mode. It also refreshes the How to Play page for 3R, 5R, and 10R sessions, adds clearer accessibility guidance, and preserves the browser-native Professor Flock read-aloud system.
+The latest stable release adds track-aware Play with CLF/SAA, AIF, MLA, DEA, and Mixed certification track filters, 60 service cards, 38 Play scenarios with domain-specific content, and expanded Learn/Test/Match exercises for all tracks. This release was submitted to the Emergent Builder's Contest.
 
-No scoring, grading, leaderboard, backend, schema, or certification-content changes were made in this release.
+### Build Process
 
-### What is new in v0.3.2
+CloudForge Cards was built through an AI-assisted no-code development workflow using Emergent. The creator's work included product concept, feature scoping, prompt direction, learning content strategy, QA testing, troubleshooting, release management, documentation, and iterative product decisions.
 
-- Shareable result cards for Play, Test Mode, and Match / Fill Mode
-- Copyable result summaries
-- Optional native share support when supported by the browser
-- Graceful fallback when clipboard or native share features are unavailable
-- Refreshed How to Play page with 3R, 5R, and 10R session language
-- Audio and Voice accessibility note added to How to Play
-- README updated with live app link, project context, features, tech stack, and disclaimer
-- Final contest-readiness polish completed
+### What is new in v0.4.2
+
+- Track-aware Play mode: CLF/SAA, AIF, MLA, DEA, and Mixed scenario pools
+- Track-aware service-card pools with relevant cards, fair distractors, and guaranteed ideal combos
+- 60 service cards (expanded from 33) across Compute, Storage, Database, Network, Security, Analytics, Integration, Monitoring, AI, ML, and Data Engineering
+- 38 Play scenarios (expanded from 10) with domain-specific architecture challenges for each track
+- DEA (Data Engineer Associate) track support across Learn Hub, Flashcards, Test Mode, Match Mode, and Play Mode
+- AIF, MLA, and DEA flashcard, Test Mode, and Match Mode content expansion
+- Domain-specific Play scenarios for AIF, MLA, DEA, and CLF/SAA
+- Learn Flashcards deck remains isolated from Play expansion cards (study deck stability)
+- Game card pool expanded for Play only
+- No scoring engine, leaderboard schema, database schema, or authentication changes
 
 ### What is new in v0.3.1
 
@@ -96,30 +100,27 @@ The Perpetual Learning mode is designed for repeat study outside the main game l
 
 ## Certification Tracks
 
-The Learn experience currently supports these study filters:
+The learning and Play experience supports these certification track filters:
 
 | Track | Coverage |
 |-------|----------|
-| CLF/SAA | Strongest coverage. Core foundation services. |
-| AIF | Early beta. AI and generative AI services tagged where relevant. |
-| MLA | Early beta. ML workflow services tagged where relevant. |
-| Mixed | All cards from all tracks combined. |
-
-CLF/SAA coverage is strongest. AIF and MLA coverage are early beta and will expand in later releases.
+| CLF/SAA | Strongest coverage. Core foundation and Solutions Architect services. |
+| AIF | AI Practitioner. Generative AI and AI service fundamentals. |
+| MLA | ML Associate. Data pipelines, model training, and deployment. |
+| DEA | Data Engineer Associate. Data lakes, ETL, streaming, and analytics services. |
+| Mixed | All cards and scenarios from all tracks combined. |
 
 ## Routes
 
 | Route | Description |
 |-------|-------------|
-| `/play` | AWS architecture card game with 3R, 5R, or 10R sessions |
+| `/play` | Track-aware AWS architecture card game with 3R, 5R, or 10R sessions |
 | `/learn` | Perpetual Learning hub |
-| `/learn/cards` | Learn Flashcards |
-| `/learn/test` | Test Mode with 15-question quizzes |
+| `/learn/cards` | Learn Flashcards with Due Today, New, Review, Known, and Mastered filters |
+| `/learn/test` | Test Mode with 15-question server-graded quizzes |
 | `/learn/match` | Match Mode with tap-to-place pipeline exercises |
 | `/leaderboard` | Per-mode leaderboard for 3R, 5R, and 10R scores |
 | `/how-to-play` | Rules, scoring reference, and accessibility note |
-
-## Features
 
 ## Features
 
@@ -201,32 +202,17 @@ Screenshots are stored in [`docs/screenshots`](docs/screenshots/README.md).
 
 Current screenshot sets:
 
+- [`v0.4.2 landing page`](docs/screenshots/v0.4.2/)
 - [`v0.2.5 deployed game screenshots`](docs/screenshots/v0.2.5/)
 - [`v0.3 Learn Flashcards screenshots`](docs/screenshots/v0.3/README.md)
 
-### Landing Page
+### Landing Page (v0.4.2)
 
-![Landing Page](docs/screenshots/v0.2.5/landing-page.png)
+![Landing Page](docs/screenshots/v0.4.2/landing-page.png)
 
-### Round 1: Play Screen
+The landing page shows the current v0.4.2 state: 60 service cards, 38 scenarios, 5 tracks, with Play/Learn/Test CTAs and 3R/5R/10R quick-start options.
 
-![Round 1 Play Screen](docs/screenshots/v0.2.5/round-1-play-screen.png)
-
-### Score Breakdown
-
-![Round 1 Score Breakdown](docs/screenshots/v0.2.5/round-1-score-breakdown.png)
-
-### Final Game Summary
-
-![Final Game Summary](docs/screenshots/v0.2.5/final-game-summary.png)
-
-### Leaderboard
-
-![Leaderboard](docs/screenshots/v0.2.5/leaderboard.png)
-
-These screenshots show a manual QA solo run used to verify gameplay, scoring behavior, final summary, and leaderboard flow. The different scores are test examples across scenarios and should not be interpreted as a formal assessment of the creator's AWS knowledge.
-
-See the [full screenshot set in docs/screenshots](docs/screenshots).
+See the [full screenshot archive in docs/screenshots](docs/screenshots) for older Play, Score Breakdown, and Leaderboard captures from prior versions.
 
 ## Tech Stack
 
@@ -315,12 +301,13 @@ cloudforge-cards/
 - [Roadmap](docs/roadmap.md)
 - [Testing](docs/testing.md)
 - [Perpetual Learning](docs/perpetual-learning.md)
+- [v0.4.2 Release Notes](docs/release-notes/v0.4.2.md)
 - [v0.3.1 Release Notes](docs/release-notes/v0.3.1.md)
 - [v0.3 Release Notes](docs/release-notes/v0.3.md)
+- [v0.2.5 Release Notes](docs/release-notes/v0.2.5.md)
 - [AWS Deployment Options](docs/aws-deployment-options.md)
 - [CLF Knowledge Integration](docs/clf-knowledge-integration.md)
 - [Content Pipeline](docs/content-pipeline.md)
-- [Release Notes: v0.2.5](docs/release-notes/v0.2.5.md)
 - [Screenshots](docs/screenshots/README.md)
 
 ## Disclaimer

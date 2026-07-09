@@ -1,8 +1,8 @@
 # CloudForge Cards Roadmap
 
-## Current Version: v0.3.1 Phase 4A (Audio Polish Patch)
+## Current Version: v0.4.2 (Track-Aware AWS Learning Platform)
 
-The app now includes the original AWS architecture game with 3R/5R/10R session modes, the full Perpetual Learning suite (Learn Flashcards, Test Mode, Match Mode), per-mode leaderboard, and browser-native Professor Flock read-aloud with voice style selection.
+The app now includes track-aware Play (CLF/SAA, AIF, MLA, DEA, Mixed), 60 service cards, 38 scenarios, 3R/5R/10R sessions, the full Perpetual Learning suite, shareable results, XP/streaks/mastery/spaced review, Professor Flock read-aloud, and per-mode leaderboard. Submitted to the Emergent Builder's Contest.
 
 ---
 
@@ -79,49 +79,84 @@ Completed highlights:
 - [x] No external TTS APIs, no generated audio files, no backend audio routes
 - [x] No scoring, grading, leaderboard, schema, or certification-content changes
 
+### v0.3.2 Phase 4B: Shareable Result Cards (complete)
+
+- [x] Shareable result cards for Play, Test Mode, and Match / Fill Mode
+- [x] Copyable result summaries
+- [x] Optional native share support when supported by the browser
+- [x] Refreshed How to Play page with 3R, 5R, 10R language and accessibility note
+
+### v0.4.1 Phase 5B Pass A: Study Progress, XP, Mastery, Spaced Review (complete)
+
+- [x] Local-only XP, daily streaks, levels, card mastery, and spaced review
+- [x] Due Today, New, Review, Known, and Mastered flashcard filters
+- [x] Visual progress indicators on Learn Hub
+- [x] No backend, DB schema, leaderboard, or auth changes
+
+### v0.4.2 Phase 5C: Track-Aware Play and Domain Scenarios (complete)
+
+- [x] Track-aware Play mode: CLF/SAA, AIF, MLA, DEA, and Mixed
+- [x] 60 service cards (expanded from 33) across 11 categories
+- [x] 38 Play scenarios (expanded from 10) with domain-specific content
+- [x] DEA (Data Engineer Associate) track support across all modes
+- [x] AIF, MLA, and DEA flashcard, Test, and Match content expansion
+- [x] Learn Flashcards deck isolated from Play expansion cards
+- [x] Game card pool expanded for Play only
+- [x] No scoring engine, leaderboard schema, or database schema changes
+- [x] Submitted to the Emergent Builder's Contest
+
 ---
 
-## Forward Roadmap
+## Post-Contest Forward Roadmap
 
-### v0.3.2 or v0.4.0: Shareable Result Cards (next)
+### Landing Stats and Screenshot Refresh (immediate)
 
-Focus: Social sharing and portfolio visibility.
+* [ ] Update landing page hero stats to show 60 service cards and 38 scenarios
+* [ ] Capture fresh screenshots reflecting v0.4.2 state
+* [ ] Replace stale landing screenshot in README
 
-* [ ] Generate shareable result card after Play session (image or link format)
-* [ ] Include session score, rating, round count, and date
-* [ ] Copy-to-clipboard and download options
-* [ ] Optional Professor Flock commentary on the card
-* [ ] Open Graph meta tags for link previews
+### Per-Track Readiness Analytics
 
-### Phase 5A: Study Streaks and XP Lite
+* [ ] Dashboard or summary showing content coverage per track
+* [ ] Identify gaps in AIF, MLA, and DEA question/scenario coverage
+* [ ] Guide future content authoring priorities
 
-Focus: Lightweight gamification to encourage daily practice.
+### Optional Downloadable Share Card Image
 
-* [ ] Daily study streak counter tracked in localStorage
-* [ ] XP points awarded for completing Learn, Test, and Match sessions
-* [ ] Visual streak indicator on the Learn hub
-* [ ] Streak-break warning and recovery grace period
-* [ ] No server-side account required (localStorage only for now)
+* [ ] Generate a PNG share card (canvas or server-side rendering)
+* [ ] Include score, rating, track, round count, and date
+* [ ] Download button alongside the existing copy/share flow
 
-### Phase 5B: Mastery and Spaced Repetition
+### Code Quality and Technical Debt
 
-Focus: Intelligent review scheduling based on performance.
+* [ ] Refactor Play.jsx (extract hooks, card selection, round management)
+* [ ] Refactor LearnCards.jsx (extract filters, progress, deck logic)
+* [ ] Hook dependency audit and cleanup
+* [ ] Dockerized local development environment
+* [ ] Architecture diagram and code tour documentation
 
-* [ ] Spaced repetition scheduling for flashcard Review queue
-* [ ] Mastery percentage per service card (based on Test and Match performance)
-* [ ] Visual progress indicators (cards mastered, track completion)
-* [ ] "Weak areas" surfacing based on repeated incorrect answers
-* [ ] Integration with Test Mode to prioritize weak-area questions
+### Optional AWS-Native Deployment
 
-### Later: AIF, MLA, and Possible DEA Content Expansion
+* [ ] Amplify or S3 plus CloudFront for frontend
+* [ ] API Gateway plus Lambda for backend
+* [ ] DynamoDB for leaderboard and progress
+* [ ] Cognito for authentication
+* [ ] CloudWatch logging
+* [ ] AWS Budgets alerting
 
-Focus: Deepen non-CLF certification track coverage.
+### Optional Authentication (Future)
 
-* [ ] Expand AIF-tagged content across AI and generative AI services
-* [ ] Expand MLA-tagged content across data pipeline and model services
-* [ ] Consider adding DEA (Data Engineer Associate) track
-* [ ] Add track-specific scenario hints and questions
-* [ ] Community feedback on which tracks to prioritize
+* [ ] Guest mode with localStorage scores
+* [ ] Registered profiles with server-side progress sync
+* [ ] Cognito or third-party auth integration
+* [ ] Score history and progress over time
+
+### Optional Kiro-Assisted Architecture Documentation
+
+* [ ] System context diagram
+* [ ] Component relationship map
+* [ ] Data flow diagram for scoring, grading, and progress
+* [ ] API contract documentation
 
 ---
 
@@ -176,6 +211,9 @@ These are ideas for consideration after v0.5 is stable:
 
 | Version | Name | Key Change |
 |---------|------|-----------|
+| v0.4.2 | Track-Aware AWS Learning Platform | Track-aware Play, 60 cards, 38 scenarios, DEA track, contest submission |
+| v0.4.1 | Study Progress, XP, Mastery, Spaced Review | Local XP, streaks, levels, mastery, Due Today filters |
+| v0.3.2 | Shareable Result Cards | Play/Test/Match share cards, How to Play refresh |
 | v0.3.1 | Phase 4A Audio Polish Patch | Browser-native Professor Flock read-aloud, voice style toggle, mute persistence |
 | v0.3 P3 | Match Mode, Round Modes, Scoring Transparency | Match mode, 3R/5R/10R play, per-mode leaderboard, transparent Flock |
 | v0.3 P2 | Perpetual Learning: Test Mode | 15-question quizzes, server-side grading, review explanations |
